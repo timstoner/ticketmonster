@@ -1,48 +1,86 @@
 package com.example.ticketmonster.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.MultivaluedMap;
 
-public class MultivaluedHashMap<K, V> extends ForwardingMap<K, List<V>> implements MultivaluedMap<K, V> {
+public class MultivaluedHashMap<K, V> extends ForwardingMap<K, List<V>>
+		implements MultivaluedMap<K, V> {
 
-    public static MultivaluedMap<?, ?> EMPTY = new MultivaluedHashMap<Object, Object>();
+	public static MultivaluedMap<?, ?> EMPTY = new MultivaluedHashMap<Object, Object>();
 
-    public static <K, V> MultivaluedHashMap<K, V> empty() {
-        return (MultivaluedHashMap<K, V>) EMPTY;
-    }
+	public static <K, V> MultivaluedHashMap<K, V> empty() {
+		return (MultivaluedHashMap<K, V>) EMPTY;
+	}
 
-    private Map<K, List<V>> map = new HashMap<K, List<V>>();
+	private Map<K, List<V>> map = new HashMap<K, List<V>>();
 
-    @Override
-    protected Map<K, List<V>> delegate() {
-        return map;
-    }
+	@Override
+	protected Map<K, List<V>> delegate() {
+		return map;
+	}
 
-    @Override
-    public void putSingle(K key, V value) {
-        List<V> l = new ArrayList<V>(1);
-        l.add(value);
-        put(key, l);
-    }
+	@Override
+	public void putSingle(K key, V value) {
+		List<V> l = new ArrayList<V>(1);
+		l.add(value);
+		put(key, l);
+	}
 
-    @Override
-    public void add(K key, V value) {
-        List<V> l = get(key);
-        if (l == null) {
-            l = new ArrayList<V>(1);
-            put(key, l);
-        }
-        l.add(value);
-    }
+	@Override
+	public void add(K key, V value) {
+		List<V> l = get(key);
+		if (l == null) {
+			l = new ArrayList<V>(1);
+			put(key, l);
+		}
+		l.add(value);
+	}
 
-    @Override
-    public V getFirst(K key) {
-        List<V> l = get(key);
-        return l == null ? null : l.get(0);
-    }
+	@Override
+	public V getFirst(K key) {
+		List<V> l = get(key);
+		return l == null ? null : l.get(0);
+	}
+
+	@Override
+	public void addAll(K key, V... newValues) {
+		List<V> list = Arrays.asList(newValues);
+		addAll(key, list);
+	}
+
+	@Override
+	public void addAll(K key, List<V> valueList) {
+		List<V> values = map.get(key);
+		if (values != null) {
+			values.addAll(valueList);
+		}
+
+		map.put(key, values);
+	}
+
+	@Override
+	public void addFirst(K key, V value) {
+		List<V> values = map.get(key);
+		if (values != null) {
+			values.add(0, value);
+		} else {
+			values = new ArrayList<V>();
+			values.add(value);
+		}
+
+		map.put(key, values);
+
+	}
+
+	@Override
+	public boolean equalsIgnoreValueOrder(MultivaluedMap<K, V> otherMap) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }
