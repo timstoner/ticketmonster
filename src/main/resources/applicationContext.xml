@@ -20,7 +20,7 @@
 
 	<bean id="jpaVendorAdapter"
 		class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-		<property name="database" value="${hibernate.database}" />
+		<!-- <property name="database" value="${hibernate.database}" /> -->
 		<property name="showSql" value="true" />
 		<property name="generateDdl" value="true" />
 		<property name="databasePlatform" value="${hibernate.databasePlatform}" />
@@ -45,7 +45,7 @@
 	</bean>
 
 	<tx:annotation-driven />
-<!-- 	<context:annotation-config /> -->
+	<!-- <context:annotation-config /> -->
 
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
@@ -71,7 +71,7 @@
 	<bean id="venueEndpoint" class="com.example.ticketmonster.rest.VenueEndpoint" />
 	<bean id="venueService" class="com.example.ticketmonster.rest.VenueService" />
 
-	<jaxrs:server id="rest" address="/*">
+	<jaxrs:server id="ticketmonsterServices" address="/">
 		<jaxrs:serviceBeans>
 			<ref bean="metricsService" />
 			<ref bean="bookingService" />
