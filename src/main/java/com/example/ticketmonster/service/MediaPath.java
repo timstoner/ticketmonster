@@ -1,10 +1,7 @@
 package com.example.ticketmonster.service;
 
-import org.springframework.stereotype.Component;
-
 import com.example.ticketmonster.model.MediaType;
 
-@Component
 public class MediaPath {
 
 	private final String url;

@@ -2,8 +2,9 @@ package com.example.ticketmonster.service;
 
 import java.util.List;
 import java.util.Timer;
-import java.util.logging.Logger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,9 @@ import com.example.ticketmonster.util.MultivaluedHashMap;
 @Component
 public class BotService {
 
+	private final static Logger logger = LoggerFactory
+			.getLogger(BotService.class);
+
 	private static final int MAX_LOG_SIZE = 50;
 
 	private CircularBuffer<String> log;
@@ -24,9 +28,6 @@ public class BotService {
 
 	@Autowired
 	private BookingService bookingService;
-
-	@Autowired
-	private Logger logger;
 
 	// @Inject
 	// @BotMessage

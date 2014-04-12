@@ -20,7 +20,7 @@
 
 	<bean id="jpaVendorAdapter"
 		class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-		<property name="database" value="test" />
+		<property name="database" value="H2" />
 		<property name="showSql" value="true" />
 		<property name="generateDdl" value="true" />
 		<property name="databasePlatform" value="org.hibernate.dialect.H2Dialect" />
@@ -70,7 +70,7 @@
 	<bean id="venueEndpoint" class="com.example.ticketmonster.rest.VenueEndpoint" />
 	<bean id="venueService" class="com.example.ticketmonster.rest.VenueService" />
 
-	<jaxrs:server id="services" address="/*">
+	<jaxrs:server id="rest" address="/rest">
 		<jaxrs:serviceBeans>
 			<ref bean="metricsService" />
 			<ref bean="bookingService" />
