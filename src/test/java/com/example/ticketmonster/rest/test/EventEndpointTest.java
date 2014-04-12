@@ -9,28 +9,38 @@ import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
-import org.apache.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.example.ticketmonster.rest.EventEndpoint;
+import com.example.ticketmonster.rest.dto.EventDTO;
 
 public class EventEndpointTest {
-//	private static Logger LOG = Logger.getLogger(EventEndpointTest.class);
+	private static Logger LOG = LoggerFactory
+			.getLogger(EventEndpointTest.class);
 
 	private final static String ENDPOINT_ADDRESS = "http://localhost:8080/rest";
 	private final static String WADL_ADDRESS = ENDPOINT_ADDRESS + "?_wadl";
 	private static Server server;
 
+	private static ApplicationContext context;
+
 	@BeforeClass
 	public static void initialize() throws Exception {
-		startServer();
-		waitForWADL();
+		LOG.info("Initializing test");
+		context = new ClassPathXmlApplicationContext("applicationContext.xml");
+
+		// startServer();
+		// waitForWADL();
 	}
 
 	private static void startServer() {
-//		LOG.info("Starting JAXRS Server");
+		LOG.info("Starting JAXRS Server");
 		JAXRSServerFactoryBean sf = new JAXRSServerFactoryBean();
 		sf.setResourceClasses(EventEndpoint.class);
 
@@ -51,7 +61,7 @@ public class EventEndpointTest {
 		for (int i = 0; i < 20; i++) {
 			Thread.sleep(1000);
 			Response response = client.get();
-//			LOG.info(response.getStatusInfo().getStatusCode());
+			// LOG.info(response.getStatusInfo().getStatusCode());
 			if (response.getStatus() == 200) {
 				break;
 			}
@@ -62,17 +72,22 @@ public class EventEndpointTest {
 
 	@AfterClass
 	public static void destroy() throws Exception {
-		server.stop();
-		server.destroy();
+		// server.stop();
+		// server.destroy();
 	}
 
 	@Test
-	public void testGetBookWithWebClient() {
-		WebClient client = WebClient.create(ENDPOINT_ADDRESS);
-		client.accept("text/xml");
-		client.path("forge/events");
+	public void testGetEventsWithWebClient() {
+		LOG.info("running testGetEventsWithWebClient");
+		EventEndpoint endpoint = context.getBean(EventEndpoint.class);
+		// WebClient client = WebClient.create(ENDPOINT_ADDRESS);
+		// client.accept("text/xml");
+		// client.path("forge/events");
+		// Response response = client.get();
 		// Book book = client.get(Book.class);
 		// assertEquals(123L, book.getId());
+
+		List<EventDTO> events = endpoint.listAll();
 	}
 
 }
