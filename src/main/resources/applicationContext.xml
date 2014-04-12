@@ -20,10 +20,10 @@
 
 	<bean id="jpaVendorAdapter"
 		class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-		<property name="database" value="H2" />
+		<property name="database" value="${hibernate.database}" />
 		<property name="showSql" value="true" />
 		<property name="generateDdl" value="true" />
-		<property name="databasePlatform" value="org.hibernate.dialect.H2Dialect" />
+		<property name="databasePlatform" value="${hibernate.databasePlatform}" />
 	</bean>
 
 	<bean id="emf"
@@ -35,6 +35,7 @@
 		<property name="jpaProperties">
 			<props>
 				<prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+				<prop key="hibernate.hbm2ddl.import_files">import.sql</prop>
 			</props>
 		</property>
 	</bean>
@@ -44,7 +45,7 @@
 	</bean>
 
 	<tx:annotation-driven />
-	<context:annotation-config />
+<!-- 	<context:annotation-config /> -->
 
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
@@ -70,7 +71,7 @@
 	<bean id="venueEndpoint" class="com.example.ticketmonster.rest.VenueEndpoint" />
 	<bean id="venueService" class="com.example.ticketmonster.rest.VenueService" />
 
-	<jaxrs:server id="rest" address="/rest">
+	<jaxrs:server id="rest" address="/*">
 		<jaxrs:serviceBeans>
 			<ref bean="metricsService" />
 			<ref bean="bookingService" />

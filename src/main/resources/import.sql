@@ -1,27 +1,27 @@
 -- MediaItem 0
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://dl.dropbox.com/u/65660684/640px-Weir%2C_Bob_(2007)_2.jpg')
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://dl.dropbox.com/u/65660684/640px-Weir%2C_Bob_(2007)_2.jpg');
 -- MediaItem 1
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://dl.dropbox.com/u/65660684/640px-Carnival_Puppets.jpg')
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://dl.dropbox.com/u/65660684/640px-Carnival_Puppets.jpg');
 -- MediaItem 2
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://dl.dropbox.com/u/65660684/640px-Opera_House_with_Sydney.jpg')
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://dl.dropbox.com/u/65660684/640px-Opera_House_with_Sydney.jpg');
 -- MediaItem 3
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://dl.dropbox.com/u/65660684/640px-Roy_Thomson_Hall_Toronto.jpg')
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://dl.dropbox.com/u/65660684/640px-Roy_Thomson_Hall_Toronto.jpg');
 -- MediaItem 4
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://dl.dropbox.com/u/65660684/640px-West-stand-bmo-field.jpg')
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://dl.dropbox.com/u/65660684/640px-West-stand-bmo-field.jpg');
 -- MediaItem 5
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://dl.dropbox.com/u/65660684/640px-Brazil_national_football_team_training_at_Dobsonville_Stadium_2010-06-03_13.jpg')
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://dl.dropbox.com/u/65660684/640px-Brazil_national_football_team_training_at_Dobsonville_Stadium_2010-06-03_13.jpg');
 -- MediaItem 6
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://dl.dropbox.com/u/8625587/ticketmonster/AllStateFootballChampionship.png')
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://dl.dropbox.com/u/8625587/ticketmonster/AllStateFootballChampionship.png');
 -- MediaItem 7
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://dl.dropbox.com/u/8625587/ticketmonster/ARhythmia.png')
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://dl.dropbox.com/u/8625587/ticketmonster/ARhythmia.png');
 -- MediaItem 8
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://dl.dropbox.com/u/8625587/ticketmonster/BattleoftheBrassBands.png')
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://dl.dropbox.com/u/8625587/ticketmonster/BattleoftheBrassBands.png');
 -- MediaItem 9
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://dl.dropbox.com/u/8625587/ticketmonster/CarnivalComestoTown.png')
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://dl.dropbox.com/u/8625587/ticketmonster/CarnivalComestoTown.png');
 -- MediaItem 10
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://dl.dropbox.com/u/8625587/ticketmonster/ChrisLewisQuarterfinals.png')
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://dl.dropbox.com/u/8625587/ticketmonster/ChrisLewisQuarterfinals.png');
 -- MediaItem 11
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://dl.dropbox.com/u/8625587/ticketmonster/CrewYou.png')
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://dl.dropbox.com/u/8625587/ticketmonster/CrewYou.png');
 -- MediaItem 12
 insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://dl.dropbox.com/u/8625587/ticketmonster/ExtremeSnowboardingFinals.png')
 -- MediaItem 13
