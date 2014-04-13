@@ -21,6 +21,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
+import com.example.ticketmonster.rest.dto.ListDTO;
+
 /**
  * <p>
  * A number of RESTful services implement GET operations on a particular type of
@@ -101,8 +103,10 @@ public abstract class BaseEntityService<T> {
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<T> getAll(@Context UriInfo uriInfo) {
-		return getAll(uriInfo.getQueryParameters());
+	public ListDTO<T> getAll(@Context UriInfo uriInfo) {
+		ListDTO<T> list = new ListDTO<T>();
+		list.addAll(getAll(uriInfo.getQueryParameters()));
+		return list;
 	}
 
 	public List<T> getAll(MultivaluedMap<String, String> queryParameters) {
@@ -169,7 +173,7 @@ public abstract class BaseEntityService<T> {
 	 * @param criteriaBuilder
 	 *            - @{link CriteriaBuilder} used by the invoker
 	 * @param root
-	 *            @{link Root} used by the invoker
+	 * @{link Root} used by the invoker
 	 * @return a list of {@link Predicate}s that will added as query parameters
 	 */
 	protected Predicate[] extractPredicates(
