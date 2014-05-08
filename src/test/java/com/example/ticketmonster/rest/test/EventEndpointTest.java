@@ -24,7 +24,7 @@ import com.example.ticketmonster.rest.EventEndpoint;
 import com.example.ticketmonster.rest.dto.EventDTO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:/applicationContext-test.xml" })
+@ContextConfiguration(locations = { "classpath:/applicationContext.xml" })
 public class EventEndpointTest {
 	private static Logger LOG = LoggerFactory
 			.getLogger(EventEndpointTest.class);

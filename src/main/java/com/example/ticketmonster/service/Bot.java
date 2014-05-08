@@ -10,11 +10,16 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Component;
 
+import com.example.ticketmonster.event.BotEvent;
 import com.example.ticketmonster.model.Performance;
 import com.example.ticketmonster.model.Show;
 import com.example.ticketmonster.model.TicketPrice;
@@ -22,18 +27,17 @@ import com.example.ticketmonster.rest.BookingRequest;
 import com.example.ticketmonster.rest.BookingService;
 import com.example.ticketmonster.rest.ShowService;
 import com.example.ticketmonster.rest.TicketRequest;
-import com.example.ticketmonster.util.MultivaluedHashMap;
 
 @Component
-public class Bot {
+public class Bot implements ApplicationEventPublisherAware {
 
 	class BotTask extends TimerTask {
 
 		@Override
 		public void run() {
+			MultivaluedHashMap<String, String> empty = new MultivaluedHashMap<String, String>();
 			// Select a show at random
-			Show show = selectAtRandom(showService.getAll(MultivaluedHashMap
-					.<String, String> empty()));
+			Show show = selectAtRandom(showService.getAll(empty));
 
 			// Select a performance at random
 			Performance performance = selectAtRandom(show.getPerformances());
@@ -77,7 +81,6 @@ public class Bot {
 			// TODO: fire bot message event
 			// event.fire(message.toString());
 		}
-
 	}
 
 	private static final Random random = new Random(System.nanoTime());
@@ -103,6 +106,8 @@ public class Bot {
 	@Autowired
 	private BookingService bookingService;
 
+	private ApplicationEventPublisher eventPublisher;
+
 	// @Inject
 	// @BotMessage
 	// Event<String> event;
@@ -111,8 +116,9 @@ public class Bot {
 		String startMessage = new StringBuilder("==========================\n")
 				.append("Bot started at ").append(new Date().toString())
 				.append("\n").toString();
-		// TODO: first bot started event
-		// event.fire(startMessage);
+
+		fireBotEvent(startMessage);
+
 		BotTask task = new BotTask();
 
 		Timer timer = new Timer();
@@ -125,8 +131,9 @@ public class Bot {
 		String stopMessage = new StringBuilder("==========================\n")
 				.append("Bot stopped at ").append(new Date().toString())
 				.append("\n").toString();
-		// TODO: fire bot stopped event
-		// event.fire(stopMessage);
+
+		fireBotEvent(stopMessage);
+
 		timer.cancel();
 	}
 
@@ -161,5 +168,17 @@ public class Bot {
 			}
 		}
 		return indicies;
+	}
+
+	@Override
+	public void setApplicationEventPublisher(
+			ApplicationEventPublisher applicationEventPublisher) {
+		this.eventPublisher = applicationEventPublisher;
+
+	}
+
+	private void fireBotEvent(String message) {
+		ApplicationEvent event = new BotEvent(this, message);
+		eventPublisher.publishEvent(event);
 	}
 }

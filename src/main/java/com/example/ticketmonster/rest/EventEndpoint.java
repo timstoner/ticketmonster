@@ -19,17 +19,25 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.example.ticketmonster.model.Event;
 import com.example.ticketmonster.rest.dto.EventDTO;
 
 @Path("forge/events")
 public class EventEndpoint {
+
+	private static Logger LOG = LoggerFactory.getLogger(EventEndpoint.class);
+
 	@PersistenceContext
 	private EntityManager em;
 
 	@POST
 	@Consumes("application/json")
 	public Response create(EventDTO dto) {
+		LOG.debug("create {}", dto.getName());
+
 		Event entity = dto.fromDTO(null, em);
 		em.persist(entity);
 		return Response.created(
@@ -40,6 +48,8 @@ public class EventEndpoint {
 	@DELETE
 	@Path("/{id:[0-9][0-9]*}")
 	public Response deleteById(@PathParam("id") Long id) {
+		LOG.debug("deleteById {}", id);
+
 		Event entity = em.find(Event.class, id);
 		if (entity == null) {
 			return Response.status(Status.NOT_FOUND).build();
@@ -52,6 +62,8 @@ public class EventEndpoint {
 	@Path("/{id:[0-9][0-9]*}")
 	@Produces("application/json")
 	public Response findById(@PathParam("id") Long id) {
+		LOG.debug("findById {}", id);
+
 		TypedQuery<Event> findByIdQuery = em
 				.createQuery(
 						"SELECT DISTINCT e FROM Event e LEFT JOIN FETCH e.mediaItem LEFT JOIN FETCH e.category WHERE e.id = :entityId ORDER BY e.id",
@@ -73,6 +85,8 @@ public class EventEndpoint {
 	@GET
 	@Produces("application/json")
 	public List<EventDTO> listAll() {
+		LOG.debug("listAll");
+
 		final List<Event> searchResults = em
 				.createQuery(
 						"SELECT DISTINCT e FROM Event e LEFT JOIN FETCH e.mediaItem LEFT JOIN FETCH e.category ORDER BY e.id",
@@ -89,6 +103,7 @@ public class EventEndpoint {
 	@Path("/{id:[0-9][0-9]*}")
 	@Consumes("application/json")
 	public Response update(@PathParam("id") Long id, EventDTO dto) {
+		LOG.debug("update {}", id);
 		TypedQuery<Event> findByIdQuery = em
 				.createQuery(
 						"SELECT DISTINCT e FROM Event e LEFT JOIN FETCH e.mediaItem LEFT JOIN FETCH e.category WHERE e.id = :entityId ORDER BY e.id",

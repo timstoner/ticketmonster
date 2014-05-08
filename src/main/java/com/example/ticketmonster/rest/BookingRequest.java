@@ -50,7 +50,6 @@ public class BookingRequest {
 	}
 
 	public void setPerformance(long performance) {
-
 		this.performance = performance;
 	}
 
@@ -60,6 +59,15 @@ public class BookingRequest {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("Booking Request id: ").append(performance)
+				.append(" Email: ").append(email);
+
+		return sb.toString();
 	}
 
 	/**

@@ -19,17 +19,25 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.example.ticketmonster.model.Section;
 import com.example.ticketmonster.rest.dto.SectionDTO;
 
 @Path("/sections")
 public class SectionEndpoint {
+
+	private static Logger LOG = LoggerFactory.getLogger(SectionEndpoint.class);
+
 	@PersistenceContext
 	private EntityManager em;
 
 	@POST
 	@Consumes("application/json")
 	public Response create(SectionDTO dto) {
+		LOG.debug("create {}", dto.getName());
+
 		Section entity = dto.fromDTO(null, em);
 		em.persist(entity);
 		return Response.created(
@@ -40,6 +48,8 @@ public class SectionEndpoint {
 	@DELETE
 	@Path("/{id:[0-9][0-9]*}")
 	public Response deleteById(@PathParam("id") Long id) {
+		LOG.debug("deleteById {}", id);
+
 		Section entity = em.find(Section.class, id);
 		if (entity == null) {
 			return Response.status(Status.NOT_FOUND).build();
@@ -52,6 +62,8 @@ public class SectionEndpoint {
 	@Path("/{id:[0-9][0-9]*}")
 	@Produces("application/json")
 	public Response findById(@PathParam("id") Long id) {
+		LOG.debug("findById {}", id);
+
 		TypedQuery<Section> findByIdQuery = em
 				.createQuery(
 						"SELECT DISTINCT s FROM Section s LEFT JOIN FETCH s.venue WHERE s.id = :entityId ORDER BY s.id",
@@ -73,6 +85,7 @@ public class SectionEndpoint {
 	@GET
 	@Produces("application/json")
 	public List<SectionDTO> listAll() {
+		LOG.debug("listAll");
 		final List<Section> searchResults = em
 				.createQuery(
 						"SELECT DISTINCT s FROM Section s LEFT JOIN FETCH s.venue ORDER BY s.id",
@@ -89,6 +102,8 @@ public class SectionEndpoint {
 	@Path("/{id:[0-9][0-9]*}")
 	@Consumes("application/json")
 	public Response update(@PathParam("id") Long id, SectionDTO dto) {
+		LOG.debug("update {}", id);
+
 		TypedQuery<Section> findByIdQuery = em
 				.createQuery(
 						"SELECT DISTINCT s FROM Section s LEFT JOIN FETCH s.venue WHERE s.id = :entityId ORDER BY s.id",

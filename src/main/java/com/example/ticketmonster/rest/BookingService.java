@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import javax.transaction.Transactional;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.Consumes;
@@ -16,9 +17,14 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 
 import com.example.ticketmonster.model.Booking;
 import com.example.ticketmonster.model.Performance;
@@ -29,9 +35,6 @@ import com.example.ticketmonster.model.TicketCategory;
 import com.example.ticketmonster.model.TicketPrice;
 import com.example.ticketmonster.service.AllocatedSeats;
 import com.example.ticketmonster.service.SeatAllocationService;
-import com.example.ticketmonster.util.MultivaluedHashMap;
-import com.example.ticketmonster.util.qualifier.Cancelled;
-import com.example.ticketmonster.util.qualifier.Created;
 
 /**
  * <p>
@@ -43,18 +46,15 @@ import com.example.ticketmonster.util.qualifier.Created;
  * @author Pete Muir
  */
 @Path("/bookings")
-public class BookingService extends BaseEntityService<Booking> {
+public class BookingService extends BaseEntityService<Booking> implements
+		ApplicationEventPublisherAware {
+
+	private static Logger LOG = LoggerFactory.getLogger(BookingService.class);
 
 	@Autowired
 	SeatAllocationService seatAllocationService;
 
-	// @Autowired
-	// @Cancelled
-	// private Event<Booking> cancelledBookingEvent;
-
-	// @Autowired
-	// @Created
-	// private Event<Booking> newBookingEvent;
+	private ApplicationEventPublisher eventPublisher;
 
 	public BookingService() {
 		super(Booking.class);
@@ -62,7 +62,10 @@ public class BookingService extends BaseEntityService<Booking> {
 
 	@DELETE
 	public Response deleteAllBookings() {
-		List<Booking> bookings = getAll(new MultivaluedHashMap<String, String>());
+		LOG.debug("deleteAllBookings");
+		MultivaluedHashMap<String, String> empty = new MultivaluedHashMap<String, String>();
+
+		List<Booking> bookings = getAll(empty);
 		for (Booking booking : bookings) {
 			deleteBooking(booking.getId());
 		}
@@ -79,7 +82,10 @@ public class BookingService extends BaseEntityService<Booking> {
 	 */
 	@DELETE
 	@Path("/{id:[0-9][0-9]*}")
+	@Transactional
 	public Response deleteBooking(@PathParam("id") Long id) {
+		LOG.debug("deleteBooking {}", id);
+
 		Booking booking = getEntityManager().find(Booking.class, id);
 		if (booking == null) {
 			return Response.status(Response.Status.NOT_FOUND).build();
@@ -123,7 +129,10 @@ public class BookingService extends BaseEntityService<Booking> {
 	 * {@link BookingRequest} class.
 	 */
 	@Consumes(MediaType.APPLICATION_JSON)
+	@Transactional
 	public Response createBooking(BookingRequest bookingRequest) {
+		LOG.debug("createBooking {}", bookingRequest);
+
 		try {
 			// identify the ticket price categories in this request
 			Set<Long> priceCategoryIds = bookingRequest
@@ -230,7 +239,7 @@ public class BookingService extends BaseEntityService<Booking> {
 				booking.setPerformance(performance);
 				booking.setCancellationCode("abc");
 				getEntityManager().persist(booking);
-				// TODO: file newBookingEvent
+				// TODO: fire newBookingEvent
 				// newBookingEvent.fire(booking);
 				return Response.ok().entity(booking)
 						.type(MediaType.APPLICATION_JSON_TYPE).build();
@@ -253,6 +262,8 @@ public class BookingService extends BaseEntityService<Booking> {
 				errorMessages.add(constraintViolation.getMessage());
 			}
 			errors.put("errors", errorMessages);
+			
+			LOG.error("Problem creating booking", e);
 			// A WebApplicationException can wrap a response
 			// Throwing the exception causes an automatic rollback
 			throw new RestServiceException(Response
@@ -263,6 +274,9 @@ public class BookingService extends BaseEntityService<Booking> {
 			errors.put("errors", Collections.singletonList(e.getMessage()));
 			// A WebApplicationException can wrap a response
 			// Throwing the exception causes an automatic rollback
+
+			LOG.error("Problem creating booking", e);
+
 			throw new RestServiceException(Response
 					.status(Response.Status.BAD_REQUEST).entity(errors).build());
 		}
@@ -285,6 +299,12 @@ public class BookingService extends BaseEntityService<Booking> {
 			ticketPricesById.put(ticketPrice.getId(), ticketPrice);
 		}
 		return ticketPricesById;
+	}
+
+	@Override
+	public void setApplicationEventPublisher(
+			ApplicationEventPublisher applicationEventPublisher) {
+		this.eventPublisher = applicationEventPublisher;
 	}
 
 }

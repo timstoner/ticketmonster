@@ -19,17 +19,25 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.example.ticketmonster.model.TicketCategory;
 import com.example.ticketmonster.rest.dto.TicketCategoryDTO;
 
 @Path("/ticketcategorys")
 public class TicketCategoryEndpoint {
+	private static Logger LOG = LoggerFactory
+			.getLogger(TicketCategoryEndpoint.class);
+
 	@PersistenceContext
 	private EntityManager em;
 
 	@POST
 	@Consumes("application/json")
 	public Response create(TicketCategoryDTO dto) {
+		LOG.debug("create {}", dto.getId());
+
 		TicketCategory entity = dto.fromDTO(null, em);
 		em.persist(entity);
 		return Response.created(
@@ -40,6 +48,8 @@ public class TicketCategoryEndpoint {
 	@DELETE
 	@Path("/{id:[0-9][0-9]*}")
 	public Response deleteById(@PathParam("id") Long id) {
+		LOG.debug("deleteById {}", id);
+
 		TicketCategory entity = em.find(TicketCategory.class, id);
 		if (entity == null) {
 			return Response.status(Status.NOT_FOUND).build();
@@ -52,6 +62,8 @@ public class TicketCategoryEndpoint {
 	@Path("/{id:[0-9][0-9]*}")
 	@Produces("application/json")
 	public Response findById(@PathParam("id") Long id) {
+		LOG.debug("findById {}", id);
+
 		TypedQuery<TicketCategory> findByIdQuery = em
 				.createQuery(
 						"SELECT DISTINCT t FROM TicketCategory t WHERE t.id = :entityId ORDER BY t.id",
@@ -73,6 +85,8 @@ public class TicketCategoryEndpoint {
 	@GET
 	@Produces("application/json")
 	public List<TicketCategoryDTO> listAll() {
+		LOG.debug("listAll");
+
 		final List<TicketCategory> searchResults = em.createQuery(
 				"SELECT DISTINCT t FROM TicketCategory t ORDER BY t.id",
 				TicketCategory.class).getResultList();
@@ -88,6 +102,8 @@ public class TicketCategoryEndpoint {
 	@Path("/{id:[0-9][0-9]*}")
 	@Consumes("application/json")
 	public Response update(@PathParam("id") Long id, TicketCategoryDTO dto) {
+		LOG.debug("update {}", id);
+
 		TypedQuery<TicketCategory> findByIdQuery = em
 				.createQuery(
 						"SELECT DISTINCT t FROM TicketCategory t WHERE t.id = :entityId ORDER BY t.id",

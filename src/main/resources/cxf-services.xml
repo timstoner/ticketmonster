@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
+
+	<bean id="bookingService" class="com.example.ticketmonster.rest.BookingService" />
+	<bean id="bookingEndpoint" class="com.example.ticketmonster.rest.BookingEndpoint" />
+	<bean id="botStatusService" class="com.example.ticketmonster.rest.BotStatusService" />
+	<bean id="eventCategoryEndpoint" class="com.example.ticketmonster.rest.EventCategoryEndpoint" />
+	<bean id="eventEndpoint" class="com.example.ticketmonster.rest.EventEndpoint" />
+	<bean id="eventService" class="com.example.ticketmonster.rest.EventService" />
+	<bean id="mediaItemEndpoint" class="com.example.ticketmonster.rest.MediaItemEndpoint" />
+	<bean id="mediaService" class="com.example.ticketmonster.rest.MediaService" />
+	<bean id="metricsService" class="com.example.ticketmonster.rest.MetricsService" />
+	<bean id="performanceEndpoint" class="com.example.ticketmonster.rest.PerformanceEndpoint" />
+	<bean id="sectionAllocationEndpoint"
+		class="com.example.ticketmonster.rest.SectionAllocationEndpoint" />
+	<bean id="sectionEndpoint" class="com.example.ticketmonster.rest.SectionEndpoint" />
+	<bean id="showEndpoint" class="com.example.ticketmonster.rest.ShowEndpoint" />
+	<bean id="showService" class="com.example.ticketmonster.rest.ShowService" />
+	<bean id="ticketCategoryEndpoint" class="com.example.ticketmonster.rest.TicketCategoryEndpoint" />
+	<bean id="ticketEndpoint" class="com.example.ticketmonster.rest.TicketEndpoint" />
+	<bean id="ticketPriceEndpoint" class="com.example.ticketmonster.rest.TicketPriceEndpoint" />
+	<bean id="venueEndpoint" class="com.example.ticketmonster.rest.VenueEndpoint" />
+	<bean id="venueService" class="com.example.ticketmonster.rest.VenueService" />
+
+	<jaxrs:server id="ticketmonsterServices" address="/">
+		<jaxrs:serviceBeans>
+			<ref bean="bookingService" />
+			<ref bean="bookingEndpoint" />
+			<ref bean="botStatusService" />
+			<ref bean="eventCategoryEndpoint" />
+			<ref bean="eventEndpoint" />
+			<ref bean="eventService" />
+			<ref bean="mediaItemEndpoint" />
+			<ref bean="mediaService" />
+			<ref bean="metricsService" />
+			<ref bean="performanceEndpoint" />
+			<ref bean="sectionAllocationEndpoint" />
+			<ref bean="sectionEndpoint" />
+			<ref bean="showEndpoint" />
+			<ref bean="showService" />
+			<ref bean="ticketCategoryEndpoint" />
+			<ref bean="ticketEndpoint" />
+			<ref bean="ticketPriceEndpoint" />
+			<ref bean="venueEndpoint" />
+			<ref bean="venueService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider" />
+			<bean class="org.apache.cxf.jaxrs.provider.json.JSONProvider">
+				<property name="dropRootElement" value="true" />
+				<property name="supportUnwrapped" value="true" />
+			</bean>
+		</jaxrs:providers>
+	</jaxrs:server>
+
+</beans>

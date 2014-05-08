@@ -19,17 +19,24 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.example.ticketmonster.model.Show;
 import com.example.ticketmonster.rest.dto.ShowDTO;
 
 @Path("forge/shows")
 public class ShowEndpoint {
+
+	private static Logger LOG = LoggerFactory.getLogger(ShowEndpoint.class);
+
 	@PersistenceContext
 	private EntityManager em;
 
 	@POST
 	@Consumes("application/json")
 	public Response create(ShowDTO dto) {
+		LOG.debug("create {}", dto.getDisplayTitle());
 		Show entity = dto.fromDTO(null, em);
 		em.persist(entity);
 		return Response.created(
@@ -40,6 +47,8 @@ public class ShowEndpoint {
 	@DELETE
 	@Path("/{id:[0-9][0-9]*}")
 	public Response deleteById(@PathParam("id") Long id) {
+		LOG.debug("deleteById {}", id);
+
 		Show entity = em.find(Show.class, id);
 		if (entity == null) {
 			return Response.status(Status.NOT_FOUND).build();
@@ -52,6 +61,8 @@ public class ShowEndpoint {
 	@Path("/{id:[0-9][0-9]*}")
 	@Produces("application/json")
 	public Response findById(@PathParam("id") Long id) {
+		LOG.debug("findById {}", id);
+
 		TypedQuery<Show> findByIdQuery = em
 				.createQuery(
 						"SELECT DISTINCT s FROM Show s LEFT JOIN FETCH s.event LEFT JOIN FETCH s.venue LEFT JOIN FETCH s.performances LEFT JOIN FETCH s.ticketPrices WHERE s.id = :entityId ORDER BY s.id",
@@ -73,6 +84,8 @@ public class ShowEndpoint {
 	@GET
 	@Produces("application/json")
 	public List<ShowDTO> listAll() {
+		LOG.debug("listAll");
+
 		final List<Show> searchResults = em
 				.createQuery(
 						"SELECT DISTINCT s FROM Show s LEFT JOIN FETCH s.event LEFT JOIN FETCH s.venue LEFT JOIN FETCH s.performances LEFT JOIN FETCH s.ticketPrices ORDER BY s.id",
@@ -89,6 +102,8 @@ public class ShowEndpoint {
 	@Path("/{id:[0-9][0-9]*}")
 	@Consumes("application/json")
 	public Response update(@PathParam("id") Long id, ShowDTO dto) {
+		LOG.debug("update {}", id);
+
 		TypedQuery<Show> findByIdQuery = em
 				.createQuery(
 						"SELECT DISTINCT s FROM Show s LEFT JOIN FETCH s.event LEFT JOIN FETCH s.venue LEFT JOIN FETCH s.performances LEFT JOIN FETCH s.ticketPrices WHERE s.id = :entityId ORDER BY s.id",

@@ -19,5 +19,9 @@ public class ListDTO<T> implements Serializable {
 	public void addAll(List<T> list) {
 		items.addAll(list);
 	}
+	
+	public List<T> getItems() {
+		return items;
+	}
 
 }

@@ -19,17 +19,26 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.example.ticketmonster.model.EventCategory;
 import com.example.ticketmonster.rest.dto.EventCategoryDTO;
 
 @Path("/eventcategorys")
 public class EventCategoryEndpoint {
+
+	private static Logger LOG = LoggerFactory
+			.getLogger(EventCategoryEndpoint.class);
+
 	@PersistenceContext
 	private EntityManager em;
 
 	@POST
 	@Consumes("application/json")
 	public Response create(EventCategoryDTO dto) {
+		LOG.debug("create {} ", dto.getId());
+
 		EventCategory entity = dto.fromDTO(null, em);
 		em.persist(entity);
 		return Response.created(
@@ -40,6 +49,8 @@ public class EventCategoryEndpoint {
 	@DELETE
 	@Path("/{id:[0-9][0-9]*}")
 	public Response deleteById(@PathParam("id") Long id) {
+		LOG.debug("deleteById {}", id);
+
 		EventCategory entity = em.find(EventCategory.class, id);
 		if (entity == null) {
 			return Response.status(Status.NOT_FOUND).build();
@@ -52,6 +63,8 @@ public class EventCategoryEndpoint {
 	@Path("/{id:[0-9][0-9]*}")
 	@Produces("application/json")
 	public Response findById(@PathParam("id") Long id) {
+		LOG.debug("findById {}", id);
+
 		TypedQuery<EventCategory> findByIdQuery = em
 				.createQuery(
 						"SELECT DISTINCT e FROM EventCategory e WHERE e.id = :entityId ORDER BY e.id",
@@ -73,6 +86,8 @@ public class EventCategoryEndpoint {
 	@GET
 	@Produces("application/json")
 	public List<EventCategoryDTO> listAll() {
+		LOG.debug("listAll");
+
 		final List<EventCategory> searchResults = em.createQuery(
 				"SELECT DISTINCT e FROM EventCategory e ORDER BY e.id",
 				EventCategory.class).getResultList();
@@ -88,6 +103,8 @@ public class EventCategoryEndpoint {
 	@Path("/{id:[0-9][0-9]*}")
 	@Consumes("application/json")
 	public Response update(@PathParam("id") Long id, EventCategoryDTO dto) {
+		LOG.debug("update {}", id);
+
 		TypedQuery<EventCategory> findByIdQuery = em
 				.createQuery(
 						"SELECT DISTINCT e FROM EventCategory e WHERE e.id = :entityId ORDER BY e.id",

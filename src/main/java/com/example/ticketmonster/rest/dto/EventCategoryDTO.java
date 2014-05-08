@@ -31,6 +31,7 @@ public class EventCategoryDTO implements Serializable {
 		if (entity == null) {
 			entity = new EventCategory();
 		}
+
 		entity.setDescription(this.description);
 		entity = em.merge(entity);
 		return entity;

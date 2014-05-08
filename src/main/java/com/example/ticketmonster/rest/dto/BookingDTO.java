@@ -55,9 +55,11 @@ public class BookingDTO implements Serializable {
 		if (entity == null) {
 			entity = new Booking();
 		}
+
 		entity.setCreatedOn(this.createdOn);
 		entity.setCancellationCode(this.cancellationCode);
 		entity.setContactEmail(this.contactEmail);
+
 		if (this.performance != null) {
 			entity.setPerformance(this.performance.fromDTO(
 					entity.getPerformance(), em));
@@ -163,5 +165,9 @@ public class BookingDTO implements Serializable {
 
 	public void setTickets(final Set<NestedTicketDTO> tickets) {
 		this.tickets = tickets;
+	}
+
+	public String toString() {
+		return String.valueOf(this.id);
 	}
 }

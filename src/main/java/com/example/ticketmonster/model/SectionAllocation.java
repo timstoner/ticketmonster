@@ -70,7 +70,6 @@ public class SectionAllocation implements Serializable {
 	 * compiler gives us about not using the field!
 	 * </p>
 	 */
-	@SuppressWarnings("unused")
 	@Version
 	private long version;
 

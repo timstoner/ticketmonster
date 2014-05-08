@@ -21,6 +21,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.example.ticketmonster.rest.dto.ListDTO;
 
 /**
@@ -74,6 +77,9 @@ import com.example.ticketmonster.rest.dto.ListDTO;
  */
 public abstract class BaseEntityService<T> {
 
+	private static final Logger LOG = LoggerFactory
+			.getLogger(BaseEntityService.class);
+
 	@PersistenceContext
 	private EntityManager entityManager;
 
@@ -103,13 +109,17 @@ public abstract class BaseEntityService<T> {
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public ListDTO<T> getAll(@Context UriInfo uriInfo) {
-		ListDTO<T> list = new ListDTO<T>();
-		list.addAll(getAll(uriInfo.getQueryParameters()));
-		return list;
+	public List<T> getAll(@Context UriInfo uriInfo) {
+		LOG.debug("getAll");
+
+//		ListDTO<T> list = new ListDTO<T>();
+//		list.addAll(getAll(uriInfo.getQueryParameters()));
+
+		return getAll(uriInfo.getQueryParameters());
 	}
 
 	public List<T> getAll(MultivaluedMap<String, String> queryParameters) {
+
 		final CriteriaBuilder criteriaBuilder = entityManager
 				.getCriteriaBuilder();
 		final CriteriaQuery<T> criteriaQuery = criteriaBuilder
@@ -147,6 +157,8 @@ public abstract class BaseEntityService<T> {
 	@Path("/count")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Map<String, Long> getCount(@Context UriInfo uriInfo) {
+		LOG.debug("getCount");
+
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Long> criteriaQuery = criteriaBuilder
 				.createQuery(Long.class);
@@ -195,6 +207,8 @@ public abstract class BaseEntityService<T> {
 	@Path("/{id:[0-9][0-9]*}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public T getSingleInstance(@PathParam("id") Long id) {
+		LOG.debug("getSingleInstance {}", id);
+
 		final CriteriaBuilder criteriaBuilder = entityManager
 				.getCriteriaBuilder();
 		final CriteriaQuery<T> criteriaQuery = criteriaBuilder

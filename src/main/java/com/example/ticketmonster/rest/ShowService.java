@@ -14,10 +14,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.example.ticketmonster.model.Show;
 
 @Path("/shows")
 public class ShowService extends BaseEntityService<Show> {
+	
+	private static Logger LOG = LoggerFactory.getLogger(ShowService.class);
 
 	public ShowService() {
 		super(Show.class);
@@ -49,6 +54,8 @@ public class ShowService extends BaseEntityService<Show> {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Show getShowByPerformance(
 			@PathParam("performanceId") Long performanceId) {
+		LOG.debug("getShowByPerformance {}", performanceId);
+		
 		Query query = getEntityManager()
 				.createQuery(
 						"select s from Show s where exists(select p from Performance p where p.show = s and p.id = :performanceId)");

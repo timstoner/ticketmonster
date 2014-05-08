@@ -19,17 +19,25 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.example.ticketmonster.model.Booking;
 import com.example.ticketmonster.rest.dto.BookingDTO;
 
 @Path("forge/bookings")
 public class BookingEndpoint {
+
+	private static Logger LOG = LoggerFactory.getLogger(BookingEndpoint.class);
+
 	@PersistenceContext
 	private EntityManager em;
 
 	@POST
 	@Consumes("application/json")
 	public Response create(BookingDTO dto) {
+		LOG.debug("Create: {}", dto.getId());
+
 		Booking entity = dto.fromDTO(null, em);
 		em.persist(entity);
 		return Response.created(
@@ -40,6 +48,8 @@ public class BookingEndpoint {
 	@DELETE
 	@Path("/{id:[0-9][0-9]*}")
 	public Response deleteById(@PathParam("id") Long id) {
+		LOG.debug("deleteById: {}", id);
+
 		Booking entity = em.find(Booking.class, id);
 		if (entity == null) {
 			return Response.status(Status.NOT_FOUND).build();
@@ -52,6 +62,8 @@ public class BookingEndpoint {
 	@Path("/{id:[0-9][0-9]*}")
 	@Produces("application/json")
 	public Response findById(@PathParam("id") Long id) {
+		LOG.debug("findById: {}", id);
+
 		TypedQuery<Booking> findByIdQuery = em
 				.createQuery(
 						"SELECT DISTINCT b FROM Booking b LEFT JOIN FETCH b.tickets LEFT JOIN FETCH b.performance WHERE b.id = :entityId ORDER BY b.id",
@@ -73,6 +85,8 @@ public class BookingEndpoint {
 	@GET
 	@Produces("application/json")
 	public List<BookingDTO> listAll() {
+		LOG.debug("listAll");
+
 		final List<Booking> searchResults = em
 				.createQuery(
 						"SELECT DISTINCT b FROM Booking b LEFT JOIN FETCH b.tickets LEFT JOIN FETCH b.performance ORDER BY b.id",
@@ -89,6 +103,8 @@ public class BookingEndpoint {
 	@Path("/{id:[0-9][0-9]*}")
 	@Consumes("application/json")
 	public Response update(@PathParam("id") Long id, BookingDTO dto) {
+		LOG.debug("update {} ", id);
+
 		TypedQuery<Booking> findByIdQuery = em
 				.createQuery(
 						"SELECT DISTINCT b FROM Booking b LEFT JOIN FETCH b.tickets LEFT JOIN FETCH b.performance WHERE b.id = :entityId ORDER BY b.id",

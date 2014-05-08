@@ -1,8 +1,12 @@
 package com.example.ticketmonster.service;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 
+import javax.ws.rs.core.MultivaluedHashMap;
+
+import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,18 +14,15 @@ import org.springframework.stereotype.Component;
 
 import com.example.ticketmonster.model.Booking;
 import com.example.ticketmonster.rest.BookingService;
-import com.example.ticketmonster.util.CircularBuffer;
-import com.example.ticketmonster.util.MultivaluedHashMap;
 
 @Component
 public class BotService {
 
-	private final static Logger logger = LoggerFactory
-			.getLogger(BotService.class);
+	private final static Logger LOG = LoggerFactory.getLogger(BotService.class);
 
 	private static final int MAX_LOG_SIZE = 50;
 
-	private CircularBuffer<String> log;
+	private CircularFifoQueue<String> log;
 
 	@Autowired
 	private Bot bot;
@@ -36,13 +37,13 @@ public class BotService {
 	private Timer timer;
 
 	public BotService() {
-		log = new CircularBuffer<String>(MAX_LOG_SIZE);
+		log = new CircularFifoQueue<String>(MAX_LOG_SIZE);
 	}
 
 	public void start() {
 		synchronized (bot) {
 			if (timer == null) {
-				logger.info("Starting bot");
+				LOG.info("Starting bot");
 				timer = bot.start();
 			}
 		}
@@ -51,7 +52,7 @@ public class BotService {
 	public void stop() {
 		synchronized (bot) {
 			if (timer != null) {
-				logger.info("Stopping bot");
+				LOG.info("Stopping bot");
 				bot.stop(timer);
 				timer = null;
 			}
@@ -61,8 +62,8 @@ public class BotService {
 	public void deleteAll() {
 		synchronized (bot) {
 			stop();
-			for (Booking booking : bookingService.getAll(MultivaluedHashMap
-					.<String, String> empty())) {
+			MultivaluedHashMap<String, String> empty = new MultivaluedHashMap<String, String>();
+			for (Booking booking : bookingService.getAll(empty)) {
 				bookingService.deleteBooking(booking.getId());
 				// event.fire("Deleted booking " + booking.getId() + " for "
 				// + booking.getContactEmail() + "\n");
@@ -76,7 +77,11 @@ public class BotService {
 	// }
 
 	public List<String> fetchLog() {
-		return log.getContents();
+		List<String> logCopy;
+		synchronized (log) {
+			logCopy = new LinkedList<String>(log);
+		}
+		return logCopy;
 	}
 
 	public boolean isBotActive() {

@@ -19,6 +19,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.example.ticketmonster.model.MediaItem;
 import com.example.ticketmonster.rest.dto.MediaItemDTO;
 
@@ -27,12 +30,17 @@ import com.example.ticketmonster.rest.dto.MediaItemDTO;
  */
 @Path("/mediaitems")
 public class MediaItemEndpoint {
+	private static Logger LOG = LoggerFactory
+			.getLogger(MediaItemEndpoint.class);
+
 	@PersistenceContext
 	private EntityManager em;
 
 	@POST
 	@Consumes("application/json")
 	public Response create(MediaItemDTO dto) {
+		LOG.debug("create {}", dto.getMediaType());
+
 		MediaItem entity = dto.fromDTO(null, em);
 		em.persist(entity);
 		return Response.created(
@@ -43,6 +51,8 @@ public class MediaItemEndpoint {
 	@DELETE
 	@Path("/{id:[0-9][0-9]*}")
 	public Response deleteById(@PathParam("id") Long id) {
+		LOG.debug("deleteById {}", id);
+		
 		MediaItem entity = em.find(MediaItem.class, id);
 		if (entity == null) {
 			return Response.status(Status.NOT_FOUND).build();
@@ -55,6 +65,8 @@ public class MediaItemEndpoint {
 	@Path("/{id:[0-9][0-9]*}")
 	@Produces("application/json")
 	public Response findById(@PathParam("id") Long id) {
+		LOG.debug("findById {}", id);
+		
 		TypedQuery<MediaItem> findByIdQuery = em
 				.createQuery(
 						"SELECT DISTINCT m FROM MediaItem m WHERE m.id = :entityId ORDER BY m.id",
@@ -76,6 +88,8 @@ public class MediaItemEndpoint {
 	@GET
 	@Produces("application/json")
 	public List<MediaItemDTO> listAll() {
+		LOG.debug("listAll");
+		
 		final List<MediaItem> searchResults = em.createQuery(
 				"SELECT DISTINCT m FROM MediaItem m ORDER BY m.id",
 				MediaItem.class).getResultList();
@@ -91,6 +105,8 @@ public class MediaItemEndpoint {
 	@Path("/{id:[0-9][0-9]*}")
 	@Consumes("application/json")
 	public Response update(@PathParam("id") Long id, MediaItemDTO dto) {
+		LOG.debug("update {}", id);
+		
 		TypedQuery<MediaItem> findByIdQuery = em
 				.createQuery(
 						"SELECT DISTINCT m FROM MediaItem m WHERE m.id = :entityId ORDER BY m.id",

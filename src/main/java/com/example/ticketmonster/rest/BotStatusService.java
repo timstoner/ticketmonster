@@ -68,13 +68,20 @@ public class BotStatusService {
 	@Path("status")
 	@PUT
 	public Response updateBotStatus(BotState updatedState) {
-		if (updatedState.equals(BotState.RUNNING)) {
-			botService.start();
-		} else if (updatedState.equals(BotState.NOT_RUNNING)) {
+		switch (updatedState) {
+		case NOT_RUNNING:
 			botService.stop();
-		} else if (updatedState.equals(BotState.RESET)) {
+			break;
+		case RESET:
 			botService.deleteAll();
+			break;
+		case RUNNING:
+			botService.start();
+			break;
+		default:
+			break;
 		}
+
 		return Response.noContent().build();
 	}
 
