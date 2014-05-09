@@ -22,26 +22,27 @@ import javax.ws.rs.core.UriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.ticketmonster.model.TicketCategory;
-import com.example.ticketmonster.rest.dto.TicketCategoryDTO;
+import com.example.ticketmonster.model.EventCategory;
+import com.example.ticketmonster.rest.dto.EventCategoryDTO;
 
-@Path("/ticketcategorys")
-public class TicketCategoryEndpoint {
+@Path("/eventcategories")
+public class EventCategoryService {
+
 	private static Logger LOG = LoggerFactory
-			.getLogger(TicketCategoryEndpoint.class);
+			.getLogger(EventCategoryService.class);
 
 	@PersistenceContext
 	private EntityManager em;
 
 	@POST
 	@Consumes("application/json")
-	public Response create(TicketCategoryDTO dto) {
-		LOG.debug("create {}", dto.getId());
+	public Response create(EventCategoryDTO dto) {
+		LOG.debug("create {} ", dto.getId());
 
-		TicketCategory entity = dto.fromDTO(null, em);
+		EventCategory entity = dto.fromDTO(null, em);
 		em.persist(entity);
 		return Response.created(
-				UriBuilder.fromResource(TicketCategoryEndpoint.class)
+				UriBuilder.fromResource(EventCategoryService.class)
 						.path(String.valueOf(entity.getId())).build()).build();
 	}
 
@@ -50,7 +51,7 @@ public class TicketCategoryEndpoint {
 	public Response deleteById(@PathParam("id") Long id) {
 		LOG.debug("deleteById {}", id);
 
-		TicketCategory entity = em.find(TicketCategory.class, id);
+		EventCategory entity = em.find(EventCategory.class, id);
 		if (entity == null) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
@@ -64,12 +65,12 @@ public class TicketCategoryEndpoint {
 	public Response findById(@PathParam("id") Long id) {
 		LOG.debug("findById {}", id);
 
-		TypedQuery<TicketCategory> findByIdQuery = em
+		TypedQuery<EventCategory> findByIdQuery = em
 				.createQuery(
-						"SELECT DISTINCT t FROM TicketCategory t WHERE t.id = :entityId ORDER BY t.id",
-						TicketCategory.class);
+						"SELECT DISTINCT e FROM EventCategory e WHERE e.id = :entityId ORDER BY e.id",
+						EventCategory.class);
 		findByIdQuery.setParameter("entityId", id);
-		TicketCategory entity;
+		EventCategory entity;
 		try {
 			entity = findByIdQuery.getSingleResult();
 		} catch (NoResultException nre) {
@@ -78,21 +79,21 @@ public class TicketCategoryEndpoint {
 		if (entity == null) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
-		TicketCategoryDTO dto = new TicketCategoryDTO(entity);
+		EventCategoryDTO dto = new EventCategoryDTO(entity);
 		return Response.ok(dto).build();
 	}
 
 	@GET
 	@Produces("application/json")
-	public List<TicketCategoryDTO> listAll() {
+	public List<EventCategoryDTO> listAll() {
 		LOG.debug("listAll");
 
-		final List<TicketCategory> searchResults = em.createQuery(
-				"SELECT DISTINCT t FROM TicketCategory t ORDER BY t.id",
-				TicketCategory.class).getResultList();
-		final List<TicketCategoryDTO> results = new ArrayList<TicketCategoryDTO>();
-		for (TicketCategory searchResult : searchResults) {
-			TicketCategoryDTO dto = new TicketCategoryDTO(searchResult);
+		final List<EventCategory> searchResults = em.createQuery(
+				"SELECT DISTINCT e FROM EventCategory e ORDER BY e.id",
+				EventCategory.class).getResultList();
+		final List<EventCategoryDTO> results = new ArrayList<EventCategoryDTO>();
+		for (EventCategory searchResult : searchResults) {
+			EventCategoryDTO dto = new EventCategoryDTO(searchResult);
 			results.add(dto);
 		}
 		return results;
@@ -101,15 +102,15 @@ public class TicketCategoryEndpoint {
 	@PUT
 	@Path("/{id:[0-9][0-9]*}")
 	@Consumes("application/json")
-	public Response update(@PathParam("id") Long id, TicketCategoryDTO dto) {
+	public Response update(@PathParam("id") Long id, EventCategoryDTO dto) {
 		LOG.debug("update {}", id);
 
-		TypedQuery<TicketCategory> findByIdQuery = em
+		TypedQuery<EventCategory> findByIdQuery = em
 				.createQuery(
-						"SELECT DISTINCT t FROM TicketCategory t WHERE t.id = :entityId ORDER BY t.id",
-						TicketCategory.class);
+						"SELECT DISTINCT e FROM EventCategory e WHERE e.id = :entityId ORDER BY e.id",
+						EventCategory.class);
 		findByIdQuery.setParameter("entityId", id);
-		TicketCategory entity;
+		EventCategory entity;
 		try {
 			entity = findByIdQuery.getSingleResult();
 		} catch (NoResultException nre) {

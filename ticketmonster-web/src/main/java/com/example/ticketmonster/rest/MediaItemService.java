@@ -22,27 +22,28 @@ import javax.ws.rs.core.UriBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.ticketmonster.model.EventCategory;
-import com.example.ticketmonster.rest.dto.EventCategoryDTO;
+import com.example.ticketmonster.model.MediaItem;
+import com.example.ticketmonster.rest.dto.MediaItemDTO;
 
-@Path("/eventcategorys")
-public class EventCategoryEndpoint {
-
-	private static Logger LOG = LoggerFactory
-			.getLogger(EventCategoryEndpoint.class);
+/**
+ * 
+ */
+@Path("/mediaitems")
+public class MediaItemService {
+	private static Logger LOG = LoggerFactory.getLogger(MediaItemService.class);
 
 	@PersistenceContext
 	private EntityManager em;
 
 	@POST
 	@Consumes("application/json")
-	public Response create(EventCategoryDTO dto) {
-		LOG.debug("create {} ", dto.getId());
+	public Response create(MediaItemDTO dto) {
+		LOG.debug("create {}", dto.getMediaType());
 
-		EventCategory entity = dto.fromDTO(null, em);
+		MediaItem entity = dto.fromDTO(null, em);
 		em.persist(entity);
 		return Response.created(
-				UriBuilder.fromResource(EventCategoryEndpoint.class)
+				UriBuilder.fromResource(MediaItemService.class)
 						.path(String.valueOf(entity.getId())).build()).build();
 	}
 
@@ -51,7 +52,7 @@ public class EventCategoryEndpoint {
 	public Response deleteById(@PathParam("id") Long id) {
 		LOG.debug("deleteById {}", id);
 
-		EventCategory entity = em.find(EventCategory.class, id);
+		MediaItem entity = em.find(MediaItem.class, id);
 		if (entity == null) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
@@ -65,12 +66,12 @@ public class EventCategoryEndpoint {
 	public Response findById(@PathParam("id") Long id) {
 		LOG.debug("findById {}", id);
 
-		TypedQuery<EventCategory> findByIdQuery = em
+		TypedQuery<MediaItem> findByIdQuery = em
 				.createQuery(
-						"SELECT DISTINCT e FROM EventCategory e WHERE e.id = :entityId ORDER BY e.id",
-						EventCategory.class);
+						"SELECT DISTINCT m FROM MediaItem m WHERE m.id = :entityId ORDER BY m.id",
+						MediaItem.class);
 		findByIdQuery.setParameter("entityId", id);
-		EventCategory entity;
+		MediaItem entity;
 		try {
 			entity = findByIdQuery.getSingleResult();
 		} catch (NoResultException nre) {
@@ -79,21 +80,21 @@ public class EventCategoryEndpoint {
 		if (entity == null) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
-		EventCategoryDTO dto = new EventCategoryDTO(entity);
+		MediaItemDTO dto = new MediaItemDTO(entity);
 		return Response.ok(dto).build();
 	}
 
 	@GET
 	@Produces("application/json")
-	public List<EventCategoryDTO> listAll() {
+	public List<MediaItemDTO> listAll() {
 		LOG.debug("listAll");
 
-		final List<EventCategory> searchResults = em.createQuery(
-				"SELECT DISTINCT e FROM EventCategory e ORDER BY e.id",
-				EventCategory.class).getResultList();
-		final List<EventCategoryDTO> results = new ArrayList<EventCategoryDTO>();
-		for (EventCategory searchResult : searchResults) {
-			EventCategoryDTO dto = new EventCategoryDTO(searchResult);
+		final List<MediaItem> searchResults = em.createQuery(
+				"SELECT DISTINCT m FROM MediaItem m ORDER BY m.id",
+				MediaItem.class).getResultList();
+		final List<MediaItemDTO> results = new ArrayList<MediaItemDTO>();
+		for (MediaItem searchResult : searchResults) {
+			MediaItemDTO dto = new MediaItemDTO(searchResult);
 			results.add(dto);
 		}
 		return results;
@@ -102,15 +103,15 @@ public class EventCategoryEndpoint {
 	@PUT
 	@Path("/{id:[0-9][0-9]*}")
 	@Consumes("application/json")
-	public Response update(@PathParam("id") Long id, EventCategoryDTO dto) {
+	public Response update(@PathParam("id") Long id, MediaItemDTO dto) {
 		LOG.debug("update {}", id);
 
-		TypedQuery<EventCategory> findByIdQuery = em
+		TypedQuery<MediaItem> findByIdQuery = em
 				.createQuery(
-						"SELECT DISTINCT e FROM EventCategory e WHERE e.id = :entityId ORDER BY e.id",
-						EventCategory.class);
+						"SELECT DISTINCT m FROM MediaItem m WHERE m.id = :entityId ORDER BY m.id",
+						MediaItem.class);
 		findByIdQuery.setParameter("entityId", id);
-		EventCategory entity;
+		MediaItem entity;
 		try {
 			entity = findByIdQuery.getSingleResult();
 		} catch (NoResultException nre) {

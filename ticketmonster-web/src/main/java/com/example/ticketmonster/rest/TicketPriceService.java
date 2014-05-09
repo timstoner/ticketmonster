@@ -16,7 +16,7 @@ import com.example.ticketmonster.model.TicketPrice;
 import com.example.ticketmonster.rest.dto.TicketPriceDTO;
 
 @Path("/ticketprices")
-public class TicketPriceEndpoint {
+public class TicketPriceService {
 	@PersistenceContext
 	private EntityManager em;
 
@@ -26,7 +26,7 @@ public class TicketPriceEndpoint {
 		TicketPrice entity = dto.fromDTO(null, em);
 		em.persist(entity);
 		return Response.created(
-				UriBuilder.fromResource(TicketPriceEndpoint.class)
+				UriBuilder.fromResource(TicketPriceService.class)
 						.path(String.valueOf(entity.getId())).build()).build();
 	}
 

@@ -39,9 +39,11 @@ public class PerformanceDTO implements Serializable {
 		if (entity == null) {
 			entity = new Performance();
 		}
+		
 		if (this.show != null) {
 			entity.setShow(this.show.fromDTO(entity.getShow(), em));
 		}
+		
 		entity.setDate(this.date);
 		entity = em.merge(entity);
 		return entity;

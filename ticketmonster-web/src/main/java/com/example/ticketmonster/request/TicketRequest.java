@@ -1,6 +1,7 @@
-package com.example.ticketmonster.rest;
+package com.example.ticketmonster.request;
 
 import com.example.ticketmonster.model.TicketPrice;
+import com.example.ticketmonster.rest.BookingRequest;
 
 /**
  * <p>

@@ -19,41 +19,28 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.example.ticketmonster.model.Ticket;
+import com.example.ticketmonster.rest.dto.TicketDTO;
 
-import com.example.ticketmonster.model.MediaItem;
-import com.example.ticketmonster.rest.dto.MediaItemDTO;
-
-/**
- * 
- */
-@Path("/mediaitems")
-public class MediaItemEndpoint {
-	private static Logger LOG = LoggerFactory
-			.getLogger(MediaItemEndpoint.class);
-
+@Path("/tickets")
+public class TicketService {
 	@PersistenceContext
 	private EntityManager em;
 
 	@POST
 	@Consumes("application/json")
-	public Response create(MediaItemDTO dto) {
-		LOG.debug("create {}", dto.getMediaType());
-
-		MediaItem entity = dto.fromDTO(null, em);
+	public Response create(TicketDTO dto) {
+		Ticket entity = dto.fromDTO(null, em);
 		em.persist(entity);
 		return Response.created(
-				UriBuilder.fromResource(MediaItemEndpoint.class)
+				UriBuilder.fromResource(TicketService.class)
 						.path(String.valueOf(entity.getId())).build()).build();
 	}
 
 	@DELETE
 	@Path("/{id:[0-9][0-9]*}")
 	public Response deleteById(@PathParam("id") Long id) {
-		LOG.debug("deleteById {}", id);
-		
-		MediaItem entity = em.find(MediaItem.class, id);
+		Ticket entity = em.find(Ticket.class, id);
 		if (entity == null) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
@@ -65,14 +52,12 @@ public class MediaItemEndpoint {
 	@Path("/{id:[0-9][0-9]*}")
 	@Produces("application/json")
 	public Response findById(@PathParam("id") Long id) {
-		LOG.debug("findById {}", id);
-		
-		TypedQuery<MediaItem> findByIdQuery = em
+		TypedQuery<Ticket> findByIdQuery = em
 				.createQuery(
-						"SELECT DISTINCT m FROM MediaItem m WHERE m.id = :entityId ORDER BY m.id",
-						MediaItem.class);
+						"SELECT DISTINCT t FROM Ticket t LEFT JOIN FETCH t.ticketCategory WHERE t.id = :entityId ORDER BY t.id",
+						Ticket.class);
 		findByIdQuery.setParameter("entityId", id);
-		MediaItem entity;
+		Ticket entity;
 		try {
 			entity = findByIdQuery.getSingleResult();
 		} catch (NoResultException nre) {
@@ -81,21 +66,20 @@ public class MediaItemEndpoint {
 		if (entity == null) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
-		MediaItemDTO dto = new MediaItemDTO(entity);
+		TicketDTO dto = new TicketDTO(entity);
 		return Response.ok(dto).build();
 	}
 
 	@GET
 	@Produces("application/json")
-	public List<MediaItemDTO> listAll() {
-		LOG.debug("listAll");
-		
-		final List<MediaItem> searchResults = em.createQuery(
-				"SELECT DISTINCT m FROM MediaItem m ORDER BY m.id",
-				MediaItem.class).getResultList();
-		final List<MediaItemDTO> results = new ArrayList<MediaItemDTO>();
-		for (MediaItem searchResult : searchResults) {
-			MediaItemDTO dto = new MediaItemDTO(searchResult);
+	public List<TicketDTO> listAll() {
+		final List<Ticket> searchResults = em
+				.createQuery(
+						"SELECT DISTINCT t FROM Ticket t LEFT JOIN FETCH t.ticketCategory ORDER BY t.id",
+						Ticket.class).getResultList();
+		final List<TicketDTO> results = new ArrayList<TicketDTO>();
+		for (Ticket searchResult : searchResults) {
+			TicketDTO dto = new TicketDTO(searchResult);
 			results.add(dto);
 		}
 		return results;
@@ -104,15 +88,13 @@ public class MediaItemEndpoint {
 	@PUT
 	@Path("/{id:[0-9][0-9]*}")
 	@Consumes("application/json")
-	public Response update(@PathParam("id") Long id, MediaItemDTO dto) {
-		LOG.debug("update {}", id);
-		
-		TypedQuery<MediaItem> findByIdQuery = em
+	public Response update(@PathParam("id") Long id, TicketDTO dto) {
+		TypedQuery<Ticket> findByIdQuery = em
 				.createQuery(
-						"SELECT DISTINCT m FROM MediaItem m WHERE m.id = :entityId ORDER BY m.id",
-						MediaItem.class);
+						"SELECT DISTINCT t FROM Ticket t LEFT JOIN FETCH t.ticketCategory WHERE t.id = :entityId ORDER BY t.id",
+						Ticket.class);
 		findByIdQuery.setParameter("entityId", id);
-		MediaItem entity;
+		Ticket entity;
 		try {
 			entity = findByIdQuery.getSingleResult();
 		} catch (NoResultException nre) {

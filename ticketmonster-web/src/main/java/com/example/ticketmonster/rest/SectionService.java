@@ -26,9 +26,13 @@ import com.example.ticketmonster.model.Section;
 import com.example.ticketmonster.rest.dto.SectionDTO;
 
 @Path("/sections")
-public class SectionEndpoint {
+public class SectionService extends BaseEntityService<Section, SectionDTO> {
 
-	private static Logger LOG = LoggerFactory.getLogger(SectionEndpoint.class);
+	private static Logger LOG = LoggerFactory.getLogger(SectionService.class);
+
+	public SectionService() {
+		super(Section.class, SectionDTO.class);
+	}
 
 	@PersistenceContext
 	private EntityManager em;
@@ -41,7 +45,7 @@ public class SectionEndpoint {
 		Section entity = dto.fromDTO(null, em);
 		em.persist(entity);
 		return Response.created(
-				UriBuilder.fromResource(SectionEndpoint.class)
+				UriBuilder.fromResource(SectionService.class)
 						.path(String.valueOf(entity.getId())).build()).build();
 	}
 
@@ -56,30 +60,6 @@ public class SectionEndpoint {
 		}
 		em.remove(entity);
 		return Response.noContent().build();
-	}
-
-	@GET
-	@Path("/{id:[0-9][0-9]*}")
-	@Produces("application/json")
-	public Response findById(@PathParam("id") Long id) {
-		LOG.debug("findById {}", id);
-
-		TypedQuery<Section> findByIdQuery = em
-				.createQuery(
-						"SELECT DISTINCT s FROM Section s LEFT JOIN FETCH s.venue WHERE s.id = :entityId ORDER BY s.id",
-						Section.class);
-		findByIdQuery.setParameter("entityId", id);
-		Section entity;
-		try {
-			entity = findByIdQuery.getSingleResult();
-		} catch (NoResultException nre) {
-			entity = null;
-		}
-		if (entity == null) {
-			return Response.status(Status.NOT_FOUND).build();
-		}
-		SectionDTO dto = new SectionDTO(entity);
-		return Response.ok(dto).build();
 	}
 
 	@GET

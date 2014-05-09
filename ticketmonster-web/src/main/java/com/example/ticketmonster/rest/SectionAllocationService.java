@@ -19,28 +19,41 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
-import com.example.ticketmonster.model.Ticket;
-import com.example.ticketmonster.rest.dto.TicketDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Path("/tickets")
-public class TicketEndpoint {
+import com.example.ticketmonster.model.SectionAllocation;
+import com.example.ticketmonster.rest.dto.SectionAllocationDTO;
+
+/**
+ * 
+ */
+@Path("/sectionallocations")
+public class SectionAllocationService {
+
+	private static final Logger LOG = LoggerFactory
+			.getLogger(SectionAllocationService.class);
+
 	@PersistenceContext
 	private EntityManager em;
 
 	@POST
 	@Consumes("application/json")
-	public Response create(TicketDTO dto) {
-		Ticket entity = dto.fromDTO(null, em);
+	public Response create(SectionAllocationDTO dto) {
+		LOG.debug("create");
+		
+		SectionAllocation entity = dto.fromDTO(null, em);
 		em.persist(entity);
 		return Response.created(
-				UriBuilder.fromResource(TicketEndpoint.class)
+				UriBuilder.fromResource(SectionAllocationService.class)
 						.path(String.valueOf(entity.getId())).build()).build();
 	}
 
 	@DELETE
 	@Path("/{id:[0-9][0-9]*}")
 	public Response deleteById(@PathParam("id") Long id) {
-		Ticket entity = em.find(Ticket.class, id);
+		LOG.debug("deleteById {}", id);
+		SectionAllocation entity = em.find(SectionAllocation.class, id);
 		if (entity == null) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
@@ -52,12 +65,13 @@ public class TicketEndpoint {
 	@Path("/{id:[0-9][0-9]*}")
 	@Produces("application/json")
 	public Response findById(@PathParam("id") Long id) {
-		TypedQuery<Ticket> findByIdQuery = em
+		LOG.debug("findById {}", id);
+		TypedQuery<SectionAllocation> findByIdQuery = em
 				.createQuery(
-						"SELECT DISTINCT t FROM Ticket t LEFT JOIN FETCH t.ticketCategory WHERE t.id = :entityId ORDER BY t.id",
-						Ticket.class);
+						"SELECT DISTINCT s FROM SectionAllocation s LEFT JOIN FETCH s.performance LEFT JOIN FETCH s.section WHERE s.id = :entityId ORDER BY s.id",
+						SectionAllocation.class);
 		findByIdQuery.setParameter("entityId", id);
-		Ticket entity;
+		SectionAllocation entity;
 		try {
 			entity = findByIdQuery.getSingleResult();
 		} catch (NoResultException nre) {
@@ -66,20 +80,21 @@ public class TicketEndpoint {
 		if (entity == null) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
-		TicketDTO dto = new TicketDTO(entity);
+		SectionAllocationDTO dto = new SectionAllocationDTO(entity);
 		return Response.ok(dto).build();
 	}
 
 	@GET
 	@Produces("application/json")
-	public List<TicketDTO> listAll() {
-		final List<Ticket> searchResults = em
+	public List<SectionAllocationDTO> listAll() {
+		LOG.debug("listAll");
+		final List<SectionAllocation> searchResults = em
 				.createQuery(
-						"SELECT DISTINCT t FROM Ticket t LEFT JOIN FETCH t.ticketCategory ORDER BY t.id",
-						Ticket.class).getResultList();
-		final List<TicketDTO> results = new ArrayList<TicketDTO>();
-		for (Ticket searchResult : searchResults) {
-			TicketDTO dto = new TicketDTO(searchResult);
+						"SELECT DISTINCT s FROM SectionAllocation s LEFT JOIN FETCH s.performance LEFT JOIN FETCH s.section ORDER BY s.id",
+						SectionAllocation.class).getResultList();
+		final List<SectionAllocationDTO> results = new ArrayList<SectionAllocationDTO>();
+		for (SectionAllocation searchResult : searchResults) {
+			SectionAllocationDTO dto = new SectionAllocationDTO(searchResult);
 			results.add(dto);
 		}
 		return results;
@@ -88,13 +103,14 @@ public class TicketEndpoint {
 	@PUT
 	@Path("/{id:[0-9][0-9]*}")
 	@Consumes("application/json")
-	public Response update(@PathParam("id") Long id, TicketDTO dto) {
-		TypedQuery<Ticket> findByIdQuery = em
+	public Response update(@PathParam("id") Long id, SectionAllocationDTO dto) {
+		LOG.debug("update {}", id);
+		TypedQuery<SectionAllocation> findByIdQuery = em
 				.createQuery(
-						"SELECT DISTINCT t FROM Ticket t LEFT JOIN FETCH t.ticketCategory WHERE t.id = :entityId ORDER BY t.id",
-						Ticket.class);
+						"SELECT DISTINCT s FROM SectionAllocation s LEFT JOIN FETCH s.performance LEFT JOIN FETCH s.section WHERE s.id = :entityId ORDER BY s.id",
+						SectionAllocation.class);
 		findByIdQuery.setParameter("entityId", id);
-		Ticket entity;
+		SectionAllocation entity;
 		try {
 			entity = findByIdQuery.getSingleResult();
 		} catch (NoResultException nre) {

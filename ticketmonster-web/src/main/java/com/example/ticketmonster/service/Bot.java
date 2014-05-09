@@ -23,15 +23,17 @@ import com.example.ticketmonster.event.BotEvent;
 import com.example.ticketmonster.model.Performance;
 import com.example.ticketmonster.model.Show;
 import com.example.ticketmonster.model.TicketPrice;
+import com.example.ticketmonster.request.TicketRequest;
 import com.example.ticketmonster.rest.BookingRequest;
 import com.example.ticketmonster.rest.BookingService;
 import com.example.ticketmonster.rest.ShowService;
-import com.example.ticketmonster.rest.TicketRequest;
 
 @Component
 public class Bot implements ApplicationEventPublisherAware {
 
 	class BotTask extends TimerTask {
+
+		private BotEvent event;
 
 		@Override
 		public void run() {
@@ -78,8 +80,9 @@ public class Bot implements ApplicationEventPublisherAware {
 								.get("errors"))
 						.append("~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 			}
-			// TODO: fire bot message event
-			// event.fire(message.toString());
+
+			event = new BotEvent(this, message.toString());
+			eventPublisher.publishEvent(event);
 		}
 	}
 

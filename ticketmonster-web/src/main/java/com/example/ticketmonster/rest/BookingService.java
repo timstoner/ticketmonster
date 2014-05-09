@@ -23,8 +23,6 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.ApplicationEventPublisherAware;
 
 import com.example.ticketmonster.model.Booking;
 import com.example.ticketmonster.model.Performance;
@@ -33,6 +31,8 @@ import com.example.ticketmonster.model.Section;
 import com.example.ticketmonster.model.Ticket;
 import com.example.ticketmonster.model.TicketCategory;
 import com.example.ticketmonster.model.TicketPrice;
+import com.example.ticketmonster.request.TicketRequest;
+import com.example.ticketmonster.rest.dto.BookingDTO;
 import com.example.ticketmonster.service.AllocatedSeats;
 import com.example.ticketmonster.service.SeatAllocationService;
 
@@ -46,18 +46,15 @@ import com.example.ticketmonster.service.SeatAllocationService;
  * @author Pete Muir
  */
 @Path("/bookings")
-public class BookingService extends BaseEntityService<Booking> implements
-		ApplicationEventPublisherAware {
+public class BookingService extends BaseEntityService<Booking, BookingDTO> {
 
 	private static Logger LOG = LoggerFactory.getLogger(BookingService.class);
 
 	@Autowired
 	SeatAllocationService seatAllocationService;
 
-	private ApplicationEventPublisher eventPublisher;
-
 	public BookingService() {
-		super(Booking.class);
+		super(Booking.class, BookingDTO.class);
 	}
 
 	@DELETE
@@ -69,6 +66,7 @@ public class BookingService extends BaseEntityService<Booking> implements
 		for (Booking booking : bookings) {
 			deleteBooking(booking.getId());
 		}
+
 		return Response.noContent().build();
 	}
 
@@ -90,6 +88,7 @@ public class BookingService extends BaseEntityService<Booking> implements
 		if (booking == null) {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
+
 		getEntityManager().remove(booking);
 		// Group together seats by section so that we can deallocate them in a
 		// group
@@ -104,12 +103,14 @@ public class BookingService extends BaseEntityService<Booking> implements
 			}
 			seats.add(ticket.getSeat());
 		}
+
 		// Deallocate each section block
 		for (Map.Entry<Section, List<Seat>> sectionListEntry : seatsBySection
 				.entrySet()) {
 			seatAllocationService.deallocateSeats(sectionListEntry.getKey(),
 					booking.getPerformance(), sectionListEntry.getValue());
 		}
+
 		// TODO: fire cancelledBookingEvent
 		// cancelledBookingEvent.fire(booking);
 		return Response.noContent().build();
@@ -262,7 +263,7 @@ public class BookingService extends BaseEntityService<Booking> implements
 				errorMessages.add(constraintViolation.getMessage());
 			}
 			errors.put("errors", errorMessages);
-			
+
 			LOG.error("Problem creating booking", e);
 			// A WebApplicationException can wrap a response
 			// Throwing the exception causes an automatic rollback
@@ -300,11 +301,4 @@ public class BookingService extends BaseEntityService<Booking> implements
 		}
 		return ticketPricesById;
 	}
-
-	@Override
-	public void setApplicationEventPublisher(
-			ApplicationEventPublisher applicationEventPublisher) {
-		this.eventPublisher = applicationEventPublisher;
-	}
-
 }

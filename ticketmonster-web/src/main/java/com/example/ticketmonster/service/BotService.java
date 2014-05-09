@@ -12,13 +12,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
+import com.example.ticketmonster.event.BotEvent;
 import com.example.ticketmonster.model.Booking;
 import com.example.ticketmonster.rest.BookingService;
 
 @Component
-public class BotService implements ApplicationEventPublisherAware {
+public class BotService implements ApplicationEventPublisherAware,
+		ApplicationListener<BotEvent> {
 
 	private final static Logger LOG = LoggerFactory.getLogger(BotService.class);
 
@@ -65,16 +68,14 @@ public class BotService implements ApplicationEventPublisherAware {
 			MultivaluedHashMap<String, String> empty = new MultivaluedHashMap<String, String>();
 			for (Booking booking : bookingService.getAll(empty)) {
 				bookingService.deleteBooking(booking.getId());
-				// event.fire("Deleted booking " + booking.getId() + " for "
-				// + booking.getContactEmail() + "\n");
+
+				String msg = "Deleted booking " + booking.getId() + " for "
+						+ booking.getContactEmail() + "\n";
+				BotEvent event = new BotEvent(this, msg);
+				publisher.publishEvent(event);
 			}
 		}
 	}
-
-	// public void newBookingRequest(@Observes @BotMessage String
-	// bookingRequest) {
-	// log.add(bookingRequest);
-	// }
 
 	public List<String> fetchLog() {
 		List<String> logCopy;
@@ -92,6 +93,13 @@ public class BotService implements ApplicationEventPublisherAware {
 	public void setApplicationEventPublisher(
 			ApplicationEventPublisher applicationEventPublisher) {
 		this.publisher = applicationEventPublisher;
+	}
+
+	@Override
+	public void onApplicationEvent(BotEvent event) {
+		synchronized (log) {
+			log.add(event.getMessage());
+		}
 	}
 
 }
