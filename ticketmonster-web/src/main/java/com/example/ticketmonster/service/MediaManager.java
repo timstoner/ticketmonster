@@ -17,6 +17,8 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.example.ticketmonster.model.MediaItem;
@@ -27,6 +29,9 @@ import com.example.ticketmonster.util.Reflections;
 @Component
 public class MediaManager {
 
+	private static final Logger LOG = LoggerFactory
+			.getLogger(MediaManager.class);
+
 	/**
 	 * Locate the tmp directory for the machine
 	 */
@@ -36,6 +41,8 @@ public class MediaManager {
 		String dataDir = System.getProperty("java.io.tmpdir");
 		String parentDir = dataDir;
 		tmpDir = new File(parentDir, "ticket-monster");
+		LOG.debug("initializing media manager tmpDir={}", tmpDir);
+
 		if (tmpDir.exists()) {
 			if (tmpDir.isFile())
 				throw new IllegalStateException(tmpDir.getAbsolutePath()
@@ -51,7 +58,6 @@ public class MediaManager {
 	private final Map<MediaItem, MediaPath> cache;
 
 	public MediaManager() {
-
 		this.cache = new HashMap<MediaItem, MediaPath>();
 	}
 

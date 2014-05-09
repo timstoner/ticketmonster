@@ -10,13 +10,15 @@ import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Component;
 
 import com.example.ticketmonster.model.Booking;
 import com.example.ticketmonster.rest.BookingService;
 
 @Component
-public class BotService {
+public class BotService implements ApplicationEventPublisherAware {
 
 	private final static Logger LOG = LoggerFactory.getLogger(BotService.class);
 
@@ -30,11 +32,9 @@ public class BotService {
 	@Autowired
 	private BookingService bookingService;
 
-	// @Inject
-	// @BotMessage
-	// private Event<String> event;
-
 	private Timer timer;
+
+	private ApplicationEventPublisher publisher;
 
 	public BotService() {
 		log = new CircularFifoQueue<String>(MAX_LOG_SIZE);
@@ -86,6 +86,12 @@ public class BotService {
 
 	public boolean isBotActive() {
 		return (timer != null);
+	}
+
+	@Override
+	public void setApplicationEventPublisher(
+			ApplicationEventPublisher applicationEventPublisher) {
+		this.publisher = applicationEventPublisher;
 	}
 
 }
