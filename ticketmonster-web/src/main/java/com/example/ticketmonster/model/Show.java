@@ -48,7 +48,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = { "event_id",
 		"venue_id" }))
-public class Show implements Serializable {
+public class Show implements Serializable, Identifiable {
 
 	/* Declaration of fields */
 

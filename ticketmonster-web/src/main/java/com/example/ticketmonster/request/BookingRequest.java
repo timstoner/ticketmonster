@@ -1,4 +1,4 @@
-package com.example.ticketmonster.rest;
+package com.example.ticketmonster.request;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Set;
 
 import com.example.ticketmonster.model.Performance;
-import com.example.ticketmonster.request.TicketRequest;
+import com.example.ticketmonster.rest.impl.BookingServiceImpl;
 
 /**
  * <p>
  * A {@link BookingRequest} is populated with unmarshalled JSON data, and handed
- * to {@link BookingService#createBooking(BookingRequest)}.
+ * to {@link BookingServiceImpl#createBooking(BookingRequest)}.
  * </p>
  * 
  * @author Marius Bogoevici
@@ -76,7 +76,7 @@ public class BookingRequest {
 	 * 
 	 * @return
 	 */
-	Set<Long> getUniquePriceCategoryIds() {
+	public Set<Long> getUniquePriceCategoryIds() {
 		Set<Long> priceCategoryIds = new HashSet<Long>();
 		for (TicketRequest ticketRequest : getTicketRequests()) {
 			if (priceCategoryIds.contains(ticketRequest.getTicketPrice())) {

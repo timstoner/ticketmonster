@@ -42,7 +42,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 @JsonIgnoreProperties("show")
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = { "section_id",
 		"show_id", "ticketcategory_id" }))
-public class TicketPrice implements Serializable {
+public class TicketPrice implements Serializable, Identifiable {
 
 	/* Declaration of fields */
 

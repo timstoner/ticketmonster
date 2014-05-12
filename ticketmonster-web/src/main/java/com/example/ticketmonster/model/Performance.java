@@ -42,7 +42,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = { "date", "show_id" }))
 // TODO Document use of @JsonIgnoreProperties
 @JsonIgnoreProperties("show")
-public class Performance implements Serializable {
+public class Performance implements Serializable, Identifiable {
 
 	/* Declaration of fields */
 

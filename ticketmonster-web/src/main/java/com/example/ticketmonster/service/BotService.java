@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 import com.example.ticketmonster.event.BotEvent;
 import com.example.ticketmonster.model.Booking;
-import com.example.ticketmonster.rest.BookingService;
+import com.example.ticketmonster.rest.impl.BookingServiceImpl;
 
 @Component
 public class BotService implements ApplicationEventPublisherAware,
@@ -33,7 +33,7 @@ public class BotService implements ApplicationEventPublisherAware,
 	private Bot bot;
 
 	@Autowired
-	private BookingService bookingService;
+	private BookingServiceImpl bookingService;
 
 	private Timer timer;
 
@@ -67,7 +67,7 @@ public class BotService implements ApplicationEventPublisherAware,
 			stop();
 			MultivaluedHashMap<String, String> empty = new MultivaluedHashMap<String, String>();
 			for (Booking booking : bookingService.getAll(empty)) {
-				bookingService.deleteBooking(booking.getId());
+				bookingService.deleteById(booking.getId());
 
 				String msg = "Deleted booking " + booking.getId() + " for "
 						+ booking.getContactEmail() + "\n";

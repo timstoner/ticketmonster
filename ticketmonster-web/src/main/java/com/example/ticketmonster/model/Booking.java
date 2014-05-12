@@ -37,7 +37,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  */
 @SuppressWarnings("serial")
 @Entity
-public class Booking implements Serializable {
+public class Booking implements Serializable, Identifiable {
 
 	/* Declaration of fields */
 

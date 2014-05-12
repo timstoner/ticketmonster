@@ -44,7 +44,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  * format
  */
 @JsonIgnoreProperties({ "venue", "sectionRows" })
-public class Section implements Serializable {
+public class Section implements Serializable, Identifiable {
 
 	/* Declaration of fields */
 

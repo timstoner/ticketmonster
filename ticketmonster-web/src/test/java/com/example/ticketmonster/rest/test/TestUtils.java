@@ -14,11 +14,11 @@ import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.ticketmonster.rest.EventService;
+import com.example.ticketmonster.rest.impl.EventServiceImpl;
 
 public class TestUtils {
 	private static Logger LOG = LoggerFactory.getLogger(TestUtils.class);
-	public final static String ENDPOINT_ADDRESS = "http://localhost:8080/rest";
+	public final static String ENDPOINT_ADDRESS = "http://localhost:8951/rest";
 	public final static String WADL_ADDRESS = ENDPOINT_ADDRESS + "?_wadl";
 
 	public static Server server;
@@ -26,7 +26,7 @@ public class TestUtils {
 	public static <T> Server startServer(Class<T> class1) {
 		LOG.info("Starting JAXRS Server");
 		JAXRSServerFactoryBean sf = new JAXRSServerFactoryBean();
-		sf.setResourceClasses(EventService.class);
+		sf.setResourceClasses(EventServiceImpl.class);
 		T t = null;
 		try {
 			t = class1.newInstance();

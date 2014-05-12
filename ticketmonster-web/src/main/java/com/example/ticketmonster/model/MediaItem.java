@@ -35,7 +35,7 @@ import org.hibernate.validator.constraints.URL;
  */
 @SuppressWarnings("serial")
 @Entity
-public class MediaItem implements Serializable {
+public class MediaItem implements Serializable, Identifiable {
 
 	/* Declaration of fields */
 

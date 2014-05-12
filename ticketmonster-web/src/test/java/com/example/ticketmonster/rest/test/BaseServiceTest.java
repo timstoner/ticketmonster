@@ -1,7 +1,17 @@
 package com.example.ticketmonster.rest.test;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
+import org.apache.cxf.jaxrs.provider.json.JSONProvider;
+import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
+import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -14,11 +24,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:applicationContext.xml" })
-public class BaseServiceTest {
+public abstract class BaseServiceTest {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(BaseServiceTest.class);
 
 	protected Server server;
+
+	private static final String alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_!@#$%^&*() {}|";
+	protected static Random random = new Random();
 
 	@Autowired
 	protected ApplicationContext context;
@@ -29,6 +42,7 @@ public class BaseServiceTest {
 		JAXRSServerFactoryBean sf = context
 				.getBean(JAXRSServerFactoryBean.class);
 		sf.setAddress(TestUtils.ENDPOINT_ADDRESS);
+		sf.setProvider(new JacksonJsonProvider());
 
 		server = sf.create();
 
@@ -40,5 +54,104 @@ public class BaseServiceTest {
 		LOG.info("Destroying server");
 		server.stop();
 		server.destroy();
+	}
+
+	protected List<Object> getProviders() {
+		List<Object> providers = new ArrayList<Object>();
+		providers.add(context.getBean(JSONProvider.class));
+		// ObjectMapper mapper = new ObjectMapper();
+
+		// <property name="dropRootElement" value="true" />C
+		// <property name="supportUnwrapped" value="true" />
+		providers.add(new ObjectMapper());
+
+		providers.add(new JacksonJaxbJsonProvider());
+
+		return providers;
+	}
+
+	protected JSONObject generateMediaItem() {
+		JSONObject mediaitem = new JSONObject();
+
+		String mediaType = "IMAGE";
+		String url = randomString(15);
+		int id = random.nextInt(100);
+
+		try {
+			mediaitem.put("mediaType", mediaType);
+			mediaitem.put("url", url);
+			mediaitem.put("id", id);
+		} catch (JSONException e) {
+			LOG.warn("Problem generate media item json object", e);
+		}
+
+		return mediaitem;
+	}
+
+	protected JSONObject generateAddress() {
+		String name = randomString(10);
+		String street = randomString(15);
+		String city = randomString(10);
+		String country = randomString(10);
+
+		return buildAddress(name, street, city, country);
+	}
+
+	protected JSONObject buildAddress(String name, String street, String city,
+			String country) {
+		JSONObject address = new JSONObject();
+
+		try {
+			address.put("name", name);
+			address.put("street", street);
+			address.put("city", city);
+			address.put("country", country);
+		} catch (JSONException e) {
+			LOG.warn("Problem building address", e);
+		}
+
+		return address;
+	}
+
+	protected JSONObject generateSection() {
+		int id = 0;
+		String name = randomString();
+		String description = randomString(20);
+		int numberOfRows = 10;
+		int rowCapacity = 10;
+
+		return buildSection(id, name, description, numberOfRows, rowCapacity);
+	}
+
+	protected JSONObject buildSection(int id, String name, String description,
+			int numberOfRows, int rowCapacity) {
+		JSONObject section = new JSONObject();
+		int capacity = numberOfRows * rowCapacity;
+
+		try {
+			section.put("id", id);
+			section.put("name", name);
+			section.put("description", description);
+			section.put("numberOfRows", numberOfRows);
+			section.put("rowCapacity", rowCapacity);
+			section.put("capacity", capacity);
+		} catch (JSONException e) {
+			LOG.warn("Problem building section", e);
+		}
+
+		return section;
+	}
+
+	protected String randomString() {
+		int length = random.nextInt(20);
+		return randomString(length);
+	}
+
+	protected String randomString(int len) {
+		StringBuilder sb = new StringBuilder(len);
+		for (int i = 0; i < len; i++) {
+			sb.append(alphabet.charAt(random.nextInt(alphabet.length())));
+		}
+		return sb.toString();
 	}
 }

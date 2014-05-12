@@ -33,7 +33,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  */
 @SuppressWarnings("serial")
 @Entity
-public class Venue implements Serializable {
+public class Venue implements Serializable, Identifiable {
 
 	/* Declaration of fields */
 

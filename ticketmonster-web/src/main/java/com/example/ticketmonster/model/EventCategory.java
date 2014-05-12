@@ -32,7 +32,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  */
 @SuppressWarnings("serial")
 @Entity
-public class EventCategory implements Serializable {
+public class EventCategory implements Serializable, Identifiable{
 
 	/* Declaration of fields */
 

@@ -27,7 +27,7 @@ import javax.validation.constraints.NotNull;
  */
 @SuppressWarnings("serial")
 @Entity
-public class Ticket implements Serializable {
+public class Ticket implements Serializable, Identifiable {
 
 	/* Declaration of fields */
 

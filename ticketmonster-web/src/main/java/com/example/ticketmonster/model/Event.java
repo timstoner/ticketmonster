@@ -37,7 +37,7 @@ import javax.validation.constraints.Size;
  */
 @SuppressWarnings("serial")
 @Entity
-public class Event implements Serializable {
+public class Event implements Serializable, Identifiable {
 
 	/* Declaration of fields */
 

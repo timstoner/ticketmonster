@@ -33,14 +33,13 @@ import com.example.ticketmonster.model.Show;
 import com.example.ticketmonster.rest.dto.PerformanceDTO;
 
 @Path("/performances")
-public class PerformanceService extends
-		BaseEntityService<Performance, PerformanceDTO> {
+public class PerformanceService extends BaseEntityService<Performance> {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(PerformanceService.class);
 
 	public PerformanceService() {
-		super(Performance.class, PerformanceDTO.class);
+		super(Performance.class);
 	}
 
 	@POST

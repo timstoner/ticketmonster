@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
@@ -23,8 +21,8 @@ import com.example.ticketmonster.event.BotEvent;
 import com.example.ticketmonster.model.Performance;
 import com.example.ticketmonster.model.Show;
 import com.example.ticketmonster.model.TicketPrice;
+import com.example.ticketmonster.request.BookingRequest;
 import com.example.ticketmonster.request.TicketRequest;
-import com.example.ticketmonster.rest.BookingRequest;
 import com.example.ticketmonster.rest.BookingService;
 import com.example.ticketmonster.rest.ShowService;
 
@@ -39,7 +37,8 @@ public class Bot implements ApplicationEventPublisherAware {
 		public void run() {
 			MultivaluedHashMap<String, String> empty = new MultivaluedHashMap<String, String>();
 			// Select a show at random
-			Show show = selectAtRandom(showService.getAll(empty));
+			// Show show = selectAtRandom(showService.getAll(empty));
+			Show show = null;
 
 			// Select a performance at random
 			Performance performance = selectAtRandom(show.getPerformances());
@@ -70,16 +69,16 @@ public class Bot implements ApplicationEventPublisherAware {
 						.append("\n");
 
 			}
-			Response response = bookingService.createBooking(bookingRequest);
-			if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-				message.append("SUCCESSFUL\n").append(
-						"~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-			} else {
-				message.append("FAILED:\n")
-						.append(((Map<String, Object>) response.getEntity())
-								.get("errors"))
-						.append("~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-			}
+			// Response response = bookingService.createBooking(bookingRequest);
+			// if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+			// message.append("SUCCESSFUL\n").append(
+			// "~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+			// } else {
+			// message.append("FAILED:\n")
+			// .append(((Map<String, Object>) response.getEntity())
+			// .get("errors"))
+			// .append("~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+			// }
 
 			event = new BotEvent(this, message.toString());
 			eventPublisher.publishEvent(event);

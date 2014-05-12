@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -15,20 +14,12 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
-import javax.transaction.Transactional;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import org.slf4j.Logger;
@@ -36,8 +27,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 
-import com.example.ticketmonster.model.Performance;
-import com.example.ticketmonster.rest.dto.PerformanceDTO;
+import com.example.ticketmonster.model.Identifiable;
+import com.example.ticketmonster.model.Venue;
 
 /**
  * <p>
@@ -88,8 +79,8 @@ import com.example.ticketmonster.rest.dto.PerformanceDTO;
  * 
  * @author Marius Bogoevici
  */
-public abstract class BaseEntityService<T, S> implements
-		ApplicationEventPublisherAware {
+public abstract class BaseEntityService<T extends Identifiable> implements
+		ApplicationEventPublisherAware, BaseService<T> {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(BaseEntityService.class);
@@ -101,40 +92,49 @@ public abstract class BaseEntityService<T, S> implements
 
 	private Class<T> entityClass;
 
-	private Class<S> dtoClass;
-
 	public BaseEntityService() {
 
 	}
 
-	public BaseEntityService(Class<T> entityClass, Class<S> dtoClass) {
+	public BaseEntityService(Class<T> entityClass) {
 		this.entityClass = entityClass;
-		this.dtoClass = dtoClass;
 	}
 
 	public EntityManager getEntityManager() {
 		return entityManager;
 	}
 
-	// @POST
-	// @Consumes("application/json")
-	// @Transactional
-	// public Response create(S dto) {
-	// // convert performance dto to a performance entity
-	// Performance entity = dto.fromDTO(null, getEntityManager());
-	// // persist the performance to the database
-	// getEntityManager().persist(entity);
-	//
-	// // build the performance uri for future requests
-	// String path = String.valueOf(entity.getId());
-	// URI uri =
-	// UriBuilder.fromResource(PerformanceService.class).path(path)
-	// .build();
-	// LOG.info("Performance created path: {}", path);
-	//
-	// // return 201 'created' response
-	// return Response.created(uri).build();
-	// }
+	public Response create(T entity) {
+
+		// persist the entity to the database
+		getEntityManager().persist(entity);
+
+		// build the uri for future requests
+		String path = String.valueOf(entity.getId());
+		URI uri = UriBuilder.fromResource(entityClass).path(path).build();
+		LOG.info("Performance created path: {}", path);
+
+		// return 201 'created' response
+		return Response.created(uri).build();
+	}
+
+	public Response deleteById(Long id) {
+		LOG.debug("deleteById {}", id);
+		ResponseBuilder rb;
+
+		T entity = getEntityManager().find(entityClass, id);
+
+		if (entity != null) {
+			getEntityManager().remove(entity);
+			LOG.info("Entity Deleted Id: {}", id);
+			rb = Response.noContent();
+		} else {
+			rb = Response.status(Status.NOT_FOUND);
+			LOG.debug("No Entity Found {}", id);
+		}
+
+		return rb.build();
+	}
 
 	/**
 	 * <p>
@@ -147,9 +147,7 @@ public abstract class BaseEntityService<T, S> implements
 	 *            UriInfo} class information for more details)
 	 * @return
 	 */
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<T> getAll(@Context UriInfo uriInfo) {
+	public List<T> getAll(UriInfo uriInfo) {
 		return getAll(uriInfo.getQueryParameters());
 	}
 
@@ -195,6 +193,11 @@ public abstract class BaseEntityService<T, S> implements
 		return query.getResultList();
 	}
 
+	public Response deleteAll() {
+		// TODO: implement delete all in base entity service;
+		return Response.ok().build();
+	}
+
 	/**
 	 * <p>
 	 * A method for counting all entities of a given type
@@ -205,10 +208,7 @@ public abstract class BaseEntityService<T, S> implements
 	 *            UriInfo} class information for more details)
 	 * @return
 	 */
-	@GET
-	@Path("/count")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Map<String, Long> getCount(@Context UriInfo uriInfo) {
+	public Map<String, Long> getCount(UriInfo uriInfo) {
 		LOG.debug("getCount");
 
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -267,10 +267,7 @@ public abstract class BaseEntityService<T, S> implements
 	 *            entity id
 	 * @return
 	 */
-	@GET
-	@Path("/{id:[0-9][0-9]*}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getSingle(@PathParam("id") Long id) {
+	public Response getSingle(Long id) {
 		LOG.debug("getSingle {}", id);
 
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
