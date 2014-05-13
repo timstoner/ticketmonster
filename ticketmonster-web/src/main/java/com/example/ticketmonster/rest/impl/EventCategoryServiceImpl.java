@@ -1,4 +1,4 @@
-package com.example.ticketmonster.rest;
+package com.example.ticketmonster.rest.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +26,10 @@ import com.example.ticketmonster.model.EventCategory;
 import com.example.ticketmonster.rest.dto.EventCategoryDTO;
 
 @Path("/eventcategories")
-public class EventCategoryService {
+public class EventCategoryServiceImpl {
 
 	private static Logger LOG = LoggerFactory
-			.getLogger(EventCategoryService.class);
+			.getLogger(EventCategoryServiceImpl.class);
 
 	@PersistenceContext
 	private EntityManager em;
@@ -42,7 +42,7 @@ public class EventCategoryService {
 		EventCategory entity = dto.fromDTO(null, em);
 		em.persist(entity);
 		return Response.created(
-				UriBuilder.fromResource(EventCategoryService.class)
+				UriBuilder.fromResource(EventCategoryServiceImpl.class)
 						.path(String.valueOf(entity.getId())).build()).build();
 	}
 

@@ -1,24 +1,22 @@
 package com.example.ticketmonster.rest.impl;
 
-import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.example.ticketmonster.model.Section;
-import com.example.ticketmonster.rest.BaseEntityService;
 import com.example.ticketmonster.rest.SectionService;
 import com.example.ticketmonster.rest.dto.SectionDTO;
 
-@Path("/sections")
 public class SectionServiceImpl extends BaseEntityService<Section> implements
 		SectionService {
 
@@ -32,59 +30,80 @@ public class SectionServiceImpl extends BaseEntityService<Section> implements
 	public Response create(SectionDTO dto) {
 		LOG.debug("create {}", dto.getName());
 
+		// convert dto to entity
 		Section entity = dto.fromDTO(null, getEntityManager());
+		// persist entity in database
 		getEntityManager().persist(entity);
-		return Response.created(
-				UriBuilder.fromResource(SectionServiceImpl.class)
-						.path(String.valueOf(entity.getId())).build()).build();
+		// build a new path to the created section
+		String path = String.valueOf(entity.getId());
+		URI uri = UriBuilder.fromResource(SectionService.class).path(path)
+				.build();
+
+		return Response.created(uri).build();
+	}
+
+	@Override
+	public Response findById(Long id) {
+		Section entity = getSingleInstance(id);
+
+		if (entity != null) {
+			SectionDTO dto = new SectionDTO(entity);
+			return Response.ok(dto).build();
+		} else {
+			return Response.status(Status.NOT_FOUND).build();
+		}
+	}
+
+	@Override
+	public Response findAll(UriInfo uriInfo) {
+		List<Section> entities = this.getAll(uriInfo.getQueryParameters());
+		List<SectionDTO> dtoResults = new ArrayList<>();
+
+		// convert entities to data transfer objects
+		for (Section entity : entities) {
+			SectionDTO dto = new SectionDTO(entity);
+			dtoResults.add(dto);
+		}
+
+		return Response.ok(dtoResults).build();
 	}
 
 	public Response deleteById(Long id) {
 		LOG.debug("deleteById {}", id);
+		ResponseBuilder rb;
 
+		// lookup the section by id in the entity manager
 		Section entity = getEntityManager().find(Section.class, id);
-		if (entity == null) {
-			return Response.status(Status.NOT_FOUND).build();
+
+		if (entity != null) {
+			getEntityManager().remove(entity);
+			rb = Response.noContent();
+		} else {
+			rb = Response.status(Status.NOT_FOUND);
 		}
-		getEntityManager().remove(entity);
-		return Response.noContent().build();
+
+		return rb.build();
 	}
 
-	// @GET
-	// @Produces("application/json")
-	// public List<SectionDTO> listAll() {
-	// LOG.debug("listAll");
-	// final List<Section> searchResults = getEntityManager()
-	// .createQuery(
-	// "SELECT DISTINCT s FROM Section s LEFT JOIN FETCH s.venue ORDER BY s.id",
-	// Section.class).getResultList();
-	// final List<SectionDTO> results = new ArrayList<SectionDTO>();
-	// for (Section searchResult : searchResults) {
-	// SectionDTO dto = new SectionDTO(searchResult);
-	// results.add(dto);
-	// }
-	// return results;
-	// }
-
-	@PUT
-	@Path("/{id:[0-9][0-9]*}")
-	@Consumes("application/json")
-	public Response update(@PathParam("id") Long id, SectionDTO dto) {
+	public Response update(Long id, SectionDTO dto) {
 		LOG.debug("update {}", id);
 
-		TypedQuery<Section> findByIdQuery = getEntityManager()
-				.createQuery(
-						"SELECT DISTINCT s FROM Section s LEFT JOIN FETCH s.venue WHERE s.id = :entityId ORDER BY s.id",
-						Section.class);
-		findByIdQuery.setParameter("entityId", id);
-		Section entity;
-		try {
-			entity = findByIdQuery.getSingleResult();
-		} catch (NoResultException nre) {
-			entity = null;
+		Section entity = getSingleInstance(id);
+
+		if (entity != null) {
+			entity = dto.fromDTO(entity, getEntityManager());
+			entity = getEntityManager().merge(entity);
 		}
-		entity = dto.fromDTO(entity, getEntityManager());
-		entity = getEntityManager().merge(entity);
+
 		return Response.noContent().build();
 	}
+
+	protected String getFindAllQuery() {
+		return "SELECT DISTINCT s FROM Section s LEFT JOIN FETCH s.venue ORDER BY s.id";
+	}
+
+	protected String getFindByIdQuery() {
+		return "SELECT DISTINCT s FROM Section s LEFT JOIN FETCH s.venue WHERE s.id = :entityId ORDER BY s.id";
+	}
+
 }

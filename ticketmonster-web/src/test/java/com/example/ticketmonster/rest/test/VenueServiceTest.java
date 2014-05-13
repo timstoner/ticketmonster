@@ -75,8 +75,7 @@ public class VenueServiceTest extends BaseServiceTest {
 	public void testCreateVenueWithWebClient() {
 		LOG.info("running testCreateVenueWithWebClient");
 
-		WebClient client = WebClient.create(TestUtils.ENDPOINT_ADDRESS,
-				getProviders());
+		WebClient client = WebClient.create(TestUtils.ENDPOINT_ADDRESS);
 		client.path("venues");
 		client.type(MediaType.APPLICATION_JSON);
 		client.accept(MediaType.APPLICATION_JSON);

@@ -8,6 +8,7 @@
 	<enableImports><![CDATA[false]]></enableImports>
 	<configs>
 		<config>src/main/resources/cxf-services.xml</config>
+		<config>src/test/resources/applicationContext-test.xml</config>
 	</configs>
 	<autoconfigs>
 		<config>src/main/resources/applicationContext.xml</config>

@@ -1,20 +1,31 @@
 package com.example.ticketmonster.rest.impl;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.ticketmonster.model.Booking;
 import com.example.ticketmonster.model.Event;
-import com.example.ticketmonster.rest.BaseEntityService;
+import com.example.ticketmonster.rest.BookingService;
 import com.example.ticketmonster.rest.EventService;
+import com.example.ticketmonster.rest.dto.BookingDTO;
+import com.example.ticketmonster.rest.dto.EventDTO;
 
 /**
  * <p>
@@ -24,57 +35,79 @@ import com.example.ticketmonster.rest.EventService;
  * 
  * @author Marius Bogoevici
  */
-@Path("/events")
+
 public class EventServiceImpl extends BaseEntityService<Event> implements
 		EventService {
+
 	private static Logger LOG = LoggerFactory.getLogger(EventServiceImpl.class);
 
 	public EventServiceImpl() {
 		super(Event.class);
 	}
 
-	// @POST
-	// @Consumes("application/json")
-	// public Response create(EventDTO dto) {
-	// LOG.debug("create {}", dto.getName());
-	//
-	// Event entity = dto.fromDTO(null, getEntityManager());
-	// getEntityManager().persist(entity);
-	// return Response.created(
-	// UriBuilder.fromResource(EventServiceImpl.class)
-	// .path(String.valueOf(entity.getId())).build()).build();
-	// }
-	//
-	// @DELETE
-	// @Path("/{id:[0-9][0-9]*}")
-	// public Response deleteById(@PathParam("id") Long id) {
-	// Event entity = getEntityManager().find(Event.class, id);
-	// if (entity == null) {
-	// return Response.status(Status.NOT_FOUND).build();
-	// }
-	// getEntityManager().remove(entity);
-	// return Response.noContent().build();
-	// }
-	//
-	// @PUT
-	// @Path("/{id:[0-9][0-9]*}")
-	// @Consumes("application/json")
-	// public Response update(@PathParam("id") Long id, EventDTO dto) {
-	// TypedQuery<Event> findByIdQuery = getEntityManager()
-	// .createQuery(
-	// "SELECT DISTINCT e FROM Event e LEFT JOIN FETCH e.mediaItem LEFT JOIN FETCH e.category WHERE e.id = :entityId ORDER BY e.id",
-	// Event.class);
-	// findByIdQuery.setParameter("entityId", id);
-	// Event entity;
-	// try {
-	// entity = findByIdQuery.getSingleResult();
-	// } catch (NoResultException nre) {
-	// entity = null;
-	// }
-	// entity = dto.fromDTO(entity, getEntityManager());
-	// entity = getEntityManager().merge(entity);
-	// return Response.noContent().build();
-	// }
+	public Response create(EventDTO dto) {
+		LOG.debug("create {}", dto.getName());
+
+		Event entity = dto.fromDTO(null, getEntityManager());
+		getEntityManager().persist(entity);
+
+		// build uri to new entity
+		String path = String.valueOf(entity.getId());
+		URI uri = UriBuilder.fromResource(EventService.class).path(path)
+				.build();
+
+		return Response.created(uri).build();
+	}
+
+	public Response update(Long id, EventDTO dto) {
+		LOG.debug("update {}", id);
+		Event entity = getSingleInstance(id);
+
+		if (entity != null) {
+			entity = dto.fromDTO(entity, getEntityManager());
+			getEntityManager().merge(entity);
+		}
+
+		return Response.noContent().build();
+	}
+
+	@Override
+	public Response findById(Long id) {
+		Event entity = getSingleInstance(id);
+
+		if (entity != null) {
+			EventDTO dto = new EventDTO(entity);
+			return Response.ok(dto).build();
+		} else {
+			return Response.status(Status.NOT_FOUND).build();
+		}
+	}
+
+	@Override
+	public Response findAll(UriInfo uriInfo) {
+		List<Event> entities = this.getAll(uriInfo.getQueryParameters());
+		List<EventDTO> dtoResults = new ArrayList<EventDTO>();
+
+		// convert entities to data transfer objects
+		for (Event entity : entities) {
+			EventDTO dto = new EventDTO(entity);
+			dtoResults.add(dto);
+		}
+
+		return Response.ok(dtoResults).build();
+	}
+
+	@Override
+	public Response deleteById(Long id) {
+		LOG.debug("deleteById {}", id);
+		return super.deleteById(id);
+	}
+
+	@Override
+	public Response deleteAll(UriInfo uriInfo) {
+		LOG.debug("deleteAll");
+		return super.deleteAll(uriInfo);
+	}
 
 	/**
 	 * <p>
@@ -103,5 +136,15 @@ public class EventServiceImpl extends BaseEntityService<Event> implements
 		}
 
 		return predicates.toArray(new Predicate[] {});
+	}
+
+	@Override
+	protected String getFindByIdQuery() {
+		return "SELECT DISTINCT e FROM Event e LEFT JOIN FETCH e.mediaItem LEFT JOIN FETCH e.category WHERE e.id = :entityId ORDER BY e.id";
+	}
+
+	@Override
+	protected String getFindAllQuery() {
+		return "SELECT DISTINCT e FROM Event e LEFT JOIN FETCH e.mediaItem LEFT JOIN FETCH e.category ORDER BY e.id";
 	}
 }

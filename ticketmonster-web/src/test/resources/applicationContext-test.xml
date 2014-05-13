@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
+	<import resource="applicationContext.xml" />
+
+
+	<!-- <jaxrs:client id="venueClient" address="http://localhost:8951/rest/venues" -->
+	<!-- serviceClass="com.example.ticketmonster.rest.VenueService" /> -->
+
+<!-- 	<jaxrs:client id="webClient" address="https://localhost:8951/rest" -->
+<!-- 		serviceClass="org.apache.cxf.jaxrs.client.WebClient" /> -->
+</beans>

@@ -6,7 +6,10 @@ import java.util.Random;
 
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
+import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.jaxrs.provider.json.JSONProvider;
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -23,7 +26,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:applicationContext.xml" })
+@ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
 public abstract class BaseServiceTest {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(BaseServiceTest.class);
@@ -56,16 +59,26 @@ public abstract class BaseServiceTest {
 		server.destroy();
 	}
 
+	public WebClient getWebClient(String path) {
+		WebClient client = context.getBean("webClient", WebClient.class);
+		client.path(path);
+		return client;
+	}
+
 	protected List<Object> getProviders() {
 		List<Object> providers = new ArrayList<Object>();
-		providers.add(context.getBean(JSONProvider.class));
-		// ObjectMapper mapper = new ObjectMapper();
+//		ObjectMapper mapper = new ObjectMapper();
+//		mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
+		
+
+		// providers.add(context.getBean(JSONProvider.class));
+		JacksonJaxbJsonProvider jackson = new JacksonJaxbJsonProvider();
+//		jackson.setMapper(mapper);
 
 		// <property name="dropRootElement" value="true" />C
 		// <property name="supportUnwrapped" value="true" />
-		providers.add(new ObjectMapper());
-
-		providers.add(new JacksonJaxbJsonProvider());
+//		providers.add(mapper);
+		providers.add(jackson);
 
 		return providers;
 	}

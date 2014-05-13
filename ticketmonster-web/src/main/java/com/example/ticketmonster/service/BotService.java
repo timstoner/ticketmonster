@@ -5,8 +5,12 @@ import java.util.List;
 import java.util.Timer;
 
 import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.collections4.queue.CircularFifoQueue;
+import org.apache.cxf.jaxrs.impl.UriInfoImpl;
+import org.apache.cxf.message.AbstractWrappedMessage;
+import org.apache.cxf.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +21,7 @@ import org.springframework.stereotype.Component;
 
 import com.example.ticketmonster.event.BotEvent;
 import com.example.ticketmonster.model.Booking;
-import com.example.ticketmonster.rest.impl.BookingServiceImpl;
+import com.example.ticketmonster.rest.BookingService;
 
 @Component
 public class BotService implements ApplicationEventPublisherAware,
@@ -33,7 +37,7 @@ public class BotService implements ApplicationEventPublisherAware,
 	private Bot bot;
 
 	@Autowired
-	private BookingServiceImpl bookingService;
+	private BookingService bookingService;
 
 	private Timer timer;
 
@@ -66,14 +70,15 @@ public class BotService implements ApplicationEventPublisherAware,
 		synchronized (bot) {
 			stop();
 			MultivaluedHashMap<String, String> empty = new MultivaluedHashMap<String, String>();
-			for (Booking booking : bookingService.getAll(empty)) {
-				bookingService.deleteById(booking.getId());
-
-				String msg = "Deleted booking " + booking.getId() + " for "
-						+ booking.getContactEmail() + "\n";
-				BotEvent event = new BotEvent(this, msg);
-				publisher.publishEvent(event);
-			}
+//			UriInfo uriInfo = new UriInfoImpl();
+			// for (Booking booking : bookingService.findAll(uriInfo) {
+			// bookingService.deleteById(booking.getId());
+			//
+			// String msg = "Deleted booking " + booking.getId() + " for "
+			// + booking.getContactEmail() + "\n";
+			// BotEvent event = new BotEvent(this, msg);
+			// publisher.publishEvent(event);
+			// }
 		}
 	}
 
@@ -100,6 +105,14 @@ public class BotService implements ApplicationEventPublisherAware,
 		synchronized (log) {
 			log.add(event.getMessage());
 		}
+	}
+
+	private class BotMessage extends AbstractWrappedMessage {
+
+		protected BotMessage(Message msg) {
+			super(msg);
+		}
+
 	}
 
 }

@@ -1,5 +1,6 @@
 package com.example.ticketmonster.rest.impl;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,10 +11,14 @@ import java.util.TreeMap;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,17 +26,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.example.ticketmonster.model.Booking;
 import com.example.ticketmonster.model.Performance;
-import com.example.ticketmonster.model.Seat;
 import com.example.ticketmonster.model.Section;
 import com.example.ticketmonster.model.Ticket;
 import com.example.ticketmonster.model.TicketCategory;
 import com.example.ticketmonster.model.TicketPrice;
 import com.example.ticketmonster.request.BookingRequest;
 import com.example.ticketmonster.request.TicketRequest;
-import com.example.ticketmonster.rest.BaseEntityService;
 import com.example.ticketmonster.rest.BookingService;
 import com.example.ticketmonster.rest.RestServiceException;
 import com.example.ticketmonster.rest.SectionComparator;
+import com.example.ticketmonster.rest.dto.BookingDTO;
 import com.example.ticketmonster.service.AllocatedSeats;
 import com.example.ticketmonster.service.SeatAllocationService;
 
@@ -58,58 +62,66 @@ public class BookingServiceImpl extends BaseEntityService<Booking> implements
 		super(Booking.class);
 	}
 
-	public Response deleteAll() {
-		LOG.debug("deleteAllBookings");
-		MultivaluedHashMap<String, String> empty = new MultivaluedHashMap<String, String>();
+	@Override
+	public Response findById(Long id) {
+		Booking entity = getSingleInstance(id);
 
-		List<Booking> bookings = getAll(empty);
-		for (Booking booking : bookings) {
-			deleteById(booking.getId());
+		if (entity != null) {
+			BookingDTO dto = new BookingDTO(entity);
+			return Response.ok(dto).build();
+		} else {
+			return Response.status(Status.NOT_FOUND).build();
 		}
-
-		return Response.noContent().build();
 	}
 
-	/**
-	 * <p>
-	 * Delete a booking by id
-	 * </p>
-	 * 
-	 * @param id
-	 * @return
-	 */
+	@Override
+	public Response findAll(UriInfo uriInfo) {
+		List<Booking> entities = this.getAll(uriInfo.getQueryParameters());
+		List<BookingDTO> dtoResults = new ArrayList<>();
+
+		// convert entities to data transfer objects
+		for (Booking entity : entities) {
+			BookingDTO dto = new BookingDTO(entity);
+			dtoResults.add(dto);
+		}
+
+		return Response.ok(dtoResults).build();
+	}
+
+	@Override
 	public Response deleteById(Long id) {
-		LOG.debug("deleteBooking {}", id);
+		LOG.debug("deleteById {}", id);
+		return super.deleteById(id);
+	}
 
-		Booking booking = getEntityManager().find(Booking.class, id);
-		if (booking == null) {
-			return Response.status(Response.Status.NOT_FOUND).build();
-		}
+	@Override
+	public Response deleteAll(UriInfo uriInfo) {
+		LOG.debug("deleteAll");
+		return super.deleteAll(uriInfo);
+	}
 
-		getEntityManager().remove(booking);
-		// Group together seats by section so that we can deallocate them in a
-		// group
-		Map<Section, List<Seat>> seatsBySection = new TreeMap<Section, java.util.List<Seat>>(
-				SectionComparator.instance());
-		for (Ticket ticket : booking.getTickets()) {
-			List<Seat> seats = seatsBySection
-					.get(ticket.getSeat().getSection());
-			if (seats == null) {
-				seats = new ArrayList<Seat>();
-				seatsBySection.put(ticket.getSeat().getSection(), seats);
-			}
-			seats.add(ticket.getSeat());
-		}
+	@Override
+	public Response create(BookingDTO dto) {
+		// convert dto to entity
+		Booking entity = dto.fromDTO(null, getEntityManager());
+		// persist in database
+		getEntityManager().persist(entity);
+		// build uri to new entity
+		String path = String.valueOf(entity.getId());
+		URI uri = UriBuilder.fromResource(BookingService.class).path(path)
+				.build();
 
-		// Deallocate each section block
-		for (Map.Entry<Section, List<Seat>> sectionListEntry : seatsBySection
-				.entrySet()) {
-			seatAllocationService.deallocateSeats(sectionListEntry.getKey(),
-					booking.getPerformance(), sectionListEntry.getValue());
-		}
+		return Response.created(uri).build();
+	}
 
-		// TODO: fire cancelledBookingEvent
-		// cancelledBookingEvent.fire(booking);
+	@Override
+	public Response update(Long id, BookingDTO dto) {
+		LOG.debug("update {}", id);
+		Booking entity = getSingleInstance(id);
+
+		entity = dto.fromDTO(entity, getEntityManager());
+		entity = getEntityManager().merge(entity);
+
 		return Response.noContent().build();
 	}
 
@@ -121,9 +133,13 @@ public class BookingServiceImpl extends BaseEntityService<Booking> implements
 	 * @param bookingRequest
 	 * @return
 	 */
+	@POST
+	/**
+	 * <p> Data is received in JSON format. For easy handling, it will be unmarshalled in the support
+	 * {@link BookingRequest} class.
+	 */
+	@Consumes(MediaType.APPLICATION_JSON)
 	public Response createBooking(BookingRequest bookingRequest) {
-		LOG.debug("createBooking {}", bookingRequest);
-
 		try {
 			// identify the ticket price categories in this request
 			Set<Long> priceCategoryIds = bookingRequest
@@ -170,7 +186,7 @@ public class BookingServiceImpl extends BaseEntityService<Booking> implements
 			// allocation
 			// The process will lock the record for a given
 			// Use deterministic ordering to prevent deadlocks
-			Map<Section, AllocatedSeats> seatsPerSection = new TreeMap<Section, com.example.ticketmonster.service.AllocatedSeats>(
+			Map<Section, AllocatedSeats> seatsPerSection = new TreeMap<Section, AllocatedSeats>(
 					SectionComparator.instance());
 			List<Section> failedSections = new ArrayList<Section>();
 			for (Section section : ticketRequestsPerSection.keySet()) {
@@ -230,10 +246,9 @@ public class BookingServiceImpl extends BaseEntityService<Booking> implements
 				booking.setPerformance(performance);
 				booking.setCancellationCode("abc");
 				getEntityManager().persist(booking);
-				// TODO: fire newBookingEvent
 				// newBookingEvent.fire(booking);
 				return Response.ok().entity(booking)
-						.type(MediaType.APPLICATION_JSON_TYPE).build();
+						.type(MediaType.APPLICATION_JSON).build();
 			} else {
 				Map<String, Object> responseEntity = new HashMap<String, Object>();
 				responseEntity
@@ -253,8 +268,6 @@ public class BookingServiceImpl extends BaseEntityService<Booking> implements
 				errorMessages.add(constraintViolation.getMessage());
 			}
 			errors.put("errors", errorMessages);
-
-			LOG.error("Problem creating booking", e);
 			// A WebApplicationException can wrap a response
 			// Throwing the exception causes an automatic rollback
 			throw new RestServiceException(Response
@@ -265,20 +278,11 @@ public class BookingServiceImpl extends BaseEntityService<Booking> implements
 			errors.put("errors", Collections.singletonList(e.getMessage()));
 			// A WebApplicationException can wrap a response
 			// Throwing the exception causes an automatic rollback
-
-			LOG.error("Problem creating booking", e);
-
 			throw new RestServiceException(Response
 					.status(Response.Status.BAD_REQUEST).entity(errors).build());
 		}
 	}
 
-	/**
-	 * Utility method for loading ticket prices
-	 * 
-	 * @param priceCategoryIds
-	 * @return
-	 */
 	private Map<Long, TicketPrice> loadTicketPrices(Set<Long> priceCategoryIds) {
 		List<TicketPrice> ticketPrices = (List<TicketPrice>) getEntityManager()
 				.createQuery("select p from TicketPrice p where p.id in :ids",
@@ -290,5 +294,13 @@ public class BookingServiceImpl extends BaseEntityService<Booking> implements
 			ticketPricesById.put(ticketPrice.getId(), ticketPrice);
 		}
 		return ticketPricesById;
+	}
+
+	protected String getFindByIdQuery() {
+		return "SELECT DISTINCT b FROM Booking b LEFT JOIN FETCH b.tickets LEFT JOIN FETCH b.performance WHERE b.id = :entityId ORDER BY b.id";
+	}
+
+	protected String getFindAllQuery() {
+		return "SELECT DISTINCT b FROM Booking b LEFT JOIN FETCH b.tickets LEFT JOIN FETCH b.performance ORDER BY b.id";
 	}
 }
