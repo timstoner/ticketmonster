@@ -81,7 +81,7 @@ public class VenueServiceTest extends BaseServiceTest {
 		client.accept(MediaType.APPLICATION_JSON);
 
 		JSONObject venue = buildVenue();
-		Response response = client.post(venue);
+		Response response = client.post(venue.toString());
 		LOG.debug("Create Post Request Response Status: {}",
 				response.getStatus());
 

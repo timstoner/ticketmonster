@@ -67,17 +67,16 @@ public abstract class BaseServiceTest {
 
 	protected List<Object> getProviders() {
 		List<Object> providers = new ArrayList<Object>();
-//		ObjectMapper mapper = new ObjectMapper();
-//		mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
-		
+		// ObjectMapper mapper = new ObjectMapper();
+		// mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
 
 		// providers.add(context.getBean(JSONProvider.class));
 		JacksonJaxbJsonProvider jackson = new JacksonJaxbJsonProvider();
-//		jackson.setMapper(mapper);
+		// jackson.setMapper(mapper);
 
 		// <property name="dropRootElement" value="true" />C
 		// <property name="supportUnwrapped" value="true" />
-//		providers.add(mapper);
+		// providers.add(mapper);
 		providers.add(jackson);
 
 		return providers;
@@ -102,20 +101,17 @@ public abstract class BaseServiceTest {
 	}
 
 	protected JSONObject generateAddress() {
-		String name = randomString(10);
 		String street = randomString(15);
 		String city = randomString(10);
 		String country = randomString(10);
 
-		return buildAddress(name, street, city, country);
+		return buildAddress(street, city, country);
 	}
 
-	protected JSONObject buildAddress(String name, String street, String city,
-			String country) {
+	protected JSONObject buildAddress(String street, String city, String country) {
 		JSONObject address = new JSONObject();
 
 		try {
-			address.put("name", name);
 			address.put("street", street);
 			address.put("city", city);
 			address.put("country", country);
