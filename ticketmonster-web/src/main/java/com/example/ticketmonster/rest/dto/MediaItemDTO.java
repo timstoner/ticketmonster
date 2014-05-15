@@ -2,12 +2,9 @@ package com.example.ticketmonster.rest.dto;
 
 import java.io.Serializable;
 
-import javax.persistence.EntityManager;
-
-import com.example.ticketmonster.model.MediaItem;
-import com.example.ticketmonster.model.MediaType;
-
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.example.ticketmonster.model.MediaType;
 
 @XmlRootElement
 public class MediaItemDTO extends BaseDTO implements Serializable {
@@ -16,27 +13,6 @@ public class MediaItemDTO extends BaseDTO implements Serializable {
 	private Long id;
 	private String url;
 	private MediaType mediaType;
-
-	public MediaItemDTO() {
-	}
-
-	public MediaItemDTO(final MediaItem entity) {
-		if (entity != null) {
-			this.id = entity.getId();
-			this.url = entity.getUrl();
-			this.mediaType = entity.getMediaType();
-		}
-	}
-
-	public MediaItem fromDTO(MediaItem entity, EntityManager em) {
-		if (entity == null) {
-			entity = new MediaItem();
-		}
-		entity.setUrl(this.url);
-		entity.setMediaType(this.mediaType);
-		entity = em.merge(entity);
-		return entity;
-	}
 
 	public Long getId() {
 		return this.id;

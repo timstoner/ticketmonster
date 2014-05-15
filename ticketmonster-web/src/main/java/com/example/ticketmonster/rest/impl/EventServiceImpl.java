@@ -7,24 +7,17 @@ import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.ticketmonster.model.Booking;
 import com.example.ticketmonster.model.Event;
-import com.example.ticketmonster.rest.BookingService;
 import com.example.ticketmonster.rest.EventService;
-import com.example.ticketmonster.rest.dto.BookingDTO;
 import com.example.ticketmonster.rest.dto.EventDTO;
 
 /**
@@ -48,8 +41,8 @@ public class EventServiceImpl extends BaseEntityService<Event> implements
 	public Response create(EventDTO dto) {
 		LOG.debug("create {}", dto.getName());
 
-		Event entity = dto.fromDTO(null, getEntityManager());
-		getEntityManager().persist(entity);
+		Event entity = Event.buildEvent(dto, getEntityManager());
+		persist(entity);
 
 		// build uri to new entity
 		String path = String.valueOf(entity.getId());
@@ -64,7 +57,8 @@ public class EventServiceImpl extends BaseEntityService<Event> implements
 		Event entity = getSingleInstance(id);
 
 		if (entity != null) {
-			entity = dto.fromDTO(entity, getEntityManager());
+			entity = Event.buildEvent(dto, getEntityManager());
+			// entity = dto.fromDTO(entity, getEntityManager());
 			getEntityManager().merge(entity);
 		}
 
@@ -76,7 +70,7 @@ public class EventServiceImpl extends BaseEntityService<Event> implements
 		Event entity = getSingleInstance(id);
 
 		if (entity != null) {
-			EventDTO dto = new EventDTO(entity);
+			EventDTO dto = entity.buildDTO();
 			return Response.ok(dto).build();
 		} else {
 			return Response.status(Status.NOT_FOUND).build();
@@ -90,7 +84,7 @@ public class EventServiceImpl extends BaseEntityService<Event> implements
 
 		// convert entities to data transfer objects
 		for (Event entity : entities) {
-			EventDTO dto = new EventDTO(entity);
+			EventDTO dto = entity.buildDTO();
 			dtoResults.add(dto);
 		}
 

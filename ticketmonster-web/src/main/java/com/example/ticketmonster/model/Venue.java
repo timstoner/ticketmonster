@@ -10,12 +10,19 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NoResultException;
 import javax.persistence.OneToMany;
+import javax.persistence.TypedQuery;
 
 import org.hibernate.validator.constraints.NotEmpty;
+
+import com.example.ticketmonster.rest.dto.NestedSectionDTO;
+import com.example.ticketmonster.rest.dto.NestedVenueDTO;
+import com.example.ticketmonster.rest.dto.VenueDTO;
 
 /**
  * <p>
@@ -194,4 +201,61 @@ public class Venue implements Serializable, Identifiable {
 	public String toString() {
 		return name;
 	}
+
+	public VenueDTO buildDTO() {
+		VenueDTO dto = new VenueDTO();
+
+		dto.setAddress(this.address.buildDTO());
+
+		return dto;
+	}
+
+	public static Venue buildEntity(VenueDTO dto, EntityManager em) {
+		Venue entity = new Venue();
+
+		entity.id = dto.getId();
+
+		if (dto.getAddress() != null) {
+			Address address = Address.buildEntity(dto.getAddress());
+			entity.setAddress(address);
+		}
+		entity.description = dto.getDescription();
+		entity.name = dto.getName();
+		entity.capacity = dto.getCapacity();
+		entity.mediaItem = MediaItem.buildMediaItem(dto.getMediaItem());
+		for (NestedSectionDTO secDTO : dto.getSections()) {
+			// TODO:
+			// entity.sections.add(Section.buildSection(dto, em))
+		}
+
+		return entity;
+	}
+
+	public static Venue buildVenue(NestedVenueDTO dto, EntityManager em) {
+		Venue entity = new Venue();
+
+		// if the nested venue has an id, query the database
+		if (dto.getId() != null) {
+			TypedQuery<Venue> findByIdQuery = em.createQuery(
+					"SELECT DISTINCT v FROM Venue v WHERE v.id = :entityId",
+					Venue.class);
+			findByIdQuery.setParameter("entityId", dto.getId());
+			try {
+				entity = findByIdQuery.getSingleResult();
+			} catch (NoResultException nre) {
+				entity = null;
+			}
+		} else {
+			if (dto.getAddress() != null) {
+				Address address = Address.buildEntity(dto.getAddress());
+				entity.setAddress(address);
+			}
+			entity.setDescription(dto.getDescription());
+			entity.setName(dto.getName());
+			entity.setCapacity(dto.getCapacity());
+		}
+
+		return entity;
+	}
+
 }

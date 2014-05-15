@@ -33,7 +33,7 @@ public class VenueServiceImpl extends BaseEntityService<Venue> implements
 	@Override
 	public Response create(VenueDTO dto) {
 		// convert dto to entity
-		Venue entity = dto.fromDTO(null, getEntityManager());
+		Venue entity = Venue.buildEntity(dto, getEntityManager());
 		// persist in database
 		persist(entity);
 		// build uri to new entity
@@ -49,7 +49,7 @@ public class VenueServiceImpl extends BaseEntityService<Venue> implements
 		Venue entity = getSingleInstance(id);
 
 		if (entity != null) {
-			VenueDTO dto = new VenueDTO(entity);
+			VenueDTO dto = entity.buildDTO();
 			return Response.ok(dto).build();
 		} else {
 			return Response.status(Status.NOT_FOUND).build();
@@ -63,7 +63,7 @@ public class VenueServiceImpl extends BaseEntityService<Venue> implements
 
 		// convert entities to data transfer objects
 		for (Venue entity : entities) {
-			VenueDTO dto = new VenueDTO(entity);
+			VenueDTO dto = entity.buildDTO();
 			dtoResults.add(dto);
 		}
 

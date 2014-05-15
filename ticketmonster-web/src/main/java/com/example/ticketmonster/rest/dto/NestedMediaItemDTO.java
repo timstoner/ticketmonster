@@ -1,13 +1,13 @@
 package com.example.ticketmonster.rest.dto;
 
 import java.io.Serializable;
-import java.util.Collection;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.example.ticketmonster.model.MediaItem;
@@ -27,36 +27,36 @@ public class NestedMediaItemDTO extends BaseDTO implements Serializable {
 	public NestedMediaItemDTO() {
 	}
 
-	public NestedMediaItemDTO(final MediaItem entity) {
-		if (entity != null) {
-			this.id = entity.getId();
-			this.url = entity.getUrl();
-			this.mediaType = entity.getMediaType();
-		}
-	}
+//	public NestedMediaItemDTO(final MediaItem entity) {
+//		if (entity != null) {
+//			this.id = entity.getId();
+//			this.url = entity.getUrl();
+//			this.mediaType = entity.getMediaType();
+//		}
+//	}
 
-	public MediaItem fromDTO(MediaItem entity, EntityManager em) {
-		if (entity == null) {
-			entity = new MediaItem();
-		}
-		if (this.id != null) {
-			TypedQuery<MediaItem> findByIdQuery = em
-					.createQuery(
-							"SELECT DISTINCT m FROM MediaItem m WHERE m.id = :entityId",
-							MediaItem.class);
-			findByIdQuery.setParameter("entityId", this.id);
-			try {
-				entity = findByIdQuery.getSingleResult();
-			} catch (javax.persistence.NoResultException nre) {
-				entity = null;
-			}
-			return entity;
-		}
-		entity.setUrl(this.url);
-		entity.setMediaType(this.mediaType);
-		entity = em.merge(entity);
-		return entity;
-	}
+//	public MediaItem fromDTO(MediaItem entity, EntityManager em) {
+//		if (entity == null) {
+//			entity = new MediaItem();
+//		}
+//		if (this.id != null) {
+//			TypedQuery<MediaItem> findByIdQuery = em
+//					.createQuery(
+//							"SELECT DISTINCT m FROM MediaItem m WHERE m.id = :entityId",
+//							MediaItem.class);
+//			findByIdQuery.setParameter("entityId", this.id);
+//			try {
+//				entity = findByIdQuery.getSingleResult();
+//			} catch (javax.persistence.NoResultException nre) {
+//				entity = null;
+//			}
+//			return entity;
+//		}
+//		entity.setUrl(this.url);
+//		entity.setMediaType(this.mediaType);
+//		entity = em.merge(entity);
+//		return entity;
+//	}
 
 	public Long getId() {
 		return this.id;

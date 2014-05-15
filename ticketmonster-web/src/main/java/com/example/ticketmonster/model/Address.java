@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
+import com.example.ticketmonster.rest.dto.AddressDTO;
+
 /**
  * <p>
  * A reusable representation of an address.
@@ -92,4 +94,25 @@ public class Address implements Serializable {
 	public String toString() {
 		return street + ", " + city + ", " + country;
 	}
+
+	public AddressDTO buildDTO() {
+		AddressDTO dto = new AddressDTO();
+
+		dto.setCity(city);
+		dto.setStreet(street);
+		dto.setCountry(country);
+
+		return dto;
+	}
+
+	public static Address buildEntity(AddressDTO dto) {
+		Address entity = new Address();
+
+		entity.setStreet(dto.getStreet());
+		entity.setCountry(dto.getCountry());
+		entity.setCity(dto.getCity());
+
+		return entity;
+	}
+
 }

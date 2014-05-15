@@ -6,11 +6,16 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import com.example.ticketmonster.rest.dto.EventDTO;
+import com.example.ticketmonster.rest.dto.NestedEventCategoryDTO;
+import com.example.ticketmonster.rest.dto.NestedMediaItemDTO;
 
 /**
  * <p>
@@ -204,5 +209,37 @@ public class Event implements Serializable, Identifiable {
 	@Override
 	public String toString() {
 		return name;
+	}
+
+	public static Event buildEvent(EventDTO dto, EntityManager em) {
+		Event entity = new Event();
+
+		entity.setId(dto.getId());
+		entity.setName(dto.getName());
+		entity.setDescription(dto.getDescription());
+		EventCategory ec = EventCategory.buildEntity(dto.getCategory());
+		entity.setCategory(ec);
+		MediaItem mi = MediaItem.buildMediaItem(dto.getMediaItem());
+		entity.setMediaItem(mi);
+
+		return entity;
+	}
+
+	public EventDTO buildDTO() {
+		EventDTO dto = new EventDTO();
+
+		if (this.category != null) {
+			NestedEventCategoryDTO necDTO = category.buildNestedDTO();
+			dto.setCategory(necDTO);
+		}
+		if (this.mediaItem != null) {
+			NestedMediaItemDTO nmiDTO = mediaItem.buildNestedDTO();
+			dto.setMediaItem(nmiDTO);
+		}
+
+		dto.setDescription(this.description);
+		dto.setName(this.name);
+
+		return dto;
 	}
 }

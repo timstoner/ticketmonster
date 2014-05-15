@@ -11,6 +11,9 @@ import javax.persistence.Id;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.example.ticketmonster.rest.dto.EventCategoryDTO;
+import com.example.ticketmonster.rest.dto.NestedEventCategoryDTO;
+
 /**
  * <p>
  * Categories of event.
@@ -32,7 +35,7 @@ import org.hibernate.validator.constraints.NotEmpty;
  */
 @SuppressWarnings("serial")
 @Entity
-public class EventCategory implements Serializable, Identifiable{
+public class EventCategory implements Serializable, Identifiable {
 
 	/* Declaration of fields */
 
@@ -106,4 +109,41 @@ public class EventCategory implements Serializable, Identifiable{
 	public String toString() {
 		return description;
 	}
+
+	public EventCategoryDTO buildDTO() {
+		EventCategoryDTO dto = new EventCategoryDTO();
+
+		dto.setId(this.id);
+		dto.setDescription(this.description);
+
+		return dto;
+	}
+
+	public NestedEventCategoryDTO buildNestedDTO() {
+		NestedEventCategoryDTO dto = new NestedEventCategoryDTO();
+
+		dto.setId(this.id);
+		dto.setDescription(this.description);
+
+		return dto;
+	}
+
+	public static EventCategory buildEntity(EventCategoryDTO dto) {
+		EventCategory entity = new EventCategory();
+
+		entity.id = dto.getId();
+		entity.description = dto.getDescription();
+
+		return entity;
+	}
+
+	public static EventCategory buildEntity(NestedEventCategoryDTO dto) {
+		EventCategory entity = new EventCategory();
+
+		entity.id = dto.getId();
+		entity.description = dto.getDescription();
+
+		return entity;
+	}
+
 }

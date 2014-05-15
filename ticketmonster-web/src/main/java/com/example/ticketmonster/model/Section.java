@@ -5,6 +5,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 import java.io.Serializable;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -14,6 +15,8 @@ import javax.validation.constraints.NotNull;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.hibernate.validator.constraints.NotEmpty;
+
+import com.example.ticketmonster.rest.dto.SectionDTO;
 
 /**
  * <p>
@@ -195,4 +198,19 @@ public class Section implements Serializable, Identifiable {
 		return name;
 	}
 
+	public static Section buildSection(SectionDTO dto, EntityManager em) {
+		Section entity = new Section();
+
+		entity.setDescription(dto.getDescription());
+		entity.setRowCapacity(dto.getRowCapacity());
+		entity.setName(dto.getName());
+		entity.setNumberOfRows(dto.getNumberOfRows());
+
+		if (dto.getVenue() != null) {
+			Venue venue = Venue.buildVenue(dto.getVenue(), em);
+			entity.setVenue(venue);
+		}
+
+		return entity;
+	}
 }

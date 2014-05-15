@@ -40,7 +40,7 @@ public class MediaItemService {
 	public Response create(MediaItemDTO dto) {
 		LOG.debug("create {}", dto.getMediaType());
 
-		MediaItem entity = dto.fromDTO(null, em);
+		MediaItem entity = MediaItem.buildMediaItem(dto);
 		em.persist(entity);
 		return Response.created(
 				UriBuilder.fromResource(MediaItemService.class)
@@ -80,7 +80,7 @@ public class MediaItemService {
 		if (entity == null) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
-		MediaItemDTO dto = new MediaItemDTO(entity);
+		MediaItemDTO dto = entity.buildDTO();
 		return Response.ok(dto).build();
 	}
 
@@ -94,7 +94,7 @@ public class MediaItemService {
 				MediaItem.class).getResultList();
 		final List<MediaItemDTO> results = new ArrayList<MediaItemDTO>();
 		for (MediaItem searchResult : searchResults) {
-			MediaItemDTO dto = new MediaItemDTO(searchResult);
+			MediaItemDTO dto = searchResult.buildDTO();
 			results.add(dto);
 		}
 		return results;
@@ -111,13 +111,18 @@ public class MediaItemService {
 						"SELECT DISTINCT m FROM MediaItem m WHERE m.id = :entityId ORDER BY m.id",
 						MediaItem.class);
 		findByIdQuery.setParameter("entityId", id);
+
 		MediaItem entity;
 		try {
 			entity = findByIdQuery.getSingleResult();
 		} catch (NoResultException nre) {
 			entity = null;
 		}
-		entity = dto.fromDTO(entity, em);
+
+		if (entity == null) {
+			entity = MediaItem.buildMediaItem(dto);
+		}
+
 		entity = em.merge(entity);
 		return Response.noContent().build();
 	}

@@ -4,7 +4,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.transaction.Transactional;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
@@ -14,7 +13,6 @@ import javax.ws.rs.core.UriInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.ticketmonster.model.EntityFactory;
 import com.example.ticketmonster.model.Section;
 import com.example.ticketmonster.rest.SectionService;
 import com.example.ticketmonster.rest.dto.SectionDTO;
@@ -33,7 +31,7 @@ public class SectionServiceImpl extends BaseEntityService<Section> implements
 		LOG.debug("create {}", dto.getName());
 
 		// convert dto to entity
-		Section entity = EntityFactory.buildSection(dto);
+		Section entity = Section.buildSection(dto, getEntityManager());
 
 		persist(entity);
 
@@ -44,8 +42,6 @@ public class SectionServiceImpl extends BaseEntityService<Section> implements
 
 		return Response.created(uri).build();
 	}
-
-
 
 	@Override
 	public Response findById(Long id) {

@@ -13,6 +13,9 @@ import javax.persistence.Id;
 
 import org.hibernate.validator.constraints.URL;
 
+import com.example.ticketmonster.rest.dto.MediaItemDTO;
+import com.example.ticketmonster.rest.dto.NestedMediaItemDTO;
+
 /**
  * <p>
  * A reference to a media object such as images, sound bites, video recordings,
@@ -138,6 +141,46 @@ public class MediaItem implements Serializable, Identifiable {
 		} else if (!url.equals(other.url))
 			return false;
 		return true;
+	}
+
+	public MediaItemDTO buildDTO() {
+		MediaItemDTO dto = new MediaItemDTO();
+
+		dto.setId(id);
+		dto.setUrl(url);
+		dto.setMediaType(mediaType);
+
+		return dto;
+	}
+
+	public NestedMediaItemDTO buildNestedDTO() {
+		NestedMediaItemDTO dto = new NestedMediaItemDTO();
+
+		dto.setId(id);
+		dto.setUrl(url);
+		dto.setMediaType(mediaType);
+
+		return dto;
+	}
+
+	public static MediaItem buildMediaItem(MediaItemDTO dto) {
+		MediaItem entity = new MediaItem();
+
+		entity.id = dto.getId();
+		entity.mediaType = dto.getMediaType();
+		entity.url = dto.getUrl();
+
+		return entity;
+	}
+
+	public static MediaItem buildMediaItem(NestedMediaItemDTO dto) {
+		MediaItem entity = new MediaItem();
+
+		entity.id = dto.getId();
+		entity.mediaType = dto.getMediaType();
+		entity.url = dto.getUrl();
+
+		return entity;
 	}
 
 }

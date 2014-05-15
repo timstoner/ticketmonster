@@ -39,7 +39,7 @@ public class EventCategoryServiceImpl {
 	public Response create(EventCategoryDTO dto) {
 		LOG.debug("create {} ", dto.getId());
 
-		EventCategory entity = dto.fromDTO(null, em);
+		EventCategory entity = EventCategory.buildEntity(dto);
 		em.persist(entity);
 		return Response.created(
 				UriBuilder.fromResource(EventCategoryServiceImpl.class)
@@ -79,7 +79,7 @@ public class EventCategoryServiceImpl {
 		if (entity == null) {
 			return Response.status(Status.NOT_FOUND).build();
 		}
-		EventCategoryDTO dto = new EventCategoryDTO(entity);
+		EventCategoryDTO dto = entity.buildDTO();
 		return Response.ok(dto).build();
 	}
 
@@ -93,7 +93,7 @@ public class EventCategoryServiceImpl {
 				EventCategory.class).getResultList();
 		final List<EventCategoryDTO> results = new ArrayList<EventCategoryDTO>();
 		for (EventCategory searchResult : searchResults) {
-			EventCategoryDTO dto = new EventCategoryDTO(searchResult);
+			EventCategoryDTO dto = searchResult.buildDTO();
 			results.add(dto);
 		}
 		return results;
@@ -105,19 +105,23 @@ public class EventCategoryServiceImpl {
 	public Response update(@PathParam("id") Long id, EventCategoryDTO dto) {
 		LOG.debug("update {}", id);
 
-		TypedQuery<EventCategory> findByIdQuery = em
-				.createQuery(
-						"SELECT DISTINCT e FROM EventCategory e WHERE e.id = :entityId ORDER BY e.id",
-						EventCategory.class);
+		TypedQuery<EventCategory> findByIdQuery = em.createQuery(
+				getFindByIdQuery(), EventCategory.class);
+
 		findByIdQuery.setParameter("entityId", id);
+
 		EventCategory entity;
 		try {
 			entity = findByIdQuery.getSingleResult();
 		} catch (NoResultException nre) {
 			entity = null;
 		}
-		entity = dto.fromDTO(entity, em);
+		entity = EventCategory.buildEntity(dto);
 		entity = em.merge(entity);
 		return Response.noContent().build();
+	}
+
+	protected String getFindByIdQuery() {
+		return "SELECT DISTINCT e FROM EventCategory e WHERE e.id = :entityId ORDER BY e.id";
 	}
 }

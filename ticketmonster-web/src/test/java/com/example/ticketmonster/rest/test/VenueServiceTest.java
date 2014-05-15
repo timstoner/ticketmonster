@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.example.ticketmonster.model.Venue;
-import com.example.ticketmonster.rest.dto.DTOFactory;
 import com.example.ticketmonster.rest.dto.VenueDTO;
 
 public class VenueServiceTest extends BaseServiceTest {
@@ -49,7 +48,7 @@ public class VenueServiceTest extends BaseServiceTest {
 		// find venue in database
 		Venue venue = entityManager.find(Venue.class, id);
 		// convert entity to dto
-		VenueDTO entityDTO = new VenueDTO(venue);
+		VenueDTO entityDTO = venue.buildDTO();
 
 		// assert they are equal
 		assertEquals(entityDTO, responseDTO);

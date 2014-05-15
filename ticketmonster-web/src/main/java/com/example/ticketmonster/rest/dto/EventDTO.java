@@ -2,10 +2,7 @@ package com.example.ticketmonster.rest.dto;
 
 import java.io.Serializable;
 
-import javax.persistence.EntityManager;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import com.example.ticketmonster.model.Event;
 
 @XmlRootElement
 public class EventDTO extends BaseDTO implements Serializable {
@@ -19,36 +16,6 @@ public class EventDTO extends BaseDTO implements Serializable {
 	private NestedMediaItemDTO mediaItem;
 	private String description;
 	private String name;
-
-	public EventDTO() {
-	}
-
-	public EventDTO(final Event entity) {
-		if (entity != null) {
-			this.id = entity.getId();
-			this.category = new NestedEventCategoryDTO(entity.getCategory());
-			this.mediaItem = new NestedMediaItemDTO(entity.getMediaItem());
-			this.description = entity.getDescription();
-			this.name = entity.getName();
-		}
-	}
-
-	public Event fromDTO(Event entity, EntityManager em) {
-		if (entity == null) {
-			entity = new Event();
-		}
-		if (this.category != null) {
-			entity.setCategory(this.category.fromDTO(entity.getCategory(), em));
-		}
-		if (this.mediaItem != null) {
-			entity.setMediaItem(this.mediaItem.fromDTO(entity.getMediaItem(),
-					em));
-		}
-		entity.setDescription(this.description);
-		entity.setName(this.name);
-		entity = em.merge(entity);
-		return entity;
-	}
 
 	public Long getId() {
 		return this.id;
