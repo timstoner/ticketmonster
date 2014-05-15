@@ -9,6 +9,9 @@ import com.example.ticketmonster.rest.dto.NestedMediaItemDTO;
 import javax.persistence.EntityManager;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 @XmlRootElement
 public class EventDTO implements Serializable {
 
@@ -90,5 +93,13 @@ public class EventDTO implements Serializable {
 
 	public void setName(final String name) {
 		this.name = name;
+	}
+
+	public boolean equals(Object obj) {
+		return EqualsBuilder.reflectionEquals(this, obj);
+	}
+
+	public int hashCode() {
+		return HashCodeBuilder.reflectionHashCode(this);
 	}
 }

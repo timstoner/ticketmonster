@@ -1,18 +1,15 @@
 package com.example.ticketmonster.rest.test;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.ws.rs.core.Response;
 
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.cxf.jaxrs.provider.json.JSONProvider;
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.codehaus.jackson.annotate.JsonMethod;
-import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
-import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
@@ -25,6 +22,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.example.ticketmonster.rest.dto.AddressDTO;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
 public abstract class BaseServiceTest {
@@ -32,24 +31,26 @@ public abstract class BaseServiceTest {
 			.getLogger(BaseServiceTest.class);
 
 	protected Server server;
+	public final static String ENDPOINT_ADDRESS = "http://localhost:8951/rest";
+	public final static String WADL_ADDRESS = ENDPOINT_ADDRESS + "?_wadl";
 
 	private static final String alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_!@#$%^&*() {}|";
 	protected static Random random = new Random();
 
 	@Autowired
 	protected ApplicationContext context;
+	
+	@PersistenceContext
+	protected EntityManager entityManager;
 
 	@Before
 	public void initialize() throws Exception {
 		LOG.info("Initializing server");
 		JAXRSServerFactoryBean sf = context
 				.getBean(JAXRSServerFactoryBean.class);
-		sf.setAddress(TestUtils.ENDPOINT_ADDRESS);
-		sf.setProvider(new JacksonJsonProvider());
+		sf.setAddress(ENDPOINT_ADDRESS);
 
 		server = sf.create();
-
-		TestUtils.waitForWADL();
 	}
 
 	@After
@@ -63,23 +64,6 @@ public abstract class BaseServiceTest {
 		WebClient client = context.getBean("webClient", WebClient.class);
 		client.path(path);
 		return client;
-	}
-
-	protected List<Object> getProviders() {
-		List<Object> providers = new ArrayList<Object>();
-		// ObjectMapper mapper = new ObjectMapper();
-		// mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
-
-		// providers.add(context.getBean(JSONProvider.class));
-		JacksonJaxbJsonProvider jackson = new JacksonJaxbJsonProvider();
-		// jackson.setMapper(mapper);
-
-		// <property name="dropRootElement" value="true" />C
-		// <property name="supportUnwrapped" value="true" />
-		// providers.add(mapper);
-		providers.add(jackson);
-
-		return providers;
 	}
 
 	protected JSONObject generateMediaItem() {
@@ -106,6 +90,20 @@ public abstract class BaseServiceTest {
 		String country = randomString(10);
 
 		return buildAddress(street, city, country);
+	}
+
+	protected AddressDTO buildAddress(JSONObject address) {
+		AddressDTO addressDTO = new AddressDTO();
+
+		try {
+			addressDTO.setCity(address.getString("city"));
+			addressDTO.setStreet(address.getString("street"));
+			addressDTO.setCountry(address.getString("country"));
+		} catch (JSONException e) {
+			LOG.error("Problem parsing address json object", e);
+		}
+
+		return addressDTO;
 	}
 
 	protected JSONObject buildAddress(String street, String city, String country) {
@@ -162,5 +160,41 @@ public abstract class BaseServiceTest {
 			sb.append(alphabet.charAt(random.nextInt(alphabet.length())));
 		}
 		return sb.toString();
+	}
+
+	protected JSONArray getJSONArrayFromResponse(Response response) {
+		JSONArray object = new JSONArray();
+		String entity = response.readEntity(String.class);
+		LOG.debug(entity);
+		try {
+			object = new JSONArray(entity);
+		} catch (JSONException e) {
+			LOG.error("Error handling JSON Array", e);
+		}
+
+		return object;
+	}
+
+	protected JSONObject getJSONObjectFromResponse(Response response) {
+		JSONObject object = new JSONObject();
+		String entity = response.readEntity(String.class);
+		LOG.debug(entity);
+		try {
+			object = new JSONObject(entity);
+		} catch (JSONException e) {
+			LOG.error("Error handling JSON Object", e);
+		}
+
+		return object;
+	}
+
+	protected long getId(JSONObject object) {
+		long id = -1;
+		try {
+			id = (int) object.get("id");
+		} catch (JSONException e) {
+			LOG.error("No Id Found in JSON Object", e);
+		}
+		return id;
 	}
 }

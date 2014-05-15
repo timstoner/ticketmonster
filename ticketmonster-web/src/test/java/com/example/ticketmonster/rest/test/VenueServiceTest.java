@@ -20,51 +20,38 @@ public class VenueServiceTest extends BaseServiceTest {
 	@Test
 	public void testGetEventsWithWebClient() {
 		LOG.info("running testGetEventsWithWebClient");
-		WebClient client = WebClient.create(TestUtils.ENDPOINT_ADDRESS);
+		WebClient client = WebClient.create(ENDPOINT_ADDRESS);
 		client.path("venues");
+		// send get request to endpoint
 		Response response = client.get();
 
-		String entity = response.readEntity(String.class);
-		LOG.debug(entity);
+		// convert response to a json array
+		JSONArray array = getJSONArrayFromResponse(response);
 
-		JSONArray array;
-
-		try {
-			array = new JSONArray(entity);
-			int length = array.length();
-			// 5 sample venues imported into database
-			assertEquals(5, length);
-		} catch (JSONException e) {
-			LOG.error("Error handling JSON Object", e);
-		}
+		// get number of results returned
+		int length = array.length();
+		// 5 sample venues imported into database
+		assertEquals(5, length);
 	}
 
 	@Test
 	public void testGetEventWithWebClient() {
 		LOG.info("running testGetEventWithWebClient");
 
-		WebClient client = WebClient.create(TestUtils.ENDPOINT_ADDRESS);
+		WebClient client = WebClient.create(ENDPOINT_ADDRESS);
 		client.path("venues/1");
 		Response response = client.get();
 
-		String entity = response.readEntity(String.class);
-		LOG.debug(entity);
-		JSONObject object;
-
-		try {
-			object = new JSONObject(entity);
-			long id = (int) object.get("id");
-			assertEquals(1L, id);
-		} catch (JSONException e) {
-			LOG.error("Error handling JSON Object", e);
-		}
+		JSONObject object = getJSONObjectFromResponse(response);
+		long id = getId(object);
+		assertEquals(1L, id);
 	}
 
 	@Test
 	public void testNoVenueFoundWithWebClient() {
 		LOG.info("running testNoVenueFoundWithWebClient");
 
-		WebClient client = WebClient.create(TestUtils.ENDPOINT_ADDRESS);
+		WebClient client = WebClient.create(ENDPOINT_ADDRESS);
 		client.path("venues/500");
 		Response response = client.get();
 
@@ -75,7 +62,7 @@ public class VenueServiceTest extends BaseServiceTest {
 	public void testCreateVenueWithWebClient() {
 		LOG.info("running testCreateVenueWithWebClient");
 
-		WebClient client = WebClient.create(TestUtils.ENDPOINT_ADDRESS);
+		WebClient client = WebClient.create(ENDPOINT_ADDRESS);
 		client.path("venues");
 		client.type(MediaType.APPLICATION_JSON);
 		client.accept(MediaType.APPLICATION_JSON);
@@ -85,7 +72,7 @@ public class VenueServiceTest extends BaseServiceTest {
 		LOG.debug("Create Post Request Response Status: {}",
 				response.getStatus());
 
-		assertEquals(200, response.getStatus());
+		assertEquals(201, response.getStatus());
 	}
 
 	protected JSONObject buildVenue() {

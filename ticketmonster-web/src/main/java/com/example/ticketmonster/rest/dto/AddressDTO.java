@@ -1,12 +1,20 @@
 package com.example.ticketmonster.rest.dto;
 
+import java.io.IOException;
 import java.io.Serializable;
-
-import com.example.ticketmonster.model.Address;
 
 import javax.persistence.EntityManager;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.example.ticketmonster.model.Address;
+
 public class AddressDTO implements Serializable {
+	private static final Logger LOG = LoggerFactory.getLogger(AddressDTO.class);
 
 	/**
 	 * 
@@ -59,5 +67,24 @@ public class AddressDTO implements Serializable {
 
 	public void setCity(final String city) {
 		this.city = city;
+	}
+
+	public boolean equals(Object obj) {
+		return EqualsBuilder.reflectionEquals(this, obj);
+	}
+
+	public int hashCode() {
+		return HashCodeBuilder.reflectionHashCode(this);
+	}
+
+	public static AddressDTO newInstance(String entity) {
+		ObjectMapper mapper = new ObjectMapper();
+		AddressDTO addressDTO = null;
+		try {
+			addressDTO = mapper.readValue(entity, AddressDTO.class);
+		} catch (IOException e) {
+			LOG.warn("Problem building address DTO from JSON", e);
+		}
+		return addressDTO;
 	}
 }

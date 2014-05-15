@@ -1,28 +1,25 @@
 package com.example.ticketmonster.rest.dto;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.codehaus.jettison.json.JSONObject;
 
 import com.example.ticketmonster.model.Section;
 import com.example.ticketmonster.model.SectionAllocation;
 import com.example.ticketmonster.model.Show;
 import com.example.ticketmonster.model.TicketPrice;
 import com.example.ticketmonster.model.Venue;
-import com.example.ticketmonster.rest.dto.AddressDTO;
-import com.example.ticketmonster.rest.dto.NestedMediaItemDTO;
-import com.example.ticketmonster.rest.dto.NestedSectionDTO;
 
 @XmlRootElement
 public class VenueDTO implements Serializable {
@@ -41,6 +38,10 @@ public class VenueDTO implements Serializable {
 
 	public VenueDTO() {
 	}
+	
+	public VenueDTO(JSONObject object) {
+		
+	}
 
 	public VenueDTO(final Venue entity) {
 		if (entity != null) {
@@ -58,6 +59,7 @@ public class VenueDTO implements Serializable {
 		}
 	}
 
+	
 	public Venue fromDTO(Venue entity, EntityManager em) {
 		if (entity == null) {
 			entity = new Venue();
@@ -153,6 +155,7 @@ public class VenueDTO implements Serializable {
 		return em.createQuery(criteria.select(from).where(sectionIsSame))
 				.getResultList();
 	}
+
 
 	public Long getId() {
 		return this.id;
