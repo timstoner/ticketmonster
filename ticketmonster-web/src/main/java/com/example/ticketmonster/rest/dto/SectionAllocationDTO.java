@@ -10,7 +10,7 @@ import javax.persistence.EntityManager;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class SectionAllocationDTO implements Serializable {
+public class SectionAllocationDTO  extends BaseDTO implements Serializable {
 
 	/**
 	 * 

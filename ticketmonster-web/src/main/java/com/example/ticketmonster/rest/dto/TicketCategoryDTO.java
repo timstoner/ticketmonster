@@ -8,7 +8,7 @@ import javax.persistence.EntityManager;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class TicketCategoryDTO implements Serializable {
+public class TicketCategoryDTO extends BaseDTO  implements Serializable {
 
 	/**
 	 * 

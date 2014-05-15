@@ -1,22 +1,14 @@
 package com.example.ticketmonster.rest.dto;
 
-import java.io.IOException;
 import java.io.Serializable;
 
 import javax.persistence.EntityManager;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.example.ticketmonster.model.Section;
 
 @XmlRootElement
-public class SectionDTO implements Serializable {
-	private static final Logger LOG = LoggerFactory.getLogger(SectionDTO.class);
+public class SectionDTO extends BaseDTO implements Serializable {
 
 	/**
 	 * 
@@ -114,25 +106,5 @@ public class SectionDTO implements Serializable {
 
 	public void setVenue(final NestedVenueDTO venue) {
 		this.venue = venue;
-	}
-
-	public boolean equals(Object obj) {
-		return EqualsBuilder.reflectionEquals(this, obj);
-	}
-
-	public int hashCode() {
-		return HashCodeBuilder.reflectionHashCode(this);
-	}
-
-	public static SectionDTO newInstance(String entity) {
-		ObjectMapper mapper = new ObjectMapper();
-		SectionDTO dto = null;
-		try {
-			dto = mapper.readValue(entity, SectionDTO.class);
-		} catch (IOException e) {
-			LOG.warn("Problem building address DTO from JSON", e);
-		}
-		return dto;
-
 	}
 }

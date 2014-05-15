@@ -7,7 +7,7 @@ import com.example.ticketmonster.model.Event;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-public class NestedEventDTO implements Serializable {
+public class NestedEventDTO extends BaseDTO  implements Serializable {
 
 	/**
 	 * 

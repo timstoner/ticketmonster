@@ -9,7 +9,7 @@ import javax.persistence.TypedQuery;
 
 import java.util.Date;
 
-public class NestedPerformanceDTO implements Serializable {
+public class NestedPerformanceDTO extends BaseDTO  implements Serializable {
 
 	/**
 	 * 

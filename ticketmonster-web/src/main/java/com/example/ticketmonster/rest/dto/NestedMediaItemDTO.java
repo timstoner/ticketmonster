@@ -1,15 +1,21 @@
 package com.example.ticketmonster.rest.dto;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.LoggerFactory;
+
 import com.example.ticketmonster.model.MediaItem;
 import com.example.ticketmonster.model.MediaType;
 
-public class NestedMediaItemDTO implements Serializable {
-
+public class NestedMediaItemDTO extends BaseDTO implements Serializable {
+	private static final Logger LOG = LoggerFactory
+			.getLogger(NestedMediaItemDTO.class);
 	/**
 	 * 
 	 */
@@ -74,5 +80,19 @@ public class NestedMediaItemDTO implements Serializable {
 
 	public void setMediaType(final MediaType mediaType) {
 		this.mediaType = mediaType;
+	}
+
+	public JSONObject toJSON() {
+		JSONObject mediaitem = new JSONObject();
+
+		try {
+			mediaitem.put("mediaType", mediaType);
+			mediaitem.put("url", url);
+			mediaitem.put("id", id);
+		} catch (JSONException e) {
+			LOG.warn("Problem building json object", e);
+		}
+
+		return mediaitem;
 	}
 }

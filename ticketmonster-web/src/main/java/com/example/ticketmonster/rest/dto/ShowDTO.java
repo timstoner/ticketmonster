@@ -26,7 +26,7 @@ import com.example.ticketmonster.rest.dto.NestedVenueDTO;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class ShowDTO implements Serializable {
+public class ShowDTO extends BaseDTO implements Serializable {
 
 	/**
 	 * 

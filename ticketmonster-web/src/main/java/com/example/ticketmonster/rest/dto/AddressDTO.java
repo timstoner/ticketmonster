@@ -1,19 +1,17 @@
 package com.example.ticketmonster.rest.dto;
 
-import java.io.IOException;
 import java.io.Serializable;
 
 import javax.persistence.EntityManager;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.example.ticketmonster.model.Address;
 
-public class AddressDTO implements Serializable {
+public class AddressDTO extends BaseDTO implements Serializable {
 	private static final Logger LOG = LoggerFactory.getLogger(AddressDTO.class);
 
 	/**
@@ -69,22 +67,17 @@ public class AddressDTO implements Serializable {
 		this.city = city;
 	}
 
-	public boolean equals(Object obj) {
-		return EqualsBuilder.reflectionEquals(this, obj);
-	}
+	public JSONObject toJSON() {
+		JSONObject address = new JSONObject();
 
-	public int hashCode() {
-		return HashCodeBuilder.reflectionHashCode(this);
-	}
-
-	public static AddressDTO newInstance(String entity) {
-		ObjectMapper mapper = new ObjectMapper();
-		AddressDTO addressDTO = null;
 		try {
-			addressDTO = mapper.readValue(entity, AddressDTO.class);
-		} catch (IOException e) {
-			LOG.warn("Problem building address DTO from JSON", e);
+			address.put("street", street);
+			address.put("city", city);
+			address.put("country", country);
+		} catch (JSONException e) {
+			LOG.warn("Problem building json object", e);
 		}
-		return addressDTO;
+
+		return address;
 	}
 }

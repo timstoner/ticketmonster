@@ -57,4 +57,6 @@ public class NestedShowDTO implements Serializable {
 	public String getDisplayTitle() {
 		return this.displayTitle;
 	}
+	
+	
 }

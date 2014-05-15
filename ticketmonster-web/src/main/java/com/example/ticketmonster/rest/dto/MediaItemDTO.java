@@ -10,7 +10,7 @@ import com.example.ticketmonster.model.MediaType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class MediaItemDTO implements Serializable {
+public class MediaItemDTO extends BaseDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private Long id;

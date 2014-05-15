@@ -22,6 +22,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * <p>
@@ -200,6 +201,12 @@ public abstract class BaseEntityService<T> {
 			MultivaluedMap<String, String> queryParameters,
 			CriteriaBuilder criteriaBuilder, Root<T> root) {
 		return new Predicate[] {};
+	}
+
+	public void persist(T entity) {
+		// persist entity in database
+		entityManager.persist(entity);
+		entityManager.flush();
 	}
 
 	protected abstract String getFindByIdQuery();

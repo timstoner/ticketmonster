@@ -21,7 +21,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @XmlRootElement
-public class BookingDTO implements Serializable {
+public class BookingDTO extends BaseDTO implements Serializable {
 
 	/**
 	 * 

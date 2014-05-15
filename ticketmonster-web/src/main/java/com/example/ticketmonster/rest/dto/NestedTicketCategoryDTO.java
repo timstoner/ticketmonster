@@ -7,7 +7,7 @@ import com.example.ticketmonster.model.TicketCategory;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-public class NestedTicketCategoryDTO implements Serializable {
+public class NestedTicketCategoryDTO extends BaseDTO  implements Serializable {
 
 	/**
 	 * 

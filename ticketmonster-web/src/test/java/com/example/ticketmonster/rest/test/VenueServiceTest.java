@@ -2,23 +2,27 @@ package com.example.ticketmonster.rest.test;
 
 import static org.junit.Assert.assertEquals;
 
+import java.net.URI;
+
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.example.ticketmonster.model.Venue;
+import com.example.ticketmonster.rest.dto.DTOFactory;
+import com.example.ticketmonster.rest.dto.VenueDTO;
 
 public class VenueServiceTest extends BaseServiceTest {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(VenueServiceTest.class);
 
 	@Test
-	public void testGetEventsWithWebClient() {
+	public void testGetVenuesWithWebClient() {
 		LOG.info("running testGetEventsWithWebClient");
 		WebClient client = WebClient.create(ENDPOINT_ADDRESS);
 		client.path("venues");
@@ -35,16 +39,20 @@ public class VenueServiceTest extends BaseServiceTest {
 	}
 
 	@Test
-	public void testGetEventWithWebClient() {
+	public void testGetVenueWithWebClient() {
 		LOG.info("running testGetEventWithWebClient");
 
-		WebClient client = WebClient.create(ENDPOINT_ADDRESS);
-		client.path("venues/1");
-		Response response = client.get();
+		long id = 1;
+		// get venue with id
+		VenueDTO responseDTO = getVenue(id);
 
-		JSONObject object = getJSONObjectFromResponse(response);
-		long id = getId(object);
-		assertEquals(1L, id);
+		// find venue in database
+		Venue venue = entityManager.find(Venue.class, id);
+		// convert entity to dto
+		VenueDTO entityDTO = new VenueDTO(venue);
+
+		// assert they are equal
+		assertEquals(entityDTO, responseDTO);
 	}
 
 	@Test
@@ -67,49 +75,23 @@ public class VenueServiceTest extends BaseServiceTest {
 		client.type(MediaType.APPLICATION_JSON);
 		client.accept(MediaType.APPLICATION_JSON);
 
-		JSONObject venue = buildVenue();
-		Response response = client.post(venue.toString());
+		VenueDTO venueDTO = generateRandomVenue();
+
+		Response response = client.post(venueDTO.toJSON());
 		LOG.debug("Create Post Request Response Status: {}",
 				response.getStatus());
 
 		assertEquals(201, response.getStatus());
+
+		URI newVenueURI = response.getLocation();
+		String path = newVenueURI.getPath();
+		LOG.debug("id: " + path.charAt(path.length() - 1));
 	}
 
-	protected JSONObject buildVenue() {
-		JSONObject venue = new JSONObject();
-
-		int id = random.nextInt(1000);
-		JSONObject address = generateAddress();
-		JSONObject mediaItem = generateMediaItem();
-		String description = randomString(50);
-
-		int totalCapacity = 0;
-		JSONArray sections = new JSONArray();
-		int sectioncount = random.nextInt(5) + 1;
-
-		int capacity;
-		JSONObject section;
-		try {
-			for (int i = 0; i < sectioncount; i++) {
-				section = generateSection();
-				capacity = Integer.valueOf(section.get("capacity").toString());
-				totalCapacity += capacity;
-				sections.put(section);
-			}
-		} catch (JSONException e) {
-			LOG.warn("Problem generating sections", e);
-		}
-
-		try {
-			venue.put("capacity", totalCapacity);
-			venue.put("id", id);
-			venue.put("description", description);
-			venue.put("address", address);
-			venue.put("mediaItem", mediaItem);
-		} catch (JSONException e) {
-			LOG.warn("Problem building address", e);
-		}
-
-		return venue;
+	protected VenueDTO getVenue(long id) {
+		WebClient client = WebClient.create(ENDPOINT_ADDRESS);
+		client.path("venues/" + id);
+		Response response = client.get();
+		return convertResponse(VenueDTO.class, response);
 	}
 }

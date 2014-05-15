@@ -1,5 +1,6 @@
 package com.example.ticketmonster.rest.dto;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -13,7 +14,13 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.example.ticketmonster.model.Section;
 import com.example.ticketmonster.model.SectionAllocation;
@@ -23,6 +30,7 @@ import com.example.ticketmonster.model.Venue;
 
 @XmlRootElement
 public class VenueDTO implements Serializable {
+	private static final Logger LOG = LoggerFactory.getLogger(VenueDTO.class);
 
 	/**
 	 * 
@@ -38,9 +46,9 @@ public class VenueDTO implements Serializable {
 
 	public VenueDTO() {
 	}
-	
+
 	public VenueDTO(JSONObject object) {
-		
+
 	}
 
 	public VenueDTO(final Venue entity) {
@@ -59,7 +67,6 @@ public class VenueDTO implements Serializable {
 		}
 	}
 
-	
 	public Venue fromDTO(Venue entity, EntityManager em) {
 		if (entity == null) {
 			entity = new Venue();
@@ -156,7 +163,6 @@ public class VenueDTO implements Serializable {
 				.getResultList();
 	}
 
-
 	public Long getId() {
 		return this.id;
 	}
@@ -211,5 +217,22 @@ public class VenueDTO implements Serializable {
 
 	public void setCapacity(final int capacity) {
 		this.capacity = capacity;
+	}
+
+	public JSONObject toJSON() {
+		JSONObject object = new JSONObject();
+
+		try {
+			object.put("capacity", capacity);
+			object.put("name", name);
+			object.put("id", id);
+			object.put("description", description);
+			object.put("address", address.toJSON());
+			object.put("mediaItem", mediaItem.toJSON());
+		} catch (JSONException e) {
+			LOG.warn("Problem building json object", e);
+		}
+
+		return object;
 	}
 }

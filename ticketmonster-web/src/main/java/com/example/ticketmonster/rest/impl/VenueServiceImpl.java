@@ -35,7 +35,7 @@ public class VenueServiceImpl extends BaseEntityService<Venue> implements
 		// convert dto to entity
 		Venue entity = dto.fromDTO(null, getEntityManager());
 		// persist in database
-		getEntityManager().persist(entity);
+		persist(entity);
 		// build uri to new entity
 		String path = String.valueOf(entity.getId());
 		URI uri = UriBuilder.fromResource(VenueService.class).path(path)

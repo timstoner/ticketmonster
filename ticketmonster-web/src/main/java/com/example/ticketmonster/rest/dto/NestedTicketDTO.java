@@ -8,7 +8,7 @@ import com.example.ticketmonster.rest.dto.SeatDTO;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-public class NestedTicketDTO implements Serializable {
+public class NestedTicketDTO  extends BaseDTO implements Serializable {
 
 	/**
 	 * 

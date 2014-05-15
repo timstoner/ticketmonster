@@ -1,13 +1,22 @@
 package com.example.ticketmonster.rest.dto;
 
+import java.io.IOException;
 import java.io.Serializable;
-
-import com.example.ticketmonster.model.Section;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.example.ticketmonster.model.Section;
+
 public class NestedSectionDTO implements Serializable {
+	private static final Logger LOG = LoggerFactory
+			.getLogger(NestedSectionDTO.class);
 
 	/**
 	 * 
@@ -104,5 +113,24 @@ public class NestedSectionDTO implements Serializable {
 
 	public void setNumberOfRows(final int numberOfRows) {
 		this.numberOfRows = numberOfRows;
+	}
+
+	public boolean equals(Object obj) {
+		return EqualsBuilder.reflectionEquals(this, obj);
+	}
+
+	public int hashCode() {
+		return HashCodeBuilder.reflectionHashCode(this);
+	}
+
+	public static NestedSectionDTO newInstance(String entity) {
+		ObjectMapper mapper = new ObjectMapper();
+		NestedSectionDTO dto = null;
+		try {
+			dto = mapper.readValue(entity, NestedSectionDTO.class);
+		} catch (IOException e) {
+			LOG.warn("Problem building DTO from JSON", e);
+		}
+		return dto;
 	}
 }

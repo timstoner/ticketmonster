@@ -11,7 +11,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @XmlRootElement
-public class EventCategoryDTO implements Serializable {
+public class EventCategoryDTO extends BaseDTO  implements Serializable {
 
 	/**
 	 * 

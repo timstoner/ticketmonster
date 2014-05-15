@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.example.ticketmonster.model.Venue;
 
-public class NestedVenueDTO implements Serializable {
+public class NestedVenueDTO  extends BaseDTO implements Serializable {
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(NestedVenueDTO.class);

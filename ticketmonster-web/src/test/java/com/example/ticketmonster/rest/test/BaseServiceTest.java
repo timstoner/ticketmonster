@@ -23,6 +23,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.example.ticketmonster.rest.dto.AddressDTO;
+import com.example.ticketmonster.rest.dto.DTOFactory;
+import com.example.ticketmonster.rest.dto.NestedVenueDTO;
+import com.example.ticketmonster.rest.dto.SectionDTO;
+import com.example.ticketmonster.rest.dto.VenueDTO;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
@@ -39,7 +43,7 @@ public abstract class BaseServiceTest {
 
 	@Autowired
 	protected ApplicationContext context;
-	
+
 	@PersistenceContext
 	protected EntityManager entityManager;
 
@@ -66,6 +70,26 @@ public abstract class BaseServiceTest {
 		return client;
 	}
 
+	protected VenueDTO generateRandomVenue() {
+		VenueDTO dto = new VenueDTO();
+
+		dto.setAddress(generateRandomAddress());
+		dto.setCapacity(100);
+		dto.setDescription(randomString(100));
+
+		return dto;
+	}
+
+	protected AddressDTO generateRandomAddress() {
+		AddressDTO dto = new AddressDTO();
+
+		dto.setCity(randomString(10));
+		dto.setStreet(randomString(10));
+		dto.setCountry(randomString(10));
+
+		return dto;
+	}
+
 	protected JSONObject generateMediaItem() {
 		JSONObject mediaitem = new JSONObject();
 
@@ -84,14 +108,6 @@ public abstract class BaseServiceTest {
 		return mediaitem;
 	}
 
-	protected JSONObject generateAddress() {
-		String street = randomString(15);
-		String city = randomString(10);
-		String country = randomString(10);
-
-		return buildAddress(street, city, country);
-	}
-
 	protected AddressDTO buildAddress(JSONObject address) {
 		AddressDTO addressDTO = new AddressDTO();
 
@@ -106,37 +122,36 @@ public abstract class BaseServiceTest {
 		return addressDTO;
 	}
 
-	protected JSONObject buildAddress(String street, String city, String country) {
-		JSONObject address = new JSONObject();
-
-		try {
-			address.put("street", street);
-			address.put("city", city);
-			address.put("country", country);
-		} catch (JSONException e) {
-			LOG.warn("Problem building address", e);
-		}
-
-		return address;
-	}
-
 	protected JSONObject generateSection() {
-		int id = 0;
 		String name = randomString();
 		String description = randomString(20);
 		int numberOfRows = 10;
 		int rowCapacity = 10;
 
-		return buildSection(id, name, description, numberOfRows, rowCapacity);
+		return buildSection(name, description, numberOfRows, rowCapacity);
 	}
 
-	protected JSONObject buildSection(int id, String name, String description,
+	protected SectionDTO buildRandomSection() {
+		SectionDTO dto = new SectionDTO();
+		dto.setNumberOfRows(10);
+		dto.setDescription(randomString(200));
+		dto.setRowCapacity(10);
+		dto.setCapacity(100);
+		dto.setVenue(generateRandomNestedVenue());
+
+		return dto;
+	}
+
+	protected NestedVenueDTO generateRandomNestedVenue() {
+		return null;
+	}
+
+	protected JSONObject buildSection(String name, String description,
 			int numberOfRows, int rowCapacity) {
 		JSONObject section = new JSONObject();
 		int capacity = numberOfRows * rowCapacity;
 
 		try {
-			section.put("id", id);
 			section.put("name", name);
 			section.put("description", description);
 			section.put("numberOfRows", numberOfRows);
@@ -196,5 +211,11 @@ public abstract class BaseServiceTest {
 			LOG.error("No Id Found in JSON Object", e);
 		}
 		return id;
+	}
+
+	protected static <T> T convertResponse(Class<T> type, Response response) {
+		String entity = response.readEntity(String.class);
+		T responseDTO = DTOFactory.build(type, entity);
+		return responseDTO;
 	}
 }
