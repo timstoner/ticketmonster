@@ -18,8 +18,8 @@ import com.example.ticketmonster.rest.SectionService;
 import com.example.ticketmonster.rest.VenueService;
 import com.example.ticketmonster.rest.dto.VenueDTO;
 
-public class VenueServiceImpl extends BaseEntityService<Venue> implements
-		VenueService {
+public class VenueServiceImpl extends BaseEntityService<Venue, VenueDTO>
+		implements VenueService {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(VenueServiceImpl.class);
 
@@ -49,7 +49,7 @@ public class VenueServiceImpl extends BaseEntityService<Venue> implements
 		Venue entity = getSingleInstance(id);
 
 		if (entity != null) {
-			VenueDTO dto = entity.buildDTO();
+			VenueDTO dto = entity.convertToDTO();
 			return Response.ok(dto).build();
 		} else {
 			return Response.status(Status.NOT_FOUND).build();
@@ -63,7 +63,7 @@ public class VenueServiceImpl extends BaseEntityService<Venue> implements
 
 		// convert entities to data transfer objects
 		for (Venue entity : entities) {
-			VenueDTO dto = entity.buildDTO();
+			VenueDTO dto = entity.convertToDTO();
 			dtoResults.add(dto);
 		}
 

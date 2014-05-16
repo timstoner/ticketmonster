@@ -1,4 +1,4 @@
-package com.example.ticketmonster.model;
+package com.example.ticketmonster.rest;
 
 public class SeatAllocationException extends RuntimeException {
 

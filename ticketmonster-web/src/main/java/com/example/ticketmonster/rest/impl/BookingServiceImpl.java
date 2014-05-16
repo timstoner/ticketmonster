@@ -1,6 +1,5 @@
 package com.example.ticketmonster.rest.impl;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,12 +12,8 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
-import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +25,7 @@ import com.example.ticketmonster.model.Section;
 import com.example.ticketmonster.model.Ticket;
 import com.example.ticketmonster.model.TicketCategory;
 import com.example.ticketmonster.model.TicketPrice;
+import com.example.ticketmonster.model.factory.BookingFactory;
 import com.example.ticketmonster.request.BookingRequest;
 import com.example.ticketmonster.request.TicketRequest;
 import com.example.ticketmonster.rest.BookingService;
@@ -48,9 +44,9 @@ import com.example.ticketmonster.service.SeatAllocationService;
  * @author Marius Bogoevici
  * @author Pete Muir
  */
-@Path("/bookings")
-public class BookingServiceImpl extends BaseEntityService<Booking> implements
-		BookingService {
+
+public class BookingServiceImpl extends BaseEntityService<Booking, BookingDTO>
+		implements BookingService {
 
 	private static Logger LOG = LoggerFactory
 			.getLogger(BookingServiceImpl.class);
@@ -60,69 +56,7 @@ public class BookingServiceImpl extends BaseEntityService<Booking> implements
 
 	public BookingServiceImpl() {
 		super(Booking.class);
-	}
-
-	@Override
-	public Response findById(Long id) {
-		Booking entity = getSingleInstance(id);
-
-		if (entity != null) {
-			BookingDTO dto = new BookingDTO(entity);
-			return Response.ok(dto).build();
-		} else {
-			return Response.status(Status.NOT_FOUND).build();
-		}
-	}
-
-	@Override
-	public Response findAll(UriInfo uriInfo) {
-		List<Booking> entities = this.getAll(uriInfo.getQueryParameters());
-		List<BookingDTO> dtoResults = new ArrayList<>();
-
-		// convert entities to data transfer objects
-		for (Booking entity : entities) {
-			BookingDTO dto = new BookingDTO(entity);
-			dtoResults.add(dto);
-		}
-
-		return Response.ok(dtoResults).build();
-	}
-
-	@Override
-	public Response deleteById(Long id) {
-		LOG.debug("deleteById {}", id);
-		return super.deleteById(id);
-	}
-
-	@Override
-	public Response deleteAll(UriInfo uriInfo) {
-		LOG.debug("deleteAll");
-		return super.deleteAll(uriInfo);
-	}
-
-	@Override
-	public Response create(BookingDTO dto) {
-		// convert dto to entity
-		Booking entity = dto.fromDTO(null, getEntityManager());
-		// persist in database
-		getEntityManager().persist(entity);
-		// build uri to new entity
-		String path = String.valueOf(entity.getId());
-		URI uri = UriBuilder.fromResource(BookingService.class).path(path)
-				.build();
-
-		return Response.created(uri).build();
-	}
-
-	@Override
-	public Response update(Long id, BookingDTO dto) {
-		LOG.debug("update {}", id);
-		Booking entity = getSingleInstance(id);
-
-		entity = dto.fromDTO(entity, getEntityManager());
-		entity = getEntityManager().merge(entity);
-
-		return Response.noContent().build();
+		LOG.debug("Creating Booking Service");
 	}
 
 	/**
@@ -296,11 +230,24 @@ public class BookingServiceImpl extends BaseEntityService<Booking> implements
 		return ticketPricesById;
 	}
 
-	protected String getFindByIdQuery() {
-		return "SELECT DISTINCT b FROM Booking b LEFT JOIN FETCH b.tickets LEFT JOIN FETCH b.performance WHERE b.id = :entityId ORDER BY b.id";
+	@Override
+	protected BookingDTO buildDTO(Booking entity) {
+		return entity.convertToDTO();
 	}
 
-	protected String getFindAllQuery() {
-		return "SELECT DISTINCT b FROM Booking b LEFT JOIN FETCH b.tickets LEFT JOIN FETCH b.performance ORDER BY b.id";
+	@Override
+	protected Booking buildEntity(BookingDTO dto) {
+		return BookingFactory.buildEntity(dto, getEntityManager());
 	}
+
+	@Override
+	protected String getFindAllQuery() {
+		return BookingFactory.getFindAllQuery();
+	}
+
+	@Override
+	protected String getFindByIdQuery() {
+		return BookingFactory.getFindByIdQuery();
+	}
+
 }

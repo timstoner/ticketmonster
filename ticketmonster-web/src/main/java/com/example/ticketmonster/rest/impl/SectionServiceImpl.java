@@ -1,110 +1,48 @@
 package com.example.ticketmonster.rest.impl;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.example.ticketmonster.model.Section;
+import com.example.ticketmonster.model.factory.SectionFactory;
 import com.example.ticketmonster.rest.SectionService;
 import com.example.ticketmonster.rest.dto.SectionDTO;
 
-public class SectionServiceImpl extends BaseEntityService<Section> implements
-		SectionService {
+public class SectionServiceImpl extends BaseEntityService<Section, SectionDTO>
+		implements SectionService {
 
 	private static Logger LOG = LoggerFactory
 			.getLogger(SectionServiceImpl.class);
 
 	public SectionServiceImpl() {
 		super(Section.class);
-	}
-
-	public Response create(SectionDTO dto) {
-		LOG.debug("create {}", dto.getName());
-
-		// convert dto to entity
-		Section entity = Section.buildSection(dto, getEntityManager());
-
-		persist(entity);
-
-		// build a new path to the created section
-		String path = String.valueOf(entity.getId());
-		URI uri = UriBuilder.fromResource(SectionService.class).path(path)
-				.build();
-
-		return Response.created(uri).build();
+		LOG.debug("Creating Section Service");
 	}
 
 	@Override
-	public Response findById(Long id) {
-		Section entity = getSingleInstance(id);
-
-		if (entity != null) {
-			SectionDTO dto = new SectionDTO(entity);
-			return Response.ok(dto).build();
-		} else {
-			return Response.status(Status.NOT_FOUND).build();
-		}
+	protected SectionDTO buildDTO(Section entity) {
+		return null;
 	}
 
 	@Override
-	public Response findAll(UriInfo uriInfo) {
-		List<Section> entities = this.getAll(uriInfo.getQueryParameters());
-		List<SectionDTO> dtoResults = new ArrayList<>();
+	protected Section buildEntity(SectionDTO dto) {
+		Section entity = getSingleInstance(dto.getId());
 
-		// convert entities to data transfer objects
-		for (Section entity : entities) {
-			SectionDTO dto = new SectionDTO(entity);
-			dtoResults.add(dto);
+		if (entity == null) {
+			entity = SectionFactory.buildSection(dto, getEntityManager());
 		}
 
-		return Response.ok(dtoResults).build();
+		return entity;
 	}
 
-	public Response deleteById(Long id) {
-		LOG.debug("deleteById {}", id);
-		ResponseBuilder rb;
-
-		// lookup the section by id in the entity manager
-		Section entity = getEntityManager().find(Section.class, id);
-
-		if (entity != null) {
-			getEntityManager().remove(entity);
-			rb = Response.noContent();
-		} else {
-			rb = Response.status(Status.NOT_FOUND);
-		}
-
-		return rb.build();
-	}
-
-	public Response update(Long id, SectionDTO dto) {
-		LOG.debug("update {}", id);
-
-		Section entity = getSingleInstance(id);
-
-		if (entity != null) {
-			entity = dto.fromDTO(entity, getEntityManager());
-			entity = getEntityManager().merge(entity);
-		}
-
-		return Response.noContent().build();
-	}
-
+	@Override
 	protected String getFindAllQuery() {
-		return "SELECT DISTINCT s FROM Section s LEFT JOIN FETCH s.venue ORDER BY s.id";
+		return null;
 	}
 
+	@Override
 	protected String getFindByIdQuery() {
-		return "SELECT DISTINCT s FROM Section s LEFT JOIN FETCH s.venue WHERE s.id = :entityId ORDER BY s.id";
+		return null;
 	}
 
 }

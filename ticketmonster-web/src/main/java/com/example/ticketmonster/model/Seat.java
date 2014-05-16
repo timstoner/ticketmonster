@@ -4,6 +4,8 @@ import javax.persistence.Embeddable;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.Min;
 
+import com.example.ticketmonster.rest.dto.SeatDTO;
+
 /**
  * TODO
  * 
@@ -54,5 +56,15 @@ public class Seat {
 		return new StringBuilder().append(getSection()).append(" (")
 				.append(getRowNumber()).append(", ").append(getNumber())
 				.append(")").toString();
+	}
+
+	public SeatDTO buildDTO() {
+		SeatDTO dto = new SeatDTO();
+
+		dto.setNumber(number);
+		dto.setRowNumber(rowNumber);
+		dto.setSection(this.section.buildNestedDTO());
+
+		return dto;
 	}
 }

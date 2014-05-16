@@ -5,6 +5,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 import java.io.Serializable;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -13,6 +14,9 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+import com.example.ticketmonster.rest.dto.NestedTicketPriceDTO;
+import com.example.ticketmonster.rest.dto.TicketPriceDTO;
 
 /**
  * <p>
@@ -42,7 +46,8 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 @JsonIgnoreProperties("show")
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = { "section_id",
 		"show_id", "ticketcategory_id" }))
-public class TicketPrice implements Serializable, Identifiable {
+public class TicketPrice extends BaseEntity<TicketPriceDTO> implements
+		Serializable, Identifiable {
 
 	/* Declaration of fields */
 
@@ -184,4 +189,41 @@ public class TicketPrice implements Serializable, Identifiable {
 	public String toString() {
 		return "$ " + price + " for " + ticketCategory + " in " + section;
 	}
+
+	public NestedTicketPriceDTO buildNestedDTO() {
+		NestedTicketPriceDTO dto = new NestedTicketPriceDTO();
+		dto.setId(id);
+		dto.setPrice(price);
+		return dto;
+	}
+
+	public TicketPriceDTO convertToDTO() {
+		TicketPriceDTO dto = new TicketPriceDTO();
+
+		dto.setId(id);
+		dto.setPrice(price);
+		dto.setSection(section.buildNestedDTO());
+		dto.setShow(show.buildNestedDTO());
+		dto.setTicketCategory(ticketCategory.buildNestedDTO());
+
+		return dto;
+	}
+
+	@Override
+	public void convertFromDTO(TicketPriceDTO dto, EntityManager em) {
+		this.id = dto.getId();
+		this.price = dto.getPrice();
+		this.section = Section.buildSection(dto.getSection(), em);
+		this.ticketCategory = TicketCategory.buildTicketCategory(
+				dto.getTicketCategory(), em);
+	}
+
+	public String getFindByIdQuery() {
+		return "SELECT DISTINCT t FROM TicketPrice t LEFT JOIN FETCH t.show LEFT JOIN FETCH t.section LEFT JOIN FETCH t.ticketCategory WHERE t.id = :entityId ORDER BY t.id";
+	}
+
+	public String getFindAllQuery() {
+		return "SELECT DISTINCT t FROM TicketPrice t LEFT JOIN FETCH t.show LEFT JOIN FETCH t.section LEFT JOIN FETCH t.ticketCategory ORDER BY t.id";
+	}
+
 }

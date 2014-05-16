@@ -9,13 +9,16 @@ import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NoResultException;
 import javax.persistence.Table;
+import javax.persistence.TypedQuery;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.example.ticketmonster.rest.dto.NestedSectionDTO;
 import com.example.ticketmonster.rest.dto.SectionDTO;
 
 /**
@@ -47,7 +50,8 @@ import com.example.ticketmonster.rest.dto.SectionDTO;
  * format
  */
 @JsonIgnoreProperties({ "venue", "sectionRows" })
-public class Section implements Serializable, Identifiable {
+public class Section extends BaseEntity<SectionDTO> implements Serializable,
+		Identifiable {
 
 	/* Declaration of fields */
 
@@ -198,19 +202,27 @@ public class Section implements Serializable, Identifiable {
 		return name;
 	}
 
-	public static Section buildSection(SectionDTO dto, EntityManager em) {
-		Section entity = new Section();
+	public NestedSectionDTO buildNestedDTO() {
+		NestedSectionDTO dto = new NestedSectionDTO();
 
-		entity.setDescription(dto.getDescription());
-		entity.setRowCapacity(dto.getRowCapacity());
-		entity.setName(dto.getName());
-		entity.setNumberOfRows(dto.getNumberOfRows());
+		dto.setCapacity(getCapacity());
+		dto.setDescription(description);
+		dto.setId(id);
+		dto.setName(name);
+		dto.setNumberOfRows(numberOfRows);
+		dto.setRowCapacity(rowCapacity);
 
-		if (dto.getVenue() != null) {
-			Venue venue = Venue.buildVenue(dto.getVenue(), em);
-			entity.setVenue(venue);
-		}
-
-		return entity;
+		return dto;
 	}
+
+	@Override
+	public SectionDTO convertToDTO() {
+		return null;
+	}
+
+	
+
+
+	
+
 }

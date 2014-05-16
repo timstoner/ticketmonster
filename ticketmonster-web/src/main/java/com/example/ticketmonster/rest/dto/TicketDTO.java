@@ -2,45 +2,16 @@ package com.example.ticketmonster.rest.dto;
 
 import java.io.Serializable;
 
-import com.example.ticketmonster.model.Ticket;
-import com.example.ticketmonster.rest.dto.NestedTicketCategoryDTO;
-import com.example.ticketmonster.rest.dto.SeatDTO;
-
-import javax.persistence.EntityManager;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class TicketDTO extends BaseDTO implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private NestedTicketCategoryDTO ticketCategory;
 	private float price;
 	private SeatDTO seat;
-
-	public TicketDTO() {
-	}
-
-	public TicketDTO(final Ticket entity) {
-		if (entity != null) {
-			this.id = entity.getId();
-			this.ticketCategory = new NestedTicketCategoryDTO(
-					entity.getTicketCategory());
-			this.price = entity.getPrice();
-			this.seat = new SeatDTO(entity.getSeat());
-		}
-	}
-
-	public Ticket fromDTO(Ticket entity, EntityManager em) {
-		if (entity == null) {
-			entity = new Ticket();
-		}
-		entity = em.merge(entity);
-		return entity;
-	}
 
 	public Long getId() {
 		return this.id;
@@ -54,7 +25,7 @@ public class TicketDTO extends BaseDTO implements Serializable {
 		return this.ticketCategory;
 	}
 
-	public void setTicketCategory(final NestedTicketCategoryDTO ticketCategory) {
+	public void setTicketCategory(NestedTicketCategoryDTO ticketCategory) {
 		this.ticketCategory = ticketCategory;
 	}
 

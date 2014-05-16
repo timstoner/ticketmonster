@@ -1,24 +1,16 @@
 package com.example.ticketmonster.rest.dto;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
-
-import java.util.Date;
-import java.util.Set;
-import java.util.HashSet;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import com.example.ticketmonster.model.Booking;
 import com.example.ticketmonster.model.Ticket;
-import com.example.ticketmonster.rest.dto.NestedPerformanceDTO;
-import com.example.ticketmonster.rest.dto.NestedTicketDTO;
-
-import java.util.Iterator;
-
-import javax.xml.bind.annotation.XmlRootElement;
-
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @XmlRootElement
 public class BookingDTO extends BaseDTO implements Serializable {
@@ -35,24 +27,6 @@ public class BookingDTO extends BaseDTO implements Serializable {
 	private float totalTicketPrice;
 	private Set<NestedTicketDTO> tickets = new HashSet<NestedTicketDTO>();
 
-	public BookingDTO() {
-	}
-
-	public BookingDTO(final Booking entity) {
-		if (entity != null) {
-			this.createdOn = entity.getCreatedOn();
-			this.id = entity.getId();
-			this.cancellationCode = entity.getCancellationCode();
-			this.contactEmail = entity.getContactEmail();
-			this.performance = new NestedPerformanceDTO(entity.getPerformance());
-			this.totalTicketPrice = entity.getTotalTicketPrice();
-			Iterator<Ticket> iterTickets = entity.getTickets().iterator();
-			for (; iterTickets.hasNext();) {
-				Ticket element = iterTickets.next();
-				this.tickets.add(new NestedTicketDTO(element));
-			}
-		}
-	}
 
 	public Booking fromDTO(Booking entity, EntityManager em) {
 		if (entity == null) {
@@ -168,14 +142,6 @@ public class BookingDTO extends BaseDTO implements Serializable {
 
 	public void setTickets(final Set<NestedTicketDTO> tickets) {
 		this.tickets = tickets;
-	}
-
-	public boolean equals(Object obj) {
-		return EqualsBuilder.reflectionEquals(this, obj);
-	}
-
-	public int hashCode() {
-		return HashCodeBuilder.reflectionHashCode(this);
 	}
 
 	public String toString() {

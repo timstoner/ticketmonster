@@ -22,6 +22,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.example.ticketmonster.rest.dto.BookingDTO;
+import com.example.ticketmonster.rest.dto.NestedPerformanceDTO;
+
 /**
  * <p>
  * A Booking represents a set of tickets purchased for a performance.
@@ -39,7 +42,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 @SuppressWarnings("serial")
 @Entity
 @XmlRootElement
-public class Booking implements Serializable, Identifiable {
+public class Booking extends BaseEntity<BookingDTO> implements Serializable,
+		Identifiable {
 
 	/* Declaration of fields */
 
@@ -214,5 +218,27 @@ public class Booking implements Serializable, Identifiable {
 	@Override
 	public int hashCode() {
 		return id != null ? id.hashCode() : 0;
+	}
+
+	@Override
+	public BookingDTO convertToDTO() {
+		BookingDTO dto = new BookingDTO();
+
+		dto.setCancellationCode(cancellationCode);
+		dto.setContactEmail(contactEmail);
+		dto.setCreatedOn(createdOn);
+		dto.setId(id);
+		dto.setTotalTicketPrice(getTotalTicketPrice());
+
+		if (this.performance != null) {
+			NestedPerformanceDTO npDTO = performance.buildNestedDTO();
+			dto.setPerformance(npDTO);
+		}
+
+		for (Ticket ticket : this.getTickets()) {
+			dto.getTickets().add(ticket.buildNestedDTO());
+		}
+
+		return dto;
 	}
 }

@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 
 import com.example.ticketmonster.model.Performance;
 import com.example.ticketmonster.model.Seat;
-import com.example.ticketmonster.model.SeatAllocationException;
 import com.example.ticketmonster.model.Section;
 import com.example.ticketmonster.model.SectionAllocation;
+import com.example.ticketmonster.rest.SeatAllocationException;
 
 @Component
 public class SeatAllocationService {

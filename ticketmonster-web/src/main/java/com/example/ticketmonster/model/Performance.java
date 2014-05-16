@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -16,6 +17,9 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+import com.example.ticketmonster.rest.dto.NestedPerformanceDTO;
+import com.example.ticketmonster.rest.dto.PerformanceDTO;
 
 /**
  * <p>
@@ -42,7 +46,8 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = { "date", "show_id" }))
 // TODO Document use of @JsonIgnoreProperties
 @JsonIgnoreProperties("show")
-public class Performance implements Serializable, Identifiable {
+public class Performance extends BaseEntity<PerformanceDTO> implements
+		Serializable, Identifiable {
 
 	/* Declaration of fields */
 
@@ -148,4 +153,39 @@ public class Performance implements Serializable, Identifiable {
 	public String toString() {
 		return show + " on " + date.toString();
 	}
+
+	@Override
+	public void convertFromDTO(PerformanceDTO dto, EntityManager em) {
+		this.date = dto.getDate();
+		this.id = dto.getId();
+		this.show = Show.buildShow(dto.getShow(), em);
+	}
+
+	public NestedPerformanceDTO buildNestedDTO() {
+		NestedPerformanceDTO dto = new NestedPerformanceDTO();
+
+		dto.setDate(date);
+		dto.setId(id);
+
+		return dto;
+	}
+
+	public PerformanceDTO convertToDTO() {
+		PerformanceDTO dto = new PerformanceDTO();
+
+		dto.setDate(date);
+		dto.setShow(show.buildNestedDTO());
+		dto.setId(id);
+
+		return dto;
+	}
+
+	public static String getFindByIdQuery() {
+		return "SELECT DISTINCT p FROM Performance p LEFT JOIN FETCH p.show WHERE p.id = :entityId ORDER BY p.id";
+	}
+
+	public static String getFindAllQuery() {
+		return "SELECT DISTINCT p FROM Performance p LEFT JOIN FETCH p.show ORDER BY p.id";
+	}
+
 }

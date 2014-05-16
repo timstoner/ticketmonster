@@ -13,9 +13,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class TicketPriceDTO extends BaseDTO implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private NestedTicketCategoryDTO ticketCategory;
@@ -24,39 +21,39 @@ public class TicketPriceDTO extends BaseDTO implements Serializable {
 	private NestedSectionDTO section;
 	private String displayTitle;
 
-	public TicketPriceDTO() {
-	}
-
-	public TicketPriceDTO(final TicketPrice entity) {
-		if (entity != null) {
-			this.id = entity.getId();
-			this.ticketCategory = new NestedTicketCategoryDTO(
-					entity.getTicketCategory());
-			this.price = entity.getPrice();
-			this.show = new NestedShowDTO(entity.getShow());
-			this.section = new NestedSectionDTO(entity.getSection());
-			this.displayTitle = entity.toString();
-		}
-	}
-
-	public TicketPrice fromDTO(TicketPrice entity, EntityManager em) {
-		if (entity == null) {
-			entity = new TicketPrice();
-		}
-		if (this.ticketCategory != null) {
-			entity.setTicketCategory(this.ticketCategory.fromDTO(
-					entity.getTicketCategory(), em));
-		}
-		entity.setPrice(this.price);
-		if (this.show != null) {
-			entity.setShow(this.show.fromDTO(entity.getShow(), em));
-		}
-		if (this.section != null) {
-			entity.setSection(this.section.fromDTO(entity.getSection(), em));
-		}
-		entity = em.merge(entity);
-		return entity;
-	}
+	// public TicketPriceDTO() {
+	// }
+	//
+	// public TicketPriceDTO(final TicketPrice entity) {
+	// if (entity != null) {
+	// this.id = entity.getId();
+	// this.ticketCategory = new NestedTicketCategoryDTO(
+	// entity.getTicketCategory());
+	// this.price = entity.getPrice();
+	// this.show = new NestedShowDTO(entity.getShow());
+	// this.section = new NestedSectionDTO(entity.getSection());
+	// this.displayTitle = entity.toString();
+	// }
+	// }
+	//
+	// public TicketPrice fromDTO(TicketPrice entity, EntityManager em) {
+	// if (entity == null) {
+	// entity = new TicketPrice();
+	// }
+	// if (this.ticketCategory != null) {
+	// entity.setTicketCategory(this.ticketCategory.fromDTO(
+	// entity.getTicketCategory(), em));
+	// }
+	// entity.setPrice(this.price);
+	// if (this.show != null) {
+	// entity.setShow(this.show.fromDTO(entity.getShow(), em));
+	// }
+	// if (this.section != null) {
+	// entity.setSection(this.section.fromDTO(entity.getSection(), em));
+	// }
+	// entity = em.merge(entity);
+	// return entity;
+	// }
 
 	public Long getId() {
 		return this.id;

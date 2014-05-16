@@ -98,9 +98,9 @@ public class Address implements Serializable {
 	public AddressDTO buildDTO() {
 		AddressDTO dto = new AddressDTO();
 
-		dto.setCity(city);
-		dto.setStreet(street);
-		dto.setCountry(country);
+		dto.setCity(this.getCity());
+		dto.setStreet(this.getStreet());
+		dto.setCountry(this.getCountry());
 
 		return dto;
 	}

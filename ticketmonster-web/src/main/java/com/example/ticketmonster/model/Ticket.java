@@ -10,6 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
+import com.example.ticketmonster.rest.dto.NestedTicketDTO;
+import com.example.ticketmonster.rest.dto.TicketDTO;
+
 /**
  * <p>
  * A ticket represents a seat sold for a particular price.
@@ -27,7 +30,8 @@ import javax.validation.constraints.NotNull;
  */
 @SuppressWarnings("serial")
 @Entity
-public class Ticket implements Serializable, Identifiable {
+public class Ticket extends BaseEntity<TicketDTO> implements Serializable,
+		Identifiable {
 
 	/* Declaration of fields */
 
@@ -95,8 +99,16 @@ public class Ticket implements Serializable, Identifiable {
 		return price;
 	}
 
+	public void setPrice(float price) {
+		this.price = price;
+	}
+
 	public Seat getSeat() {
 		return seat;
+	}
+
+	public void setSeat(Seat seat) {
+		this.seat = seat;
 	}
 
 	@Override
@@ -104,5 +116,27 @@ public class Ticket implements Serializable, Identifiable {
 		return new StringBuilder().append(getSeat()).append(" @ ")
 				.append(getPrice()).append(" (").append(getTicketCategory())
 				.append(")").toString();
+	}
+
+	@Override
+	public TicketDTO convertToDTO() {
+		TicketDTO dto = new TicketDTO();
+
+		dto.setId(id);
+		dto.setPrice(price);
+		dto.setSeat(seat.buildDTO());
+		dto.setTicketCategory(ticketCategory.buildNestedDTO());
+
+		return dto;
+	}
+
+	public NestedTicketDTO buildNestedDTO() {
+		NestedTicketDTO dto = new NestedTicketDTO();
+
+		dto.setId(id);
+		dto.setPrice(price);
+		dto.setSeat(seat.buildDTO());
+
+		return dto;
 	}
 }

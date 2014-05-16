@@ -1,5 +1,7 @@
 package com.example.ticketmonster.rest.impl;
 
+import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,11 +20,15 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
+
+import com.example.ticketmonster.model.BaseEntity;
+import com.example.ticketmonster.rest.BaseService;
+import com.example.ticketmonster.rest.dto.BaseDTO;
 
 /**
  * <p>
@@ -72,8 +78,11 @@ import org.springframework.transaction.annotation.Transactional;
  * 
  * 
  * @author Marius Bogoevici
+ * @param <S>
+ * @param <S>
  */
-public abstract class BaseEntityService<T> {
+public abstract class BaseEntityService<T extends BaseEntity<S>, S extends BaseDTO>
+		implements BaseService<S> {
 
 	public static final MultivaluedHashMap<String, String> EMPTY = new MultivaluedHashMap<String, String>();
 
@@ -94,6 +103,18 @@ public abstract class BaseEntityService<T> {
 
 	public EntityManager getEntityManager() {
 		return entityManager;
+	}
+
+	public Response create(S dto) {
+		T entity = buildEntity(dto);
+
+		// persist to the database
+		persist(entity);
+
+		// return the path to the new resource
+		URI path = UriBuilder.fromResource(entityClass)
+				.path(String.valueOf(entity.getId())).build();
+		return Response.created(path).build();
 	}
 
 	public Response getCount(UriInfo uriInfo) {
@@ -131,6 +152,42 @@ public abstract class BaseEntityService<T> {
 			entityManager.remove(entity);
 		}
 
+		return Response.noContent().build();
+	}
+
+	public Response findById(Long id) {
+		T entity = getSingleInstance(id);
+
+		if (entity != null) {
+			S dto = buildDTO(entity);
+			return Response.ok(dto).build();
+		} else {
+			return Response.status(Status.NOT_FOUND).build();
+		}
+	}
+
+	@Override
+	public Response findAll(UriInfo uriInfo) {
+		List<T> entities = this.getAll(uriInfo.getQueryParameters());
+		List<S> dtoResults = new ArrayList<>();
+
+		// convert entities to data transfer objects
+		for (T entity : entities) {
+			S dto = buildDTO(entity);
+			dtoResults.add(dto);
+		}
+
+		return Response.ok(dtoResults).build();
+	}
+
+	@Override
+	public Response update(Long id, S dto) {
+		LOG.debug("update {}", id);
+
+		T entity = getSingleInstance(id);
+
+		entity = getEntityManager().find(entityClass, id);
+		entity = getEntityManager().merge(entity);
 		return Response.noContent().build();
 	}
 
@@ -209,7 +266,12 @@ public abstract class BaseEntityService<T> {
 		entityManager.flush();
 	}
 
-	protected abstract String getFindByIdQuery();
+	protected abstract S buildDTO(T entity);
+
+	protected abstract T buildEntity(S dto);
 
 	protected abstract String getFindAllQuery();
+
+	protected abstract String getFindByIdQuery();
+
 }

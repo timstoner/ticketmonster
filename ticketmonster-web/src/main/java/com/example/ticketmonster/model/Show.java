@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -17,6 +18,11 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
+
+import com.example.ticketmonster.rest.dto.NestedPerformanceDTO;
+import com.example.ticketmonster.rest.dto.NestedShowDTO;
+import com.example.ticketmonster.rest.dto.NestedTicketPriceDTO;
+import com.example.ticketmonster.rest.dto.ShowDTO;
 
 /**
  * <p>
@@ -48,7 +54,8 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = { "event_id",
 		"venue_id" }))
-public class Show implements Serializable, Identifiable {
+public class Show extends BaseEntity<ShowDTO> implements Serializable,
+		Identifiable {
 
 	/* Declaration of fields */
 
@@ -204,5 +211,59 @@ public class Show implements Serializable, Identifiable {
 	@Override
 	public String toString() {
 		return event + " at " + venue;
+	}
+
+	@Override
+	public ShowDTO convertToDTO() {
+		ShowDTO dto = new ShowDTO();
+
+		dto.setEvent(event.buildNestedDTO());
+		dto.setId(id);
+		dto.setVenue(venue.convertToNestedDTO());
+
+		NestedPerformanceDTO npDTO = new NestedPerformanceDTO();
+		for (Performance p : this.getPerformances()) {
+			npDTO = p.buildNestedDTO();
+			dto.getPerformances().add(npDTO);
+		}
+
+		NestedTicketPriceDTO ntpDTO = new NestedTicketPriceDTO();
+		for (TicketPrice tp : this.getTicketPrices()) {
+			ntpDTO = tp.buildNestedDTO();
+			dto.getTicketPrices().add(ntpDTO);
+		}
+
+		return dto;
+	}
+
+	public NestedShowDTO buildNestedDTO() {
+		NestedShowDTO dto = new NestedShowDTO();
+
+		dto.setId(id);
+		dto.setDisplayTitle(toString());
+
+		return dto;
+	}
+
+	@Override
+	public void convertFromDTO(ShowDTO dto, EntityManager em) {
+		this.venue = Venue.buildVenue(dto.getVenue(), em);
+		this.event = Event.buildEvent(dto.getEvent(), em);
+	}
+
+	public static String getFindByIdQuery() {
+		return "SELECT DISTINCT s FROM Show s LEFT JOIN FETCH s.event LEFT JOIN FETCH s.venue LEFT JOIN FETCH s.performances LEFT JOIN FETCH s.ticketPrices WHERE s.id = :entityId ORDER BY s.id";
+	}
+
+	public static String getFindAllQuery() {
+		return "SELECT DISTINCT s FROM Show s LEFT JOIN FETCH s.event LEFT JOIN FETCH s.venue LEFT JOIN FETCH s.performances LEFT JOIN FETCH s.ticketPrices ORDER BY s.id";
+	}
+
+	public static Show buildShow(NestedShowDTO dto, EntityManager em) {
+		Show entity = new Show();
+
+		entity = em.find(Show.class, dto.getId());
+
+		return entity;
 	}
 }

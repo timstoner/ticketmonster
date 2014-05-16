@@ -38,7 +38,8 @@ import com.example.ticketmonster.rest.dto.NestedMediaItemDTO;
  */
 @SuppressWarnings("serial")
 @Entity
-public class MediaItem implements Serializable, Identifiable {
+public class MediaItem extends BaseEntity<MediaItemDTO> implements
+		Serializable, Identifiable {
 
 	/* Declaration of fields */
 
@@ -92,6 +93,10 @@ public class MediaItem implements Serializable, Identifiable {
 		return id;
 	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public MediaType getMediaType() {
 		return mediaType;
 	}
@@ -143,7 +148,8 @@ public class MediaItem implements Serializable, Identifiable {
 		return true;
 	}
 
-	public MediaItemDTO buildDTO() {
+	@Override
+	public MediaItemDTO convertToDTO() {
 		MediaItemDTO dto = new MediaItemDTO();
 
 		dto.setId(id);
@@ -162,25 +168,4 @@ public class MediaItem implements Serializable, Identifiable {
 
 		return dto;
 	}
-
-	public static MediaItem buildMediaItem(MediaItemDTO dto) {
-		MediaItem entity = new MediaItem();
-
-		entity.id = dto.getId();
-		entity.mediaType = dto.getMediaType();
-		entity.url = dto.getUrl();
-
-		return entity;
-	}
-
-	public static MediaItem buildMediaItem(NestedMediaItemDTO dto) {
-		MediaItem entity = new MediaItem();
-
-		entity.id = dto.getId();
-		entity.mediaType = dto.getMediaType();
-		entity.url = dto.getUrl();
-
-		return entity;
-	}
-
 }

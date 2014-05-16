@@ -48,7 +48,7 @@ public class VenueServiceTest extends BaseServiceTest {
 		// find venue in database
 		Venue venue = entityManager.find(Venue.class, id);
 		// convert entity to dto
-		VenueDTO entityDTO = venue.buildDTO();
+		VenueDTO entityDTO = venue.convertToDTO();
 
 		// assert they are equal
 		assertEquals(entityDTO, responseDTO);
