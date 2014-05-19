@@ -89,6 +89,7 @@ public class MediaItem extends BaseEntity<MediaItemDTO> implements
 
 	/* Boilerplate getters and setters */
 
+	@Override
 	public Long getId() {
 		return id;
 	}

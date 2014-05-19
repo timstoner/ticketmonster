@@ -2,24 +2,14 @@ package com.example.ticketmonster.dto;
 
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.example.ticketmonster.model.Section;
-import com.example.ticketmonster.model.SectionAllocation;
-import com.example.ticketmonster.model.TicketPrice;
 
 @XmlRootElement
 public class VenueDTO extends BaseDTO implements Serializable {
@@ -185,6 +175,11 @@ public class VenueDTO extends BaseDTO implements Serializable {
 
 	public void setCapacity(final int capacity) {
 		this.capacity = capacity;
+	}
+
+	@Override
+	public String toString() {
+		return toJSON().toString();
 	}
 
 	public JSONObject toJSON() {

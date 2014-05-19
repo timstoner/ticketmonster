@@ -2,11 +2,6 @@ package com.example.ticketmonster.dto;
 
 import java.io.Serializable;
 
-import com.example.ticketmonster.model.Show;
-
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-
 public class NestedShowDTO extends BaseDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;

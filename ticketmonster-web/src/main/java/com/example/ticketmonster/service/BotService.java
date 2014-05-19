@@ -5,10 +5,7 @@ import java.util.List;
 import java.util.Timer;
 
 import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.UriInfo;
-
 import org.apache.commons.collections4.queue.CircularFifoQueue;
-import org.apache.cxf.jaxrs.impl.UriInfoImpl;
 import org.apache.cxf.message.AbstractWrappedMessage;
 import org.apache.cxf.message.Message;
 import org.slf4j.Logger;
@@ -20,7 +17,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import com.example.ticketmonster.event.BotEvent;
-import com.example.ticketmonster.model.Booking;
 import com.example.ticketmonster.rest.BookingService;
 
 @Component
@@ -70,7 +66,7 @@ public class BotService implements ApplicationEventPublisherAware,
 		synchronized (bot) {
 			stop();
 			MultivaluedHashMap<String, String> empty = new MultivaluedHashMap<String, String>();
-//			UriInfo uriInfo = new UriInfoImpl();
+			// UriInfo uriInfo = new UriInfoImpl();
 			// for (Booking booking : bookingService.findAll(uriInfo) {
 			// bookingService.deleteById(booking.getId());
 			//
@@ -103,16 +99,8 @@ public class BotService implements ApplicationEventPublisherAware,
 	@Override
 	public void onApplicationEvent(BotEvent event) {
 		synchronized (log) {
+			LOG.debug("onApplicationEvent {}", event.getMessage());
 			log.add(event.getMessage());
 		}
 	}
-
-	private class BotMessage extends AbstractWrappedMessage {
-
-		protected BotMessage(Message msg) {
-			super(msg);
-		}
-
-	}
-
 }

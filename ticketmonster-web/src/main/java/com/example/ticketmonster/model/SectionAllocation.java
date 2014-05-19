@@ -369,6 +369,7 @@ public class SectionAllocation extends BaseEntity<SectionAllocationDTO>
 		return section;
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}

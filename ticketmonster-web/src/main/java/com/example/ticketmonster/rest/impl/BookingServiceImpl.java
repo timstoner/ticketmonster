@@ -218,7 +218,7 @@ public class BookingServiceImpl extends BaseEntityService<Booking, BookingDTO>
 	}
 
 	private Map<Long, TicketPrice> loadTicketPrices(Set<Long> priceCategoryIds) {
-		List<TicketPrice> ticketPrices = (List<TicketPrice>) getEntityManager()
+		List<TicketPrice> ticketPrices = getEntityManager()
 				.createQuery("select p from TicketPrice p where p.id in :ids",
 						TicketPrice.class)
 				.setParameter("ids", priceCategoryIds).getResultList();

@@ -109,6 +109,7 @@ public class TicketPrice extends BaseEntity<TicketPriceDTO> implements
 
 	/* Boilerplate getters and setters */
 
+	@Override
 	public Long getId() {
 		return id;
 	}
@@ -196,6 +197,7 @@ public class TicketPrice extends BaseEntity<TicketPriceDTO> implements
 		return dto;
 	}
 
+	@Override
 	public TicketPriceDTO buildDTO() {
 		TicketPriceDTO dto = new TicketPriceDTO();
 

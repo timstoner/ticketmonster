@@ -65,6 +65,7 @@ public class TicketCategory extends BaseEntity<TicketCategoryDTO> implements
 
 	/* Boilerplate getters and setters */
 
+	@Override
 	public Long getId() {
 		return id;
 	}

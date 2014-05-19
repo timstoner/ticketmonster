@@ -5,9 +5,6 @@ import java.io.Serializable;
 import com.example.ticketmonster.dto.NestedSectionDTO;
 import com.example.ticketmonster.dto.NestedShowDTO;
 import com.example.ticketmonster.dto.NestedTicketCategoryDTO;
-import com.example.ticketmonster.model.TicketPrice;
-
-import javax.persistence.EntityManager;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement

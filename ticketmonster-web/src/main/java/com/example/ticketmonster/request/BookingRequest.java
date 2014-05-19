@@ -62,6 +62,7 @@ public class BookingRequest {
 		this.email = email;
 	}
 
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 

@@ -139,6 +139,7 @@ public class Show extends BaseEntity<ShowDTO> implements Serializable,
 
 	/* Boilerplate getters and setters */
 
+	@Override
 	public Long getId() {
 		return id;
 	}

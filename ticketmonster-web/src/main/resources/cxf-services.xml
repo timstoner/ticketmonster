@@ -6,18 +6,23 @@
 
 	<bean id="bookingService" class="com.example.ticketmonster.rest.impl.BookingServiceImpl" />
 	<bean id="botStatusService" class="com.example.ticketmonster.rest.BotStatusService" />
-	<bean id="eventCategoryService" class="com.example.ticketmonster.rest.impl.EventCategoryServiceImpl" />
+	<bean id="eventCategoryService"
+		class="com.example.ticketmonster.rest.impl.EventCategoryServiceImpl" />
 	<bean id="eventService" class="com.example.ticketmonster.rest.impl.EventServiceImpl" />
-	<bean id="mediaItemService" class="com.example.ticketmonster.rest.impl.MediaItemServiceImpl" />
+	<bean id="mediaItemService"
+		class="com.example.ticketmonster.rest.impl.MediaItemServiceImpl" />
 	<bean id="mediaService" class="com.example.ticketmonster.rest.impl.MediaServiceImpl" />
 	<bean id="metricsService" class="com.example.ticketmonster.rest.MetricsService" />
-	<bean id="performanceService" class="com.example.ticketmonster.rest.impl.PerformanceServiceImpl" />
-	<bean id="sectionAllocationService" class="com.example.ticketmonster.rest.impl.SectionAllocationServiceImpl" />
+	<bean id="performanceService"
+		class="com.example.ticketmonster.rest.impl.PerformanceServiceImpl" />
+	<bean id="sectionAllocationService"
+		class="com.example.ticketmonster.rest.impl.SectionAllocationServiceImpl" />
 	<bean id="sectionService" class="com.example.ticketmonster.rest.impl.SectionServiceImpl" />
 	<bean id="showService" class="com.example.ticketmonster.rest.impl.ShowServiceImpl" />
 	<bean id="ticketCategoryService"
 		class="com.example.ticketmonster.rest.impl.TicketCategoryServiceImpl" />
-	<bean id="ticketPriceService" class="com.example.ticketmonster.rest.impl.TicketPriceServiceImpl" />
+	<bean id="ticketPriceService"
+		class="com.example.ticketmonster.rest.impl.TicketPriceServiceImpl" />
 	<bean id="ticketService" class="com.example.ticketmonster.rest.impl.TicketServiceImpl" />
 	<bean id="venueService" class="com.example.ticketmonster.rest.impl.VenueServiceImpl" />
 

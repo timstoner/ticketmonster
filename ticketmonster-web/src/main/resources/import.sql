@@ -1,51 +1,51 @@
 -- MediaItem 0
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'images/640px-Weir%2C_Bob_(2007)_2.jpg');
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://localhost:8080/TicketMonster/images/640px-Weir%2C_Bob_(2007)_2.jpg');
 -- MediaItem 1
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'images/640px-Carnival_Puppets.jpg');
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://localhost:8080/TicketMonster/images/640px-Carnival_Puppets.jpg');
 -- MediaItem 2
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'images/640px-Opera_House_with_Sydney.jpg');
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://localhost:8080/TicketMonster/images/640px-Opera_House_with_Sydney.jpg');
 -- MediaItem 3
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'images/640px-Roy_Thomson_Hall_Toronto.jpg');
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://localhost:8080/TicketMonster/images/640px-Roy_Thomson_Hall_Toronto.jpg');
 -- MediaItem 4
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'images/640px-West-stand-bmo-field.jpg');
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://localhost:8080/TicketMonster/images/640px-West-stand-bmo-field.jpg');
 -- MediaItem 5
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'images/640px-Brazil_national_football_team_training_at_Dobsonville_Stadium_2010-06-03_13.jpg');
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://localhost:8080/TicketMonster/images/640px-Brazil_national_football_team_training_at_Dobsonville_Stadium_2010-06-03_13.jpg');
 -- MediaItem 6
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'images/AllStateFootballChampionship.png');
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://localhost:8080/TicketMonster/images/AllStateFootballChampionship.png');
 -- MediaItem 7
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'images/ARhythmia.png');
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://localhost:8080/TicketMonster/images/ARhythmia.png');
 -- MediaItem 8
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'images/BattleoftheBrassBands.png');
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://localhost:8080/TicketMonster/images/BattleoftheBrassBands.png');
 -- MediaItem 9
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'images/CarnivalComestoTown.png');
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://localhost:8080/TicketMonster/images/CarnivalComestoTown.png');
 -- MediaItem 10
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'images/ChrisLewisQuarterfinals.png');
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://localhost:8080/TicketMonster/images/ChrisLewisQuarterfinals.png');
 -- MediaItem 11
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'images/CrewYou.png');
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://localhost:8080/TicketMonster/images/CrewYou.png');
 -- MediaItem 12
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'images/ExtremeSnowboardingFinals.png')
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://localhost:8080/TicketMonster/images/ExtremeSnowboardingFinals.png')
 -- MediaItem 13
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'images/FlamencoFinale.png')
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://localhost:8080/TicketMonster/images/FlamencoFinale.png')
 -- MediaItem 14
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'images/JesseLewisUnplugged.png')
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://localhost:8080/TicketMonster/images/JesseLewisUnplugged.png')
 -- MediaItem 15
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'images/MadameButterfly.png')
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://localhost:8080/TicketMonster/images/MadameButterfly.png')
 -- MediaItem 16
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'images/MimeMania.png')
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://localhost:8080/TicketMonster/images/MimeMania.png')
 -- MediaItem 17
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'images/MorrisonCover.png')
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://localhost:8080/TicketMonster/images/MorrisonCover.png')
 -- MediaItem 18
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'images/TutuTchai.png')
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://localhost:8080/TicketMonster/images/TutuTchai.png')
 -- MediaItem 19
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'images/SlapShot.png')
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://localhost:8080/TicketMonster/images/SlapShot.png')
 -- MediaItem 20
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'images/Giantsofthegame.png')
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://localhost:8080/TicketMonster/images/Giantsofthegame.png')
 -- MediaItem 21
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'images/Punch%26Judy.png')
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://localhost:8080/TicketMonster/images/Punch%26Judy.png')
 -- MediaItem 22
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'images/800px-Paris_Opera_full_frontal_architecture%2C_May_2009.jpg')
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://localhost:8080/TicketMonster/images/800px-Paris_Opera_full_frontal_architecture%2C_May_2009.jpg')
 -- MediaItem 23
-insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'images/800px-Boston_Symphony_Hall_from_the_south.jpg')
+insert into MediaItem ( mediaType, url) values ( 'IMAGE', 'http://localhost:8080/TicketMonster/images/800px-Boston_Symphony_Hall_from_the_south.jpg')
 
 -- Venue 1
 insert into Venue ( name, city, country, street, description, mediaitem_id, capacity) values ( 'Roy Thomson Hall', 'Toronto', 'Canada', '60 Simcoe Street','Roy Thomson Hall is the home of the Toronto Symphony Orchestra and the Toronto Mendelssohn Choir.',4, 11000);

@@ -87,6 +87,7 @@ public class Ticket extends BaseEntity<TicketDTO> implements Serializable,
 
 	/* Boilerplate getters and setters */
 
+	@Override
 	public Long getId() {
 		return id;
 	}

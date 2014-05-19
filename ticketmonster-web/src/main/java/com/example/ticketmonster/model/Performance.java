@@ -95,6 +95,7 @@ public class Performance extends BaseEntity<PerformanceDTO> implements
 
 	/* Boilerplate getters and setters */
 
+	@Override
 	public Long getId() {
 		return id;
 	}
@@ -162,6 +163,7 @@ public class Performance extends BaseEntity<PerformanceDTO> implements
 		return dto;
 	}
 
+	@Override
 	public PerformanceDTO buildDTO() {
 		PerformanceDTO dto = new PerformanceDTO();
 

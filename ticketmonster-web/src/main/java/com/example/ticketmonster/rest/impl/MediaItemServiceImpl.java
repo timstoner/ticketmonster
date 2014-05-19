@@ -20,21 +20,17 @@ public class MediaItemServiceImpl extends
 
 	@Override
 	protected MediaItem buildEntity(MediaItemDTO dto) {
-		MediaItem entity = MediaItemFactory
-				.buildEntity(dto, getEntityManager());
-		return entity;
+		return MediaItemFactory.buildEntity(dto, getEntityManager());
 	}
 
 	@Override
 	protected String getFindAllQuery() {
-		// TODO Auto-generated method stub
-		return null;
+		return MediaItemFactory.getFindAllQuery();
 	}
 
 	@Override
 	protected String getFindByIdQuery() {
-		// TODO Auto-generated method stub
-		return null;
+		return MediaItemFactory.getFindByIdQuery();
 	}
 
 }

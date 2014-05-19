@@ -112,6 +112,7 @@ public class Section extends BaseEntity<SectionDTO> implements Serializable,
 
 	/* Boilerplate getters and setters */
 
+	@Override
 	public Long getId() {
 		return id;
 	}

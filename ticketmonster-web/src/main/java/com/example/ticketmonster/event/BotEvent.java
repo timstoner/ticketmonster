@@ -10,6 +10,7 @@ public class BotEvent extends ApplicationEvent {
 
 	public BotEvent(Object source, String message) {
 		super(source);
+		this.message = message;
 	}
 
 	public String getMessage() {

@@ -7,7 +7,9 @@ import java.net.URI;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jettison.json.JSONArray;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -15,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import com.example.ticketmonster.dto.VenueDTO;
 import com.example.ticketmonster.model.Venue;
+import com.example.ticketmonster.rest.VenueService;
 
 public class VenueServiceTest extends BaseServiceTest {
 	private static final Logger LOG = LoggerFactory
@@ -68,6 +71,7 @@ public class VenueServiceTest extends BaseServiceTest {
 	@Test
 	public void testCreateVenueWithWebClient() {
 		LOG.info("running testCreateVenueWithWebClient");
+		ObjectMapper mapper = new ObjectMapper();
 
 		WebClient client = WebClient.create(ENDPOINT_ADDRESS);
 		client.path("venues");
@@ -76,7 +80,7 @@ public class VenueServiceTest extends BaseServiceTest {
 
 		VenueDTO venueDTO = generateRandomVenue();
 
-		Response response = client.post(venueDTO.toJSON());
+		Response response = client.post(venueDTO);
 		LOG.debug("Create Post Request Response Status: {}",
 				response.getStatus());
 
@@ -85,6 +89,17 @@ public class VenueServiceTest extends BaseServiceTest {
 		URI newVenueURI = response.getLocation();
 		String path = newVenueURI.getPath();
 		LOG.debug("id: " + path.charAt(path.length() - 1));
+	}
+
+	@Test
+	public void testCreateVenueWithProxy() {
+		LOG.info("running testCreateVenueWithProxy");
+
+		VenueService vs = JAXRSClientFactory.create(ENDPOINT_ADDRESS,
+				VenueService.class);
+
+		VenueDTO venueDTO = generateRandomVenue();
+		vs.create(venueDTO);
 	}
 
 	protected VenueDTO getVenue(long id) {

@@ -142,6 +142,7 @@ public class Event extends BaseEntity<EventDTO> implements Serializable,
 
 	/* Boilerplate getters and setters */
 
+	@Override
 	public Long getId() {
 		return id;
 	}
@@ -212,6 +213,7 @@ public class Event extends BaseEntity<EventDTO> implements Serializable,
 		return name;
 	}
 
+	@Override
 	public EventDTO buildDTO() {
 		EventDTO dto = new EventDTO();
 

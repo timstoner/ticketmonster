@@ -68,6 +68,7 @@ public class EventCategory extends BaseEntity<EventCategoryDTO> implements
 
 	/* Boilerplate getters and setters */
 
+	@Override
 	public Long getId() {
 		return id;
 	}
@@ -115,6 +116,7 @@ public class EventCategory extends BaseEntity<EventCategoryDTO> implements
 		return description;
 	}
 
+	@Override
 	public EventCategoryDTO buildDTO() {
 		EventCategoryDTO dto = new EventCategoryDTO();
 

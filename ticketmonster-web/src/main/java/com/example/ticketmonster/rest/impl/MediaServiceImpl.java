@@ -21,10 +21,12 @@ public class MediaServiceImpl implements MediaService {
 	@PersistenceContext
 	private EntityManager entityManager;
 
+	@Override
 	public File getCachedMediaContent(String cachedFileName) {
 		return mediaManager.getCachedFile(cachedFileName);
 	}
 
+	@Override
 	public File getMediaContent(Long id) {
 		return mediaManager.getCachedFile(mediaManager.getPath(
 				entityManager.find(MediaItem.class, id)).getUrl());

@@ -11,6 +11,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.core.MultivaluedHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
@@ -28,6 +30,7 @@ import com.example.ticketmonster.rest.ShowService;
 
 @Component
 public class Bot implements ApplicationEventPublisherAware {
+	private final static Logger LOG = LoggerFactory.getLogger(Bot.class);
 
 	class BotTask extends TimerTask {
 
@@ -115,9 +118,9 @@ public class Bot implements ApplicationEventPublisherAware {
 	// Event<String> event;
 
 	public Timer start() {
-		String startMessage = new StringBuilder("==========================\n")
-				.append("Bot started at ").append(new Date().toString())
-				.append("\n").toString();
+		String startMessage = "Bot Started";
+
+		LOG.info(startMessage);
 
 		fireBotEvent(startMessage);
 
@@ -130,9 +133,9 @@ public class Bot implements ApplicationEventPublisherAware {
 	}
 
 	public void stop(Timer timer) {
-		String stopMessage = new StringBuilder("==========================\n")
-				.append("Bot stopped at ").append(new Date().toString())
-				.append("\n").toString();
+		String stopMessage = "Bot Stopped";
+
+		LOG.info(stopMessage);
 
 		fireBotEvent(stopMessage);
 

@@ -140,6 +140,7 @@ public class BookingDTO extends BaseDTO implements Serializable {
 		this.tickets = tickets;
 	}
 
+	@Override
 	public String toString() {
 		return String.valueOf(this.id);
 	}

@@ -27,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.example.ticketmonster.dto.BaseDTO;
-import com.example.ticketmonster.factory.EntityFactory;
 import com.example.ticketmonster.model.BaseEntity;
 import com.example.ticketmonster.rest.BaseService;
 
@@ -106,6 +105,7 @@ public abstract class BaseEntityService<T extends BaseEntity<S>, S extends BaseD
 		return em;
 	}
 
+	@Override
 	public Response create(S dto) {
 		T entity = buildEntity(dto);
 
@@ -118,6 +118,7 @@ public abstract class BaseEntityService<T extends BaseEntity<S>, S extends BaseD
 		return Response.created(path).build();
 	}
 
+	@Override
 	public Response getCount(UriInfo uriInfo) {
 		long count = this.getCount(uriInfo.getQueryParameters());
 		Map<String, Long> result = new HashMap<String, Long>();
@@ -126,6 +127,7 @@ public abstract class BaseEntityService<T extends BaseEntity<S>, S extends BaseD
 		return Response.ok(result).build();
 	}
 
+	@Override
 	public Response deleteById(Long id) {
 		// query for the T entity
 		T entity = getEntityManager().find(entityClass, id);
@@ -146,6 +148,7 @@ public abstract class BaseEntityService<T extends BaseEntity<S>, S extends BaseD
 		return rb.build();
 	}
 
+	@Override
 	public Response deleteAll(UriInfo uriInfo) {
 		List<T> entities = getAll(uriInfo.getQueryParameters());
 
@@ -156,6 +159,7 @@ public abstract class BaseEntityService<T extends BaseEntity<S>, S extends BaseD
 		return Response.noContent().build();
 	}
 
+	@Override
 	public Response findById(Long id) {
 		T entity = getSingleInstance(id);
 

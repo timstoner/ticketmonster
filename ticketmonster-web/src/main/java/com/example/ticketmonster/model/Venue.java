@@ -108,6 +108,7 @@ public class Venue extends BaseEntity<VenueDTO> implements Serializable,
 
 	/* Boilerplate getters and setters */
 
+	@Override
 	public Long getId() {
 		return id;
 	}
@@ -199,6 +200,7 @@ public class Venue extends BaseEntity<VenueDTO> implements Serializable,
 		return name;
 	}
 
+	@Override
 	public VenueDTO buildDTO() {
 		VenueDTO dto = new VenueDTO();
 
