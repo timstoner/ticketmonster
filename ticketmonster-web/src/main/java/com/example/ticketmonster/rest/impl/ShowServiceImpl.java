@@ -12,9 +12,10 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.ticketmonster.dto.ShowDTO;
+import com.example.ticketmonster.factory.ShowFactory;
 import com.example.ticketmonster.model.Show;
 import com.example.ticketmonster.rest.ShowService;
-import com.example.ticketmonster.rest.dto.ShowDTO;
 
 public class ShowServiceImpl extends BaseEntityService<Show, ShowDTO> implements
 		ShowService {
@@ -54,6 +55,21 @@ public class ShowServiceImpl extends BaseEntityService<Show, ShowDTO> implements
 						"select s from Show s where exists(select p from Performance p where p.show = s and p.id = :performanceId)");
 		query.setParameter("performanceId", performanceId);
 		return (Show) query.getSingleResult();
+	}
+
+	@Override
+	protected Show buildEntity(ShowDTO dto) {
+		return ShowFactory.buildEntity(dto, em);
+	}
+
+	@Override
+	protected String getFindAllQuery() {
+		return ShowFactory.getFindAllQuery();
+	}
+
+	@Override
+	protected String getFindByIdQuery() {
+		return ShowFactory.getFindByIdQuery();
 	}
 
 }

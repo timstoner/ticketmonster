@@ -6,14 +6,13 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.example.ticketmonster.rest.dto.NestedTicketCategoryDTO;
-import com.example.ticketmonster.rest.dto.TicketCategoryDTO;
+import com.example.ticketmonster.dto.NestedTicketCategoryDTO;
+import com.example.ticketmonster.dto.TicketCategoryDTO;
 
 /**
  * <p>
@@ -113,15 +112,6 @@ public class TicketCategory extends BaseEntity<TicketCategoryDTO> implements
 		return description;
 	}
 
-	public TicketCategoryDTO buildDTO() {
-		TicketCategoryDTO dto = new TicketCategoryDTO();
-
-		dto.setDescription(description);
-		dto.setId(id);
-
-		return dto;
-	}
-
 	public NestedTicketCategoryDTO buildNestedDTO() {
 		NestedTicketCategoryDTO dto = new NestedTicketCategoryDTO();
 
@@ -132,31 +122,12 @@ public class TicketCategory extends BaseEntity<TicketCategoryDTO> implements
 	}
 
 	@Override
-	public TicketCategoryDTO convertToDTO() {
+	public TicketCategoryDTO buildDTO() {
 		TicketCategoryDTO dto = new TicketCategoryDTO();
+
 		dto.setDescription(description);
 		dto.setId(id);
+
 		return dto;
-	}
-
-	@Override
-	public void convertFromDTO(TicketCategoryDTO dto, EntityManager em) {
-		this.description = dto.getDescription();
-		this.id = dto.getId();
-	}
-
-	public String getFindByIdQuery() {
-		return "SELECT DISTINCT t FROM TicketCategory t WHERE t.id = :entityId ORDER BY t.id";
-	}
-
-	public String getFindAllQuery() {
-		return "SELECT DISTINCT t FROM TicketCategory t ORDER BY t.id";
-	}
-
-	public static TicketCategory buildTicketCategory(
-			NestedTicketCategoryDTO dto, EntityManager em) {
-		TicketCategory entity = em.find(TicketCategory.class, dto.getId());
-
-		return entity;
 	}
 }

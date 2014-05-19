@@ -10,8 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
-import com.example.ticketmonster.rest.dto.NestedTicketDTO;
-import com.example.ticketmonster.rest.dto.TicketDTO;
+import com.example.ticketmonster.dto.NestedTicketDTO;
+import com.example.ticketmonster.dto.TicketDTO;
 
 /**
  * <p>
@@ -91,8 +91,16 @@ public class Ticket extends BaseEntity<TicketDTO> implements Serializable,
 		return id;
 	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public TicketCategory getTicketCategory() {
 		return ticketCategory;
+	}
+
+	public void setTicketCategory(TicketCategory ticketCategory) {
+		this.ticketCategory = ticketCategory;
 	}
 
 	public float getPrice() {
@@ -119,7 +127,7 @@ public class Ticket extends BaseEntity<TicketDTO> implements Serializable,
 	}
 
 	@Override
-	public TicketDTO convertToDTO() {
+	public TicketDTO buildDTO() {
 		TicketDTO dto = new TicketDTO();
 
 		dto.setId(id);
@@ -139,4 +147,5 @@ public class Ticket extends BaseEntity<TicketDTO> implements Serializable,
 
 		return dto;
 	}
+
 }

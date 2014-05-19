@@ -6,17 +6,16 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.example.ticketmonster.rest.dto.EventDTO;
-import com.example.ticketmonster.rest.dto.NestedEventCategoryDTO;
-import com.example.ticketmonster.rest.dto.NestedEventDTO;
-import com.example.ticketmonster.rest.dto.NestedMediaItemDTO;
+import com.example.ticketmonster.dto.EventDTO;
+import com.example.ticketmonster.dto.NestedEventCategoryDTO;
+import com.example.ticketmonster.dto.NestedEventDTO;
+import com.example.ticketmonster.dto.NestedMediaItemDTO;
 
 /**
  * <p>
@@ -213,7 +212,7 @@ public class Event extends BaseEntity<EventDTO> implements Serializable,
 		return name;
 	}
 
-	public EventDTO convertToDTO() {
+	public EventDTO buildDTO() {
 		EventDTO dto = new EventDTO();
 
 		if (this.category != null) {
@@ -241,45 +240,5 @@ public class Event extends BaseEntity<EventDTO> implements Serializable,
 		return dto;
 	}
 
-	public static Event buildEvent(EventDTO dto, EntityManager em) {
-		Event entity = new Event();
-
-		entity.setId(dto.getId());
-		entity.setName(dto.getName());
-		entity.setDescription(dto.getDescription());
-		EventCategory ec = EventCategory.buildEntity(dto.getCategory(), em);
-		entity.setCategory(ec);
-		MediaItem mi = MediaItem.buildMediaItem(dto.getMediaItem(), em);
-		entity.setMediaItem(mi);
-
-		return entity;
-	}
-
-	@Override
-	public void convertFromDTO(EventDTO dto, EntityManager em) {
-		this.category = EventCategory.buildEntity(dto.getCategory(), em);
-		this.description = dto.getDescription();
-		this.id = dto.getId();
-		this.mediaItem = MediaItem.buildMediaItem(dto.getMediaItem(), em);
-		this.name = dto.getName();
-	}
-
-	public static String getFindByIdQuery() {
-		return "SELECT DISTINCT e FROM Event e LEFT JOIN FETCH e.mediaItem LEFT JOIN FETCH e.category WHERE e.id = :entityId ORDER BY e.id";
-	}
-
-	public static String getFindAllQuery() {
-		return "SELECT DISTINCT e FROM Event e LEFT JOIN FETCH e.mediaItem LEFT JOIN FETCH e.category ORDER BY e.id";
-	}
-
-	public static Event buildEvent(NestedEventDTO dto, EntityManager em) {
-		Event entity = new Event();
-
-		entity.setId(dto.getId());
-		entity.setName(dto.getName());
-		entity.setDescription(dto.getDescription());
-
-		return entity;
-	}
 
 }

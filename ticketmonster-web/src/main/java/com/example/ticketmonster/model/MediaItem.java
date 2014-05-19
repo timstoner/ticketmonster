@@ -13,8 +13,8 @@ import javax.persistence.Id;
 
 import org.hibernate.validator.constraints.URL;
 
-import com.example.ticketmonster.rest.dto.MediaItemDTO;
-import com.example.ticketmonster.rest.dto.NestedMediaItemDTO;
+import com.example.ticketmonster.dto.MediaItemDTO;
+import com.example.ticketmonster.dto.NestedMediaItemDTO;
 
 /**
  * <p>
@@ -149,7 +149,7 @@ public class MediaItem extends BaseEntity<MediaItemDTO> implements
 	}
 
 	@Override
-	public MediaItemDTO convertToDTO() {
+	public MediaItemDTO buildDTO() {
 		MediaItemDTO dto = new MediaItemDTO();
 
 		dto.setId(id);

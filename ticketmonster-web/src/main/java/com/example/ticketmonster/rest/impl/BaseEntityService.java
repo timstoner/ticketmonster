@@ -26,9 +26,10 @@ import javax.ws.rs.core.UriInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.ticketmonster.dto.BaseDTO;
+import com.example.ticketmonster.factory.EntityFactory;
 import com.example.ticketmonster.model.BaseEntity;
 import com.example.ticketmonster.rest.BaseService;
-import com.example.ticketmonster.rest.dto.BaseDTO;
 
 /**
  * <p>
@@ -90,7 +91,7 @@ public abstract class BaseEntityService<T extends BaseEntity<S>, S extends BaseD
 			.getLogger(BaseEntityService.class);
 
 	@PersistenceContext
-	private EntityManager entityManager;
+	protected EntityManager em;
 
 	private Class<T> entityClass;
 
@@ -102,7 +103,7 @@ public abstract class BaseEntityService<T extends BaseEntity<S>, S extends BaseD
 	}
 
 	public EntityManager getEntityManager() {
-		return entityManager;
+		return em;
 	}
 
 	public Response create(S dto) {
@@ -149,7 +150,7 @@ public abstract class BaseEntityService<T extends BaseEntity<S>, S extends BaseD
 		List<T> entities = getAll(uriInfo.getQueryParameters());
 
 		for (T entity : entities) {
-			entityManager.remove(entity);
+			em.remove(entity);
 		}
 
 		return Response.noContent().build();
@@ -159,7 +160,7 @@ public abstract class BaseEntityService<T extends BaseEntity<S>, S extends BaseD
 		T entity = getSingleInstance(id);
 
 		if (entity != null) {
-			S dto = buildDTO(entity);
+			S dto = entity.buildDTO();
 			return Response.ok(dto).build();
 		} else {
 			return Response.status(Status.NOT_FOUND).build();
@@ -173,7 +174,7 @@ public abstract class BaseEntityService<T extends BaseEntity<S>, S extends BaseD
 
 		// convert entities to data transfer objects
 		for (T entity : entities) {
-			S dto = buildDTO(entity);
+			S dto = entity.buildDTO();
 			dtoResults.add(dto);
 		}
 
@@ -184,9 +185,8 @@ public abstract class BaseEntityService<T extends BaseEntity<S>, S extends BaseD
 	public Response update(Long id, S dto) {
 		LOG.debug("update {}", id);
 
-		T entity = getSingleInstance(id);
+		T entity = buildEntity(dto);
 
-		entity = getEntityManager().find(entityClass, id);
 		entity = getEntityManager().merge(entity);
 		return Response.noContent().build();
 	}
@@ -207,8 +207,9 @@ public abstract class BaseEntityService<T extends BaseEntity<S>, S extends BaseD
 	}
 
 	protected List<T> getAll(MultivaluedMap<String, String> queryParameters) {
-		TypedQuery<T> query = entityManager.createQuery(getFindAllQuery(),
-				entityClass);
+		String text = getFindAllQuery();
+		LOG.debug("Find ALl query: " + text);
+		TypedQuery<T> query = em.createQuery(getFindAllQuery(), entityClass);
 
 		Integer value;
 		if (queryParameters.containsKey("first")) {
@@ -224,7 +225,7 @@ public abstract class BaseEntityService<T extends BaseEntity<S>, S extends BaseD
 	}
 
 	protected long getCount(MultivaluedMap<String, String> queryParameters) {
-		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 		CriteriaQuery<Long> criteriaQuery = criteriaBuilder
 				.createQuery(Long.class);
 
@@ -236,7 +237,7 @@ public abstract class BaseEntityService<T extends BaseEntity<S>, S extends BaseD
 
 		criteriaQuery.where(predicates);
 
-		return entityManager.createQuery(criteriaQuery).getSingleResult();
+		return em.createQuery(criteriaQuery).getSingleResult();
 	}
 
 	/**
@@ -262,11 +263,11 @@ public abstract class BaseEntityService<T extends BaseEntity<S>, S extends BaseD
 
 	public void persist(T entity) {
 		// persist entity in database
-		entityManager.persist(entity);
-		entityManager.flush();
+		em.persist(entity);
+		em.flush();
 	}
 
-	protected abstract S buildDTO(T entity);
+	// protected abstract S buildDTO(T entity);
 
 	protected abstract T buildEntity(S dto);
 

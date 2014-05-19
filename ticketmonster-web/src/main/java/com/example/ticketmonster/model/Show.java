@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -19,10 +18,10 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
-import com.example.ticketmonster.rest.dto.NestedPerformanceDTO;
-import com.example.ticketmonster.rest.dto.NestedShowDTO;
-import com.example.ticketmonster.rest.dto.NestedTicketPriceDTO;
-import com.example.ticketmonster.rest.dto.ShowDTO;
+import com.example.ticketmonster.dto.NestedPerformanceDTO;
+import com.example.ticketmonster.dto.NestedShowDTO;
+import com.example.ticketmonster.dto.NestedTicketPriceDTO;
+import com.example.ticketmonster.dto.ShowDTO;
 
 /**
  * <p>
@@ -214,12 +213,12 @@ public class Show extends BaseEntity<ShowDTO> implements Serializable,
 	}
 
 	@Override
-	public ShowDTO convertToDTO() {
+	public ShowDTO buildDTO() {
 		ShowDTO dto = new ShowDTO();
 
 		dto.setEvent(event.buildNestedDTO());
 		dto.setId(id);
-		dto.setVenue(venue.convertToNestedDTO());
+		dto.setVenue(venue.buildNestedDTO());
 
 		NestedPerformanceDTO npDTO = new NestedPerformanceDTO();
 		for (Performance p : this.getPerformances()) {
@@ -245,25 +244,4 @@ public class Show extends BaseEntity<ShowDTO> implements Serializable,
 		return dto;
 	}
 
-	@Override
-	public void convertFromDTO(ShowDTO dto, EntityManager em) {
-		this.venue = Venue.buildVenue(dto.getVenue(), em);
-		this.event = Event.buildEvent(dto.getEvent(), em);
-	}
-
-	public static String getFindByIdQuery() {
-		return "SELECT DISTINCT s FROM Show s LEFT JOIN FETCH s.event LEFT JOIN FETCH s.venue LEFT JOIN FETCH s.performances LEFT JOIN FETCH s.ticketPrices WHERE s.id = :entityId ORDER BY s.id";
-	}
-
-	public static String getFindAllQuery() {
-		return "SELECT DISTINCT s FROM Show s LEFT JOIN FETCH s.event LEFT JOIN FETCH s.venue LEFT JOIN FETCH s.performances LEFT JOIN FETCH s.ticketPrices ORDER BY s.id";
-	}
-
-	public static Show buildShow(NestedShowDTO dto, EntityManager em) {
-		Show entity = new Show();
-
-		entity = em.find(Show.class, dto.getId());
-
-		return entity;
-	}
 }

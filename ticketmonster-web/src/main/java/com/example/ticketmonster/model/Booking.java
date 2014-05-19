@@ -22,8 +22,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.example.ticketmonster.rest.dto.BookingDTO;
-import com.example.ticketmonster.rest.dto.NestedPerformanceDTO;
+import com.example.ticketmonster.dto.BookingDTO;
+import com.example.ticketmonster.dto.NestedPerformanceDTO;
 
 /**
  * <p>
@@ -221,7 +221,7 @@ public class Booking extends BaseEntity<BookingDTO> implements Serializable,
 	}
 
 	@Override
-	public BookingDTO convertToDTO() {
+	public BookingDTO buildDTO() {
 		BookingDTO dto = new BookingDTO();
 
 		dto.setCancellationCode(cancellationCode);

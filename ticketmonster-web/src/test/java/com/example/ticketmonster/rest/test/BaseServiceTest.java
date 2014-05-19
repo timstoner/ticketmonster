@@ -22,11 +22,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.example.ticketmonster.rest.dto.AddressDTO;
-import com.example.ticketmonster.rest.dto.DTOFactory;
-import com.example.ticketmonster.rest.dto.NestedVenueDTO;
-import com.example.ticketmonster.rest.dto.SectionDTO;
-import com.example.ticketmonster.rest.dto.VenueDTO;
+import com.example.ticketmonster.dto.AddressDTO;
+import com.example.ticketmonster.dto.NestedVenueDTO;
+import com.example.ticketmonster.dto.SectionDTO;
+import com.example.ticketmonster.dto.VenueDTO;
+import com.example.ticketmonster.factory.EntityFactory;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:applicationContext-test.xml" })
@@ -215,7 +215,7 @@ public abstract class BaseServiceTest {
 
 	protected static <T> T convertResponse(Class<T> type, Response response) {
 		String entity = response.readEntity(String.class);
-		T responseDTO = DTOFactory.build(type, entity);
+		T responseDTO = EntityFactory.build(type, entity);
 		return responseDTO;
 	}
 }

@@ -13,12 +13,13 @@ import javax.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.ticketmonster.dto.PerformanceDTO;
+import com.example.ticketmonster.factory.PerformanceFactory;
 import com.example.ticketmonster.model.Booking;
 import com.example.ticketmonster.model.Performance;
 import com.example.ticketmonster.model.SectionAllocation;
 import com.example.ticketmonster.model.Show;
 import com.example.ticketmonster.rest.PerformanceService;
-import com.example.ticketmonster.rest.dto.PerformanceDTO;
 
 public class PerformanceServiceImpl extends
 		BaseEntityService<Performance, PerformanceDTO> implements
@@ -32,6 +33,7 @@ public class PerformanceServiceImpl extends
 		LOG.debug("Creating Performance Service");
 	}
 
+	@Override
 	public Response deleteById(Long id) {
 		LOG.debug("deleteById {}", id);
 		// find the performance by id
@@ -95,5 +97,21 @@ public class PerformanceServiceImpl extends
 				performance);
 		return getEntityManager().createQuery(
 				criteria.select(from).where(performanceIsSame)).getResultList();
+	}
+
+	@Override
+	protected Performance buildEntity(PerformanceDTO dto) {
+		Performance entity = PerformanceFactory.buildEntity(dto, em);
+		return entity;
+	}
+
+	@Override
+	protected String getFindAllQuery() {
+		return PerformanceFactory.getFindAllQuery();
+	}
+
+	@Override
+	protected String getFindByIdQuery() {
+		return PerformanceFactory.getFindByIdQuery();
 	}
 }

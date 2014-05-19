@@ -4,7 +4,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.Min;
 
-import com.example.ticketmonster.rest.dto.SeatDTO;
+import com.example.ticketmonster.dto.SeatDTO;
 
 /**
  * TODO

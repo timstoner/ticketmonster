@@ -13,7 +13,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import com.example.ticketmonster.rest.dto.BaseDTO;
+import com.example.ticketmonster.dto.BaseDTO;
 
 public interface BaseService<T extends BaseDTO> {
 

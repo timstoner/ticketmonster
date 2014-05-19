@@ -3,9 +3,10 @@ package com.example.ticketmonster.rest.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.ticketmonster.dto.EventDTO;
+import com.example.ticketmonster.factory.EventFactory;
 import com.example.ticketmonster.model.Event;
 import com.example.ticketmonster.rest.EventService;
-import com.example.ticketmonster.rest.dto.EventDTO;
 
 /**
  * <p>
@@ -25,4 +26,21 @@ public class EventServiceImpl extends BaseEntityService<Event, EventDTO>
 		super(Event.class);
 		LOG.debug("Creating Event Service");
 	}
+
+	@Override
+	protected Event buildEntity(EventDTO dto) {
+		Event entity = EventFactory.buildEntity(dto, getEntityManager());
+		return entity;
+	}
+
+	@Override
+	protected String getFindAllQuery() {
+		return EventFactory.getFindAllQuery();
+	}
+
+	@Override
+	protected String getFindByIdQuery() {
+		return EventFactory.getFindByIdQuery();
+	}
+
 }

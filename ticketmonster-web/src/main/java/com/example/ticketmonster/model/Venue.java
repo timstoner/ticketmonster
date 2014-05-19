@@ -17,8 +17,8 @@ import javax.persistence.OneToMany;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.example.ticketmonster.rest.dto.NestedVenueDTO;
-import com.example.ticketmonster.rest.dto.VenueDTO;
+import com.example.ticketmonster.dto.NestedVenueDTO;
+import com.example.ticketmonster.dto.VenueDTO;
 
 /**
  * <p>
@@ -199,7 +199,7 @@ public class Venue extends BaseEntity<VenueDTO> implements Serializable,
 		return name;
 	}
 
-	public VenueDTO convertToDTO() {
+	public VenueDTO buildDTO() {
 		VenueDTO dto = new VenueDTO();
 
 		dto.setAddress(this.address.buildDTO());
@@ -215,7 +215,7 @@ public class Venue extends BaseEntity<VenueDTO> implements Serializable,
 		return dto;
 	}
 
-	public NestedVenueDTO convertToNestedDTO() {
+	public NestedVenueDTO buildNestedDTO() {
 		NestedVenueDTO dto = new NestedVenueDTO();
 
 		dto.setAddress(address.buildDTO());

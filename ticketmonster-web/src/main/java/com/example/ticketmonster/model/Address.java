@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
-import com.example.ticketmonster.rest.dto.AddressDTO;
+import com.example.ticketmonster.dto.AddressDTO;
 
 /**
  * <p>

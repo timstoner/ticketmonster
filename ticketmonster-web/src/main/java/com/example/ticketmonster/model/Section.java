@@ -5,21 +5,18 @@ import static javax.persistence.GenerationType.IDENTITY;
 import java.io.Serializable;
 
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.NoResultException;
 import javax.persistence.Table;
-import javax.persistence.TypedQuery;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.example.ticketmonster.rest.dto.NestedSectionDTO;
-import com.example.ticketmonster.rest.dto.SectionDTO;
+import com.example.ticketmonster.dto.NestedSectionDTO;
+import com.example.ticketmonster.dto.SectionDTO;
 
 /**
  * <p>
@@ -216,13 +213,16 @@ public class Section extends BaseEntity<SectionDTO> implements Serializable,
 	}
 
 	@Override
-	public SectionDTO convertToDTO() {
-		return null;
+	public SectionDTO buildDTO() {
+		SectionDTO dto = new SectionDTO();
+		dto.setId(id);
+		dto.setCapacity(getCapacity());
+		dto.setDescription(description);
+		dto.setName(name);
+		dto.setNumberOfRows(numberOfRows);
+		dto.setRowCapacity(rowCapacity);
+		dto.setVenue(venue.buildNestedDTO());
+
+		return dto;
 	}
-
-	
-
-
-	
-
 }

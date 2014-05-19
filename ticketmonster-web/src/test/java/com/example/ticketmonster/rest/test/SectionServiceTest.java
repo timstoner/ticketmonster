@@ -7,15 +7,14 @@ import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.ticketmonster.dto.SectionDTO;
+import com.example.ticketmonster.dto.VenueDTO;
+import com.example.ticketmonster.factory.EntityFactory;
 import com.example.ticketmonster.model.Section;
-import com.example.ticketmonster.rest.dto.DTOFactory;
-import com.example.ticketmonster.rest.dto.SectionDTO;
-import com.example.ticketmonster.rest.dto.VenueDTO;
 
 public class SectionServiceTest extends BaseServiceTest {
 
@@ -46,14 +45,11 @@ public class SectionServiceTest extends BaseServiceTest {
 		// send get request to endpoint
 		Response response = client.get();
 
-		// convert json response to a string
-		String entity = response.readEntity(String.class);
-
-		// convert json string to a section dto
-		SectionDTO responseDTO = DTOFactory.build(SectionDTO.class, entity);
+		// convert response to dto
+		SectionDTO responseDTO = convertResponse(SectionDTO.class, response);
 
 		Section section = entityManager.find(Section.class, sectionId);
-		SectionDTO entityDTO = new SectionDTO(section);
+		SectionDTO entityDTO = section.buildDTO();
 
 		assertEquals(entityDTO, responseDTO);
 	}
@@ -68,8 +64,10 @@ public class SectionServiceTest extends BaseServiceTest {
 		// create new venue
 		VenueDTO venueDTO = generateRandomVenue();
 		SectionDTO sectionDTO = buildRandomSection();
+		
+		LOG.debug("Post: {}", sectionDTO.toJSON());
 
-		Response response = client.post(sectionDTO);
+		Response response = client.post(sectionDTO.toString());
 		String path = response.readEntity(String.class);
 
 		LOG.debug(path);

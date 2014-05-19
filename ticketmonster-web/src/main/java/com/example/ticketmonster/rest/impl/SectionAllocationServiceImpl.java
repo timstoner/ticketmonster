@@ -3,9 +3,10 @@ package com.example.ticketmonster.rest.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.example.ticketmonster.dto.SectionAllocationDTO;
+import com.example.ticketmonster.factory.SectionAllocationFactory;
 import com.example.ticketmonster.model.SectionAllocation;
 import com.example.ticketmonster.rest.SectionAllocationService;
-import com.example.ticketmonster.rest.dto.SectionAllocationDTO;
 
 public class SectionAllocationServiceImpl extends
 		BaseEntityService<SectionAllocation, SectionAllocationDTO> implements
@@ -20,28 +21,20 @@ public class SectionAllocationServiceImpl extends
 	}
 
 	@Override
-	protected SectionAllocationDTO buildDTO(SectionAllocation entity) {
-		return entity.convertToDTO();
-	}
-
-	@Override
 	protected SectionAllocation buildEntity(SectionAllocationDTO dto) {
-		SectionAllocation entity = getSingleInstance(dto.getId());
-
-		if (entity != null) {
-			
-		}
+		SectionAllocation entity = SectionAllocationFactory
+				.buildEntity(dto, em);
 
 		return entity;
 	}
 
 	@Override
 	protected String getFindAllQuery() {
-		return SectionAllocation.getFindAllQuery();
+		return SectionAllocationFactory.getFindAllQuery();
 	}
 
 	@Override
 	protected String getFindByIdQuery() {
-		return SectionAllocation.getFindByIdQuery();
+		return SectionAllocationFactory.getFindByIdQuery();
 	}
 }

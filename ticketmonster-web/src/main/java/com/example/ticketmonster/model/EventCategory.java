@@ -6,14 +6,13 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.example.ticketmonster.rest.dto.EventCategoryDTO;
-import com.example.ticketmonster.rest.dto.NestedEventCategoryDTO;
+import com.example.ticketmonster.dto.EventCategoryDTO;
+import com.example.ticketmonster.dto.NestedEventCategoryDTO;
 
 /**
  * <p>
@@ -73,6 +72,10 @@ public class EventCategory extends BaseEntity<EventCategoryDTO> implements
 		return id;
 	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public String getDescription() {
 		return description;
 	}
@@ -112,13 +115,7 @@ public class EventCategory extends BaseEntity<EventCategoryDTO> implements
 		return description;
 	}
 
-	@Override
-	public void convertFromDTO(EventCategoryDTO dto, EntityManager em) {
-		this.id = dto.getId();
-		this.description = dto.getDescription();
-	}
-
-	public EventCategoryDTO convertToDTO() {
+	public EventCategoryDTO buildDTO() {
 		EventCategoryDTO dto = new EventCategoryDTO();
 
 		dto.setId(this.id);
@@ -135,23 +132,4 @@ public class EventCategory extends BaseEntity<EventCategoryDTO> implements
 
 		return dto;
 	}
-
-	public static EventCategory buildEntity(NestedEventCategoryDTO dto,
-			EntityManager em) {
-		EventCategory entity = new EventCategory();
-
-		entity.id = dto.getId();
-		entity.description = dto.getDescription();
-
-		return entity;
-	}
-
-	public static String getFindAllQuery() {
-		return "SELECT DISTINCT e FROM EventCategory e ORDER BY e.id";
-	}
-
-	public static String getFindByIdQuery() {
-		return "SELECT DISTINCT e FROM EventCategory e WHERE e.id = :entityId ORDER BY e.id";
-	}
-
 }

@@ -19,19 +19,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.example.ticketmonster.dto.BookingDTO;
+import com.example.ticketmonster.factory.BookingFactory;
 import com.example.ticketmonster.model.Booking;
 import com.example.ticketmonster.model.Performance;
 import com.example.ticketmonster.model.Section;
 import com.example.ticketmonster.model.Ticket;
 import com.example.ticketmonster.model.TicketCategory;
 import com.example.ticketmonster.model.TicketPrice;
-import com.example.ticketmonster.model.factory.BookingFactory;
 import com.example.ticketmonster.request.BookingRequest;
 import com.example.ticketmonster.request.TicketRequest;
 import com.example.ticketmonster.rest.BookingService;
 import com.example.ticketmonster.rest.RestServiceException;
 import com.example.ticketmonster.rest.SectionComparator;
-import com.example.ticketmonster.rest.dto.BookingDTO;
 import com.example.ticketmonster.service.AllocatedSeats;
 import com.example.ticketmonster.service.SeatAllocationService;
 
@@ -228,11 +228,6 @@ public class BookingServiceImpl extends BaseEntityService<Booking, BookingDTO>
 			ticketPricesById.put(ticketPrice.getId(), ticketPrice);
 		}
 		return ticketPricesById;
-	}
-
-	@Override
-	protected BookingDTO buildDTO(Booking entity) {
-		return entity.convertToDTO();
 	}
 
 	@Override

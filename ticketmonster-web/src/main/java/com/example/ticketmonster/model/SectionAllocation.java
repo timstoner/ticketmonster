@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
@@ -19,8 +18,8 @@ import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
+import com.example.ticketmonster.dto.SectionAllocationDTO;
 import com.example.ticketmonster.rest.SeatAllocationException;
-import com.example.ticketmonster.rest.dto.SectionAllocationDTO;
 
 /**
  * <p>
@@ -379,7 +378,7 @@ public class SectionAllocation extends BaseEntity<SectionAllocationDTO>
 	}
 
 	@Override
-	public SectionAllocationDTO convertToDTO() {
+	public SectionAllocationDTO buildDTO() {
 		SectionAllocationDTO dto = new SectionAllocationDTO();
 
 		dto.setId(id);
@@ -388,20 +387,5 @@ public class SectionAllocation extends BaseEntity<SectionAllocationDTO>
 		dto.setSection(section.buildNestedDTO());
 
 		return dto;
-	}
-
-	@Override
-	public void convertFromDTO(SectionAllocationDTO dto, EntityManager em) {
-		// Performance.buildPerformance(dto.getPerformance(), em);
-		this.id = dto.getId();
-		this.section = Section.buildSection(dto.getSection(), em);
-	}
-
-	public static String getFindByIdQuery() {
-		return "SELECT DISTINCT s FROM SectionAllocation s LEFT JOIN FETCH s.performance LEFT JOIN FETCH s.section WHERE s.id = :entityId ORDER BY s.id";
-	}
-
-	public static String getFindAllQuery() {
-		return "SELECT DISTINCT s FROM SectionAllocation s LEFT JOIN FETCH s.performance LEFT JOIN FETCH s.section ORDER BY s.id";
 	}
 }

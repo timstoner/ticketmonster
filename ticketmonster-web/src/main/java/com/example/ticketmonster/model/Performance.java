@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -18,8 +17,8 @@ import javax.validation.constraints.NotNull;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
-import com.example.ticketmonster.rest.dto.NestedPerformanceDTO;
-import com.example.ticketmonster.rest.dto.PerformanceDTO;
+import com.example.ticketmonster.dto.NestedPerformanceDTO;
+import com.example.ticketmonster.dto.PerformanceDTO;
 
 /**
  * <p>
@@ -154,13 +153,6 @@ public class Performance extends BaseEntity<PerformanceDTO> implements
 		return show + " on " + date.toString();
 	}
 
-	@Override
-	public void convertFromDTO(PerformanceDTO dto, EntityManager em) {
-		this.date = dto.getDate();
-		this.id = dto.getId();
-		this.show = Show.buildShow(dto.getShow(), em);
-	}
-
 	public NestedPerformanceDTO buildNestedDTO() {
 		NestedPerformanceDTO dto = new NestedPerformanceDTO();
 
@@ -170,7 +162,7 @@ public class Performance extends BaseEntity<PerformanceDTO> implements
 		return dto;
 	}
 
-	public PerformanceDTO convertToDTO() {
+	public PerformanceDTO buildDTO() {
 		PerformanceDTO dto = new PerformanceDTO();
 
 		dto.setDate(date);
@@ -179,13 +171,4 @@ public class Performance extends BaseEntity<PerformanceDTO> implements
 
 		return dto;
 	}
-
-	public static String getFindByIdQuery() {
-		return "SELECT DISTINCT p FROM Performance p LEFT JOIN FETCH p.show WHERE p.id = :entityId ORDER BY p.id";
-	}
-
-	public static String getFindAllQuery() {
-		return "SELECT DISTINCT p FROM Performance p LEFT JOIN FETCH p.show ORDER BY p.id";
-	}
-
 }
