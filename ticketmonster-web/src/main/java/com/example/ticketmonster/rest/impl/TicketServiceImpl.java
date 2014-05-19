@@ -8,6 +8,10 @@ import com.example.ticketmonster.rest.TicketService;
 public class TicketServiceImpl extends BaseEntityService<Ticket, TicketDTO>
 		implements TicketService {
 
+	public TicketServiceImpl() {
+		super(Ticket.class);
+	}
+
 	@Override
 	protected Ticket buildEntity(TicketDTO dto) {
 		return TicketFactory.buildEntity(dto, em);

@@ -113,10 +113,6 @@ public class Bot implements ApplicationEventPublisherAware {
 
 	private ApplicationEventPublisher eventPublisher;
 
-	// @Inject
-	// @BotMessage
-	// Event<String> event;
-
 	public Timer start() {
 		String startMessage = "Bot Started";
 

@@ -211,8 +211,6 @@ public abstract class BaseEntityService<T extends BaseEntity<S>, S extends BaseD
 	}
 
 	protected List<T> getAll(MultivaluedMap<String, String> queryParameters) {
-		String text = getFindAllQuery();
-		LOG.debug("Find ALl query: " + text);
 		TypedQuery<T> query = em.createQuery(getFindAllQuery(), entityClass);
 
 		Integer value;
@@ -220,6 +218,7 @@ public abstract class BaseEntityService<T extends BaseEntity<S>, S extends BaseD
 			value = Integer.parseInt(queryParameters.getFirst("first")) - 1;
 			query.setFirstResult(value);
 		}
+
 		if (queryParameters.containsKey("maxResults")) {
 			value = Integer.parseInt(queryParameters.getFirst("maxResults"));
 			query.setMaxResults(value);
