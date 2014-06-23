@@ -536,14 +536,13 @@
 		<!-- <lst name="defaults"> <str name="update.chain">dedupe</str> </lst> -->
 	</requestHandler>
 
-	<!-- for back compat with clients using /update/json and /update/csv -->
-	<!--<requestHandler name="/update/json" class="solr.UpdateRequestHandler"> 
-		<lst name="defaults"> <str name="stream.contentType">text/json</str> </lst> 
-		</requestHandler> <requestHandler name="/update/csv" class="solr.UpdateRequestHandler"> 
-		<lst name="defaults"> <str name="stream.contentType">text/csv</str> </lst> 
-		</requestHandler> <requestHandler name="/update/xml" class="solr.UpdateRequestHandler"> 
-		<lst name="defaults"> <str name="stream.contentType">text/xml</str> </lst> 
-		</requestHandler> -->
+
+	<requestHandler name="/dataimport"
+		class="org.apache.solr.handler.dataimport.DataImportHandler">
+		<lst name="defaults">
+			<str name="config">dataimport.xml</str>
+		</lst>
+	</requestHandler>
 
 
 	<!-- Field Analysis Request Handler RequestHandler that provides much the 

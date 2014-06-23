@@ -1,9 +1,7 @@
 package com.example.ticketmonster.rest.test;
 
-import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -14,6 +12,7 @@ import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,12 +32,10 @@ public class SearchServiceTest extends BaseServiceTest {
 		super.initialize();
 
 		LOG.info("Starting Jetty Solr Runner");
-		solrRunner = new JettySolrRunner("src/test/resources/solr", "/solr",
-				SOLR_PORT);
+		solrRunner = new JettySolrRunner("solr", "/solr", SOLR_PORT);
 		solrRunner.start();
 
 		LOG.info("Starting up Http Solr Server");
-
 		solrServer = new HttpSolrServer("http://localhost:" + SOLR_PORT
 				+ "/solr/core1");
 		LOG.info("Ping: " + solrServer.ping().getStatus());
