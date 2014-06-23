@@ -35,7 +35,9 @@ public abstract class BaseServiceTest {
 			.getLogger(BaseServiceTest.class);
 
 	protected Server server;
-	public final static String ENDPOINT_ADDRESS = "http://localhost:8951/rest";
+	public final static int ENDPOINT_PORT = 8951;
+	public final static String ENDPOINT_ADDRESS = "http://localhost:"
+			+ ENDPOINT_PORT + "/rest";
 	public final static String WADL_ADDRESS = ENDPOINT_ADDRESS + "?_wadl";
 
 	private static final String alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_!@#$%^&*() {}|";
@@ -58,7 +60,7 @@ public abstract class BaseServiceTest {
 	}
 
 	@After
-	public void destroy() throws Exception {
+	public void shutdown() throws Exception {
 		LOG.info("Destroying server");
 		server.stop();
 		server.destroy();
