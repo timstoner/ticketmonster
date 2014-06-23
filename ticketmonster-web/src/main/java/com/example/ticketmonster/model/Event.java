@@ -228,6 +228,7 @@ public class Event extends BaseEntity<EventDTO> implements Serializable,
 
 		dto.setDescription(this.description);
 		dto.setName(this.name);
+		dto.setId(id);
 
 		return dto;
 	}
