@@ -182,7 +182,7 @@ public abstract class BaseServiceTest {
 	protected JSONArray getJSONArrayFromResponse(Response response) {
 		JSONArray object = new JSONArray();
 		String entity = response.readEntity(String.class);
-		LOG.debug(entity);
+//		LOG.debug(entity);
 		try {
 			object = new JSONArray(entity);
 		} catch (JSONException e) {
@@ -195,7 +195,7 @@ public abstract class BaseServiceTest {
 	protected JSONObject getJSONObjectFromResponse(Response response) {
 		JSONObject object = new JSONObject();
 		String entity = response.readEntity(String.class);
-		LOG.debug(entity);
+//		LOG.debug(entity);
 		try {
 			object = new JSONObject(entity);
 		} catch (JSONException e) {

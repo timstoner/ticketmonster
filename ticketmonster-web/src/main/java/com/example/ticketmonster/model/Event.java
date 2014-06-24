@@ -1,14 +1,17 @@
 package com.example.ticketmonster.model;
 
 import static javax.persistence.GenerationType.IDENTITY;
+import static javax.persistence.TemporalType.TIMESTAMP;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -140,7 +143,10 @@ public class Event extends BaseEntity<EventDTO> implements Serializable,
 	@NotNull
 	private EventCategory category;
 
-	/* Boilerplate getters and setters */
+	@Temporal(TIMESTAMP)
+	@NotNull
+	@Column(name="last_modified")
+	private Date lastModified;
 
 	@Override
 	public Long getId() {
@@ -181,6 +187,14 @@ public class Event extends BaseEntity<EventDTO> implements Serializable,
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Date getLastModifiedOn() {
+		return lastModified;
+	}
+
+	public void setLastModifiedOn(Date date) {
+		this.lastModified = date;
 	}
 
 	/*
@@ -242,6 +256,5 @@ public class Event extends BaseEntity<EventDTO> implements Serializable,
 
 		return dto;
 	}
-
 
 }

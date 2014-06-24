@@ -161,12 +161,12 @@
 			</analyzer>
 		</fieldType>
 
-<!-- 		<fieldType name="pint" class="solr.IntField" /> -->
-<!-- 		<fieldType name="plong" class="solr.LongField" /> -->
-<!-- 		<fieldType name="pfloat" class="solr.FloatField" /> -->
-<!-- 		<fieldType name="pdouble" class="solr.DoubleField" /> -->
-<!-- 		<fieldType name="pdate" class="solr.DateField" -->
-<!-- 			sortMissingLast="true" /> -->
+		<!-- <fieldType name="pint" class="solr.IntField" /> -->
+		<!-- <fieldType name="plong" class="solr.LongField" /> -->
+		<!-- <fieldType name="pfloat" class="solr.FloatField" /> -->
+		<!-- <fieldType name="pdouble" class="solr.DoubleField" /> -->
+		<!-- <fieldType name="pdate" class="solr.DateField" -->
+		<!-- sortMissingLast="true" /> -->
 
 		<!-- A specialized field for geospatial search. If indexed, this fieldType 
 			must not be multivalued. -->
@@ -286,8 +286,8 @@
 		<dynamicField name="*_tdt" type="tdate" indexed="true"
 			stored="true" />
 
-<!-- 		<dynamicField name="*_pi" type="pint" indexed="true" -->
-<!-- 			stored="true" /> -->
+		<!-- <dynamicField name="*_pi" type="pint" indexed="true" -->
+		<!-- stored="true" /> -->
 
 		<dynamicField name="ignored_*" type="ignored"
 			multiValued="true" />
