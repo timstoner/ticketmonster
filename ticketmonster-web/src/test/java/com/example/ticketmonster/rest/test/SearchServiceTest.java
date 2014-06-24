@@ -1,5 +1,7 @@
 package com.example.ticketmonster.rest.test;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 
 import javax.ws.rs.core.Response;
@@ -42,9 +44,8 @@ public class SearchServiceTest extends BaseServiceTest {
 		startSolrServer();
 		pingSolrServer();
 		triggerFullIndex();
-//		addTestData();
-
-//		System.in.read();
+		
+		System.in.read();
 	}
 
 	@Override
@@ -69,14 +70,14 @@ public class SearchServiceTest extends BaseServiceTest {
 			LOG.debug("Query Response Code: " + rsp.getStatus());
 
 			SolrDocumentList docs = rsp.getResults();
-			if (docs != null) {
-				LOG.info("Number of Results Found: " + docs.size());
-				for (SolrDocument doc : docs) {
-					LOG.info("Solr Doc: " + doc.toString());
-				}
-			} else {
-				LOG.warn("No Results Found");
+
+			assertEquals(1, docs.size(), 0);
+
+			LOG.info("Number of Results Found: " + docs.size());
+			for (SolrDocument doc : docs) {
+				LOG.info("Solr Doc: " + doc.toString());
 			}
+
 		} catch (SolrServerException e) {
 			LOG.warn("Problem talking to solr server", e);
 		}
@@ -101,11 +102,12 @@ public class SearchServiceTest extends BaseServiceTest {
 			SolrServerException, IOException {
 		LOG.debug("Triggering Full Index of DIH");
 		String diUrl = SOLR_URL + "/dataimport";
+		
+		// send command to do a full import and return json encoded result
 		WebClient client = WebClient.create(diUrl
 				+ "?command=full-import&wt=json");
 
 		Response resp = client.get();
-
 		JSONObject data = getJSONObjectFromResponse(resp);
 		LOG.debug("Full Index Response: " + data);
 
@@ -117,6 +119,7 @@ public class SearchServiceTest extends BaseServiceTest {
 
 		int count;
 
+		// loop while dataimporthandler is busy indexing data
 		while (busy) {
 			client = WebClient.create(diUrl + "?wt=json");
 			response = client.get();
@@ -139,26 +142,9 @@ public class SearchServiceTest extends BaseServiceTest {
 			}
 		}
 
-		LOG.info("***** Commiting Solr Index");
+		LOG.info("Commiting Solr Index");
 		UpdateResponse up = solrServer.commit();
-		LOG.debug("**** Solr Commit Status: " + up.getStatus());
+		LOG.debug("Solr Commit Status: " + up.getStatus());
 
-	}
-
-	private void addTestData() throws SolrServerException, IOException {
-		SolrInputDocument doc;
-		UpdateResponse up;
-
-		for (int i = 100; i < 115; i++) {
-			doc = new SolrInputDocument();
-			doc.addField("id", i);
-			doc.addField("name_t", "Document #" + i);
-			doc.addField("category_t", "Test Document");
-			up = solrServer.add(doc);
-			LOG.debug("***** Solr Add Doc Status: " + up.getStatus());
-		}
-
-		up = solrServer.commit();
-		LOG.debug("***** Solr Commit Status: " + up.getStatus());
 	}
 }

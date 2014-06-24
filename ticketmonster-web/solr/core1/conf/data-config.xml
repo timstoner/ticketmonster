@@ -16,10 +16,11 @@
 			this entity is the 'root' entity. -->
 		<entity name="event" query="select * from Event"
 			deltaQuery="select ID from Event where last_modified > '${dataimporter.last_index_time}'"
-			transformer="LogTransformer" logTemplate="${event}" logLevel="debug">
+			transformer="LogTransformer,TemplateTransformer" logTemplate="${event}"
+			logLevel="debug">
 
 			<!-- fun fact in DIH, columns need to be uppercase to match fields -->
-			<field name="id" column="ID" />
+			<field name="id" column="ID" template="EVENT:${event.ID}" />
 			<field name="name_t" column="NAME" />
 			<field name="description_t" column="DESCRIPTION" />
 			<!-- <field name="category_ts" column="CATEGORY_ID" /> -->
@@ -39,13 +40,14 @@
 			</entity>
 		</entity>
 
-		<!-- <entity name="venue" query="select * from Venue"> -->
-		<!-- <field column="name" name="name_t" /> -->
-		<!-- <field column="description" name="description_t" /> -->
-		<!-- <field column="city" name="city_t" /> -->
-		<!-- <field column="country" name="country_t" /> -->
-		<!-- <field column="street" name="street_t" /> -->
-		<!-- <field column="capacity" name="capacity_i" /> -->
-		<!-- </entity> -->
+		<entity name="venue" query="select * from Venue" transformer="TemplateTransformer">
+			<field column="ID" name="id" template="VENUE:${venue.ID}" />
+			<field column="NAME" name="name_t" />
+			<field column="DESCRIPTION" name="description_t" />
+			<field column="CITY" name="city_s" />
+			<field column="COUNTRY" name="country_s" />
+			<field column="STREET" name="street_s" />
+			<field column="CAPACITY" name="capacity_i" />
+		</entity>
 	</document>
 </dataConfig>
