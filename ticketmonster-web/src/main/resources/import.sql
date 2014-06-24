@@ -67,7 +67,7 @@ insert into Section ( name, description, numberofrows, rowcapacity, venue_id) va
 -- Section 6
 insert into Section ( name, description, numberofrows, rowcapacity, venue_id) values ( 'S2', 'Front centre', 50, 50, 2);
 -- Section 7
-insert into Section ( name, description, numberofrows, rowcapacity, venue_id) values ( 'S3', 'Front right',50, 50, 2);
+insert into Section ( name, description, numberofrows, rowcapacity, venue_id) values ( 'S3', 'Front right', 50, 50, 2);
 -- Section 8
 insert into Section ( name, description, numberofrows, rowcapacity, venue_id) values ( 'S4', 'Rear left', 50, 50, 2);
 -- Section 9

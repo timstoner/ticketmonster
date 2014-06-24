@@ -13,7 +13,8 @@
 
 	<types>
 
-		<fieldType name="id" class="solr.UUIDField" indexed="false" />
+		<!-- <fieldType name="id" class="solr.UUIDField" indexed="false" /> -->
+		<fieldType name="id" class="solr.StrField" indexed="true" />
 
 		<fieldType name="string" class="solr.StrField"
 			sortMissingLast="true" />
@@ -189,6 +190,15 @@
 		<field name="title" type="text_en" stored="true" indexed="true" />
 
 
+		<!-- <field name="description" type="text_en" stored="true" indexed="true" 
+			/> -->
+
+		<!-- <field name="category" type="string" stored="true" indexed="true" 
+			/> -->
+
+		<!-- <field name="name" type="string" stored="true" indexed="true" /> -->
+
+
 		<!-- SolrCloud version field -->
 		<field name="_version_" type="long" indexed="true" stored="true" />
 
@@ -285,9 +295,6 @@
 
 		<dynamicField name="*_tdt" type="tdate" indexed="true"
 			stored="true" />
-
-		<!-- <dynamicField name="*_pi" type="pint" indexed="true" -->
-		<!-- stored="true" /> -->
 
 		<dynamicField name="ignored_*" type="ignored"
 			multiValued="true" />

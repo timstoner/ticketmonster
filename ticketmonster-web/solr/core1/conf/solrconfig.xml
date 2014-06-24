@@ -448,15 +448,15 @@
 			<!-- default field -->
 			<str name="df">text</str>
 
-			<str name="spellcheck">on</str>
-			<str name="spellcheck.extendedResults">false</str>
-			<str name="spellcheck.count">5</str>
-			<str name="spellcheck.alternativeTermCount">2</str>
-			<str name="spellcheck.maxResultsForSuggest">5</str>
-			<str name="spellcheck.collate">true</str>
-			<str name="spellcheck.collateExtendedResults">true</str>
-			<str name="spellcheck.maxCollationTries">5</str>
-			<str name="spellcheck.maxCollations">3</str>
+<!-- 			<str name="spellcheck">on</str> -->
+<!-- 			<str name="spellcheck.extendedResults">false</str> -->
+<!-- 			<str name="spellcheck.count">5</str> -->
+<!-- 			<str name="spellcheck.alternativeTermCount">2</str> -->
+<!-- 			<str name="spellcheck.maxResultsForSuggest">5</str> -->
+<!-- 			<str name="spellcheck.collate">true</str> -->
+<!-- 			<str name="spellcheck.collateExtendedResults">true</str> -->
+<!-- 			<str name="spellcheck.maxCollationTries">5</str> -->
+<!-- 			<str name="spellcheck.maxCollations">3</str> -->
 
 		</lst>
 		<!-- In addition to defaults, "appends" params can be specified to identify 
@@ -488,9 +488,9 @@
 			to the default list. (see below) -->
 		<!-- <arr name="components"> <str>nameOfCustomComponent1</str> <str>nameOfCustomComponent2</str> 
 			</arr> -->
-		<arr name="components">
-			<str>spellcheck</str>
-		</arr>
+<!-- 		<arr name="components"> -->
+<!-- 			<str>spellcheck</str> -->
+<!-- 		</arr> -->
 
 	</requestHandler>
 
@@ -540,7 +540,7 @@
 	<requestHandler name="/dataimport"
 		class="org.apache.solr.handler.dataimport.DataImportHandler">
 		<lst name="defaults">
-			<str name="config">dataimport.xml</str>
+			<str name="config">data-config.xml</str>
 		</lst>
 	</requestHandler>
 

@@ -1,0 +1,51 @@
+<dataConfig>
+	<!-- The first element is the dataSource, in this case an HSQLDB database. 
+		The path to the JDBC driver and the JDBC URL and login credentials are all 
+		specified here. Other permissible attributes include whether or not to autocommit 
+		to Solr,the batchsize used in the JDBC connection, a 'readOnly' flag -->
+	<dataSource driver="org.h2.Driver" url="jdbc:h2:mem:ticketmonster"
+		user="sa" />
+	<!-- a 'document' element follows, containing multiple 'entity' elements. 
+		Note that 'entity' elements can be nested, and this allows the entity relationships 
+		in the sample database to be mirrored here, so that we can generate a denormalized 
+		Solr record which may include multiple features for one item, for instance -->
+	<document>
+		<!-- The possible attributes for the entity element are described below. 
+			Entity elements may contain one or more 'field' elements, which map the data 
+			source field names to Solr fields, and optionally specify per-field transformations 
+			this entity is the 'root' entity. -->
+		<entity name="event" query="select * from Event"
+			deltaQuery="select ID from Event where last_modified > '${dataimporter.last_index_time}'"
+			transformer="LogTransformer" logTemplate="${event}" logLevel="debug">
+
+			<!-- fun fact in DIH, columns need to be uppercase to match fields -->
+			<field name="id" column="ID" />
+			<field name="name_t" column="NAME" />
+			<field name="description_t" column="DESCRIPTION" />
+			<!-- <field name="category_ts" column="CATEGORY_ID" /> -->
+			<!-- <field name="mediaitem_i" column="MEDIAITEM_ID" /> -->
+
+			<entity name="eventcategory"
+				query="select description from EventCategory where ID='${event.CATEGORY_ID}'"
+				parentDeltaQuery="select ID from event where category_id=${eventcategory.ID}">
+				<field name="category_s" column="DESCRIPTION" />
+			</entity>
+
+			<entity name="mediaitem"
+				query="select mediaType, url from MediaItem where ID='${event.MEDIAITEM_ID}'"
+				parentDeltaQuery="select ID from event where MEDIAITEM_ID=${mediaitem.ID}">
+				<field name="media_url_s" column="URL" />
+				<field name="mediay_type_s" column="MEDIATYPE" />
+			</entity>
+		</entity>
+
+		<!-- <entity name="venue" query="select * from Venue"> -->
+		<!-- <field column="name" name="name_t" /> -->
+		<!-- <field column="description" name="description_t" /> -->
+		<!-- <field column="city" name="city_t" /> -->
+		<!-- <field column="country" name="country_t" /> -->
+		<!-- <field column="street" name="street_t" /> -->
+		<!-- <field column="capacity" name="capacity_i" /> -->
+		<!-- </entity> -->
+	</document>
+</dataConfig>

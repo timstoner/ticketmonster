@@ -1,8 +1,6 @@
 package com.example.ticketmonster.rest.test;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 import javax.ws.rs.core.Response;
 
@@ -15,8 +13,10 @@ import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.request.SolrPing;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.SolrPingResponse;
+import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.SolrInputDocument;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.Test;
@@ -42,8 +42,9 @@ public class SearchServiceTest extends BaseServiceTest {
 		startSolrServer();
 		pingSolrServer();
 		triggerFullIndex();
+//		addTestData();
 
-		System.in.read();
+//		System.in.read();
 	}
 
 	@Override
@@ -96,7 +97,8 @@ public class SearchServiceTest extends BaseServiceTest {
 		LOG.debug("Solr Ping Response Status: " + response.getStatus());
 	}
 
-	private void triggerFullIndex() throws InterruptedException, JSONException {
+	private void triggerFullIndex() throws InterruptedException, JSONException,
+			SolrServerException, IOException {
 		LOG.debug("Triggering Full Index of DIH");
 		String diUrl = SOLR_URL + "/dataimport";
 		WebClient client = WebClient.create(diUrl
@@ -136,5 +138,27 @@ public class SearchServiceTest extends BaseServiceTest {
 				LOG.debug("unknown status " + value);
 			}
 		}
+
+		LOG.info("***** Commiting Solr Index");
+		UpdateResponse up = solrServer.commit();
+		LOG.debug("**** Solr Commit Status: " + up.getStatus());
+
+	}
+
+	private void addTestData() throws SolrServerException, IOException {
+		SolrInputDocument doc;
+		UpdateResponse up;
+
+		for (int i = 100; i < 115; i++) {
+			doc = new SolrInputDocument();
+			doc.addField("id", i);
+			doc.addField("name_t", "Document #" + i);
+			doc.addField("category_t", "Test Document");
+			up = solrServer.add(doc);
+			LOG.debug("***** Solr Add Doc Status: " + up.getStatus());
+		}
+
+		up = solrServer.commit();
+		LOG.debug("***** Solr Commit Status: " + up.getStatus());
 	}
 }
