@@ -10,7 +10,7 @@
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
 		<!-- Camel route to feed the ActiveMQ inbox queue once per second -->
 		<route>
-			<from uri="timer:foo?period=1s" />
+			<from uri="activemq:queue:bot" />
 			<transform>
 				<simple>Message at ${date:now:yyyy-MM-dd HH:mm:ss}</simple>
 			</transform>
@@ -25,16 +25,16 @@
 			${body}" /> -->
 		<!-- <to uri="activemq:queue:outbox" /> -->
 		<!-- </route> -->
-		<route>
-			<from
-				uri="activemq:topic:ActiveMQ.Advisory.Connection?mapJmsMessage=false" />
-			<convertBodyTo type="java.lang.String" />
-			<transform>
-				<simple>${in.body}&#13;</simple>
-			</transform>
-			<to
-				uri="file://data/activemq/?fileExist=Append&amp;fileName=advisoryConnection-${date:now:yyyyMMdd}.txt" />
-		</route>
+<!-- 		<route> -->
+<!-- 			<from -->
+<!-- 				uri="activemq:topic:ActiveMQ.Advisory.Connection?mapJmsMessage=false" /> -->
+<!-- 			<convertBodyTo type="java.lang.String" /> -->
+<!-- 			<transform> -->
+<!-- 				<simple>${in.body}&#13;</simple> -->
+<!-- 			</transform> -->
+<!-- 			<to -->
+<!-- 				uri="file://data/activemq/?fileExist=Append&amp;fileName=advisoryConnection-${date:now:yyyyMMdd}.txt" /> -->
+<!-- 		</route> -->
 	</camelContext>
 
 	<!-- create a Camel ActiveMQ component to use, using the Spring bean style -->

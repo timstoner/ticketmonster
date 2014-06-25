@@ -7,6 +7,7 @@ import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.slf4j.Logger;
@@ -70,6 +71,11 @@ public class ShowServiceImpl extends BaseEntityService<Show, ShowDTO> implements
 	@Override
 	protected String getFindByIdQuery() {
 		return ShowFactory.getFindByIdQuery();
+	}
+
+	@Override
+	public List<Show> getAll(MultivaluedHashMap<String, String> empty) {
+		return super.getAll(empty);
 	}
 
 }

@@ -17,14 +17,13 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.example.ticketmonster.model.MediaItem;
 import com.example.ticketmonster.model.MediaType;
-import com.example.ticketmonster.util.Base64;
-import com.example.ticketmonster.util.Reflections;
 
 @Component
 public class MediaManager {
@@ -95,17 +94,15 @@ public class MediaManager {
 	 */
 	private MediaPath createPath(MediaItem mediaItem) {
 		if (mediaItem == null) {
-			return createCachedMedia(
-					Reflections.getResource("not_available.jpg")
-							.toExternalForm(), IMAGE);
+			return createCachedMedia(getResource("not_available.jpg")
+					.toExternalForm(), IMAGE);
 		} else if (!mediaItem.getMediaType().isCacheable()) {
 			if (checkResourceAvailable(mediaItem)) {
 				return new MediaPath(mediaItem.getUrl(), false,
 						mediaItem.getMediaType());
 			} else {
-				return createCachedMedia(
-						Reflections.getResource("not_available.jpg")
-								.toExternalForm(), IMAGE);
+				return createCachedMedia(getResource("not_available.jpg")
+						.toExternalForm(), IMAGE);
 			}
 		} else {
 			return createCachedMedia(mediaItem);
@@ -138,14 +135,6 @@ public class MediaManager {
 	}
 
 	/**
-	 * The cached file name is a base64 encoded version of the URL. This means
-	 * we don't need to maintain a database of cached files.
-	 */
-	private String getCachedFileName(String url) {
-		return Base64.encodeToString(url.getBytes(), false);
-	}
-
-	/**
 	 * Check to see if the file is already cached.
 	 */
 	private boolean alreadyCached(String cachedFileName) {
@@ -166,7 +155,8 @@ public class MediaManager {
 	 * disk.
 	 */
 	private MediaPath createCachedMedia(String url, MediaType mediaType) {
-		String cachedFileName = getCachedFileName(url);
+		String cachedFileName = Base64.encodeBase64String(url.getBytes());
+
 		if (!alreadyCached(cachedFileName)) {
 			URL _url = null;
 			try {
@@ -214,4 +204,12 @@ public class MediaManager {
 		}
 	}
 
+	public static URL getResource(String name) {
+		if (Thread.currentThread().getContextClassLoader() != null) {
+			return Thread.currentThread().getContextClassLoader()
+					.getResource(name);
+		} else {
+			return MediaManager.class.getClassLoader().getResource(name);
+		}
+	}
 }

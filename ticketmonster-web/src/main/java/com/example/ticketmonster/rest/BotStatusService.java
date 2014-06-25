@@ -13,14 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.example.ticketmonster.service.BotService;
 
-/**
- * A non-RESTful service for providing the current state of the Bot. This
- * service also allows the bot to be started, stopped or the existing bookings
- * to be deleted.
- * 
- * @author Vineet Reynolds
- * 
- */
 @Path("/bot")
 public class BotStatusService {
 

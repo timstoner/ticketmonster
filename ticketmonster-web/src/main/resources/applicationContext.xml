@@ -49,5 +49,8 @@
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 	<import resource="classpath:cxf-services.xml" />
 
+	<import resource="jms-broker.xml" />
+	<import resource="camel-context.xml" />
+
 	<context:component-scan base-package="com.example.ticketmonster" />
 </beans>

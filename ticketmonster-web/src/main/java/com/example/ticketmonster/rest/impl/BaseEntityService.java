@@ -14,7 +14,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.ws.rs.Path;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -30,57 +29,6 @@ import com.example.ticketmonster.dto.BaseDTO;
 import com.example.ticketmonster.model.BaseEntity;
 import com.example.ticketmonster.rest.BaseService;
 
-/**
- * <p>
- * A number of RESTful services implement GET operations on a particular type of
- * entity. For observing the DRY principle, the generic operations are
- * implemented in the <code>BaseEntityService</code> class, and the other
- * services can inherit from here.
- * </p>
- * 
- * <p>
- * Subclasses will declare a base path using the JAX-RS {@link Path} annotation,
- * for example:
- * </p>
- * 
- * <pre>
- * <code>
- * &#064;Path("/widgets")
- * public class WidgetService extends BaseEntityService<Widget> {
- * ...
- * }
- * </code>
- * </pre>
- * 
- * <p>
- * will support the following methods:
- * </p>
- * 
- * <pre>
- * <code>
- *   GET /widgets
- *   GET /widgets/:id
- *   GET /widgets/count
- * </code>
- * </pre>
- * 
- * <p>
- * Subclasses may specify various criteria for filtering entities when
- * retrieving a list of them, by supporting custom query parameters. Pagination
- * is supported by default through the query parameters <code>first</code> and
- * <code>maxResults</code>.
- * </p>
- * 
- * <p>
- * The class is abstract because it is not intended to be used directly, but
- * subclassed by actual JAX-RS endpoints.
- * </p>
- * 
- * 
- * @author Marius Bogoevici
- * @param <S>
- * @param <S>
- */
 public abstract class BaseEntityService<T extends BaseEntity<S>, S extends BaseDTO>
 		implements BaseService<S> {
 
@@ -185,6 +133,23 @@ public abstract class BaseEntityService<T extends BaseEntity<S>, S extends BaseD
 		return Response.ok(dtoResults).build();
 	}
 
+	public List<T> getAll(MultivaluedMap<String, String> queryParameters) {
+		TypedQuery<T> query = em.createQuery(getFindAllQuery(), entityClass);
+
+		Integer value;
+		if (queryParameters.containsKey("first")) {
+			value = Integer.parseInt(queryParameters.getFirst("first")) - 1;
+			query.setFirstResult(value);
+		}
+
+		if (queryParameters.containsKey("maxResults")) {
+			value = Integer.parseInt(queryParameters.getFirst("maxResults"));
+			query.setMaxResults(value);
+		}
+
+		return query.getResultList();
+	}
+
 	@Override
 	public Response update(Long id, S dto) {
 		LOG.debug("update {}", id);
@@ -208,23 +173,6 @@ public abstract class BaseEntityService<T extends BaseEntity<S>, S extends BaseD
 		}
 
 		return entity;
-	}
-
-	protected List<T> getAll(MultivaluedMap<String, String> queryParameters) {
-		TypedQuery<T> query = em.createQuery(getFindAllQuery(), entityClass);
-
-		Integer value;
-		if (queryParameters.containsKey("first")) {
-			value = Integer.parseInt(queryParameters.getFirst("first")) - 1;
-			query.setFirstResult(value);
-		}
-
-		if (queryParameters.containsKey("maxResults")) {
-			value = Integer.parseInt(queryParameters.getFirst("maxResults"));
-			query.setMaxResults(value);
-		}
-
-		return query.getResultList();
 	}
 
 	protected long getCount(MultivaluedMap<String, String> queryParameters) {

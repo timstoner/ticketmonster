@@ -464,9 +464,9 @@
 			<str name="facet.field">category_s</str>
 			<str name="facet.field">country_s</str>
 		</lst>
-<!-- 		<lst name="appends"> -->
+		<!-- <lst name="appends"> -->
 
-<!-- 		</lst> -->
+		<!-- </lst> -->
 
 		<!-- <lst name="invariants"> -->
 		<!-- <str name="facet.field">category_s</str> -->

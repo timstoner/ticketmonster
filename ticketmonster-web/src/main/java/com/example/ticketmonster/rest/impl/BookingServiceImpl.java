@@ -13,6 +13,7 @@ import javax.validation.ConstraintViolationException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
@@ -59,19 +60,12 @@ public class BookingServiceImpl extends BaseEntityService<Booking, BookingDTO>
 		LOG.debug("Creating Booking Service");
 	}
 
-	/**
-	 * <p>
-	 * Create a booking. Data is contained in the bookingRequest object
-	 * </p>
-	 * 
-	 * @param bookingRequest
-	 * @return
-	 */
+	@Override
+	public List<Booking> getAll(MultivaluedHashMap<String, String> parameters) {
+		return super.getAll(parameters);
+	}
+
 	@POST
-	/**
-	 * <p> Data is received in JSON format. For easy handling, it will be unmarshalled in the support
-	 * {@link BookingRequest} class.
-	 */
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response createBooking(BookingRequest bookingRequest) {
 		try {
@@ -117,8 +111,7 @@ public class BookingServiceImpl extends BaseEntityService<Booking, BookingDTO>
 
 			// Now, we can allocate the tickets
 			// Iterate over the sections, finding the candidate seats for
-			// allocation
-			// The process will lock the record for a given
+			// allocation. The process will lock the record for a given
 			// Use deterministic ordering to prevent deadlocks
 			Map<Section, AllocatedSeats> seatsPerSection = new TreeMap<Section, AllocatedSeats>(
 					SectionComparator.instance());
