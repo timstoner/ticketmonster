@@ -2,3 +2,7 @@ target
 bin
 gen
 local.properties
+logs
+*.log
+dataimport.properties
+
