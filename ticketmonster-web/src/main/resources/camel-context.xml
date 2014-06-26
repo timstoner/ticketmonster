@@ -1,49 +1,32 @@
-<!-- this is a spring XML file where we have Camel embedded -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camel="http://camel.apache.org/schema/spring"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:camel="http://camel.apache.org/schema/spring"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
 
+<!-- 	<context:property-placeholder location="camel.properties" /> -->
+
 	<!-- Here we define Camel, notice the namespace it uses -->
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
-		<!-- Camel route to feed the ActiveMQ inbox queue once per second -->
+		<propertyPlaceholder id="properties"
+			location="classpath:camel.properties" />
 		<route>
-			<from uri="activemq:queue:bot" />
-			<transform>
-				<simple>Message at ${date:now:yyyy-MM-dd HH:mm:ss}</simple>
-			</transform>
-			<to uri="activemq:queue:inbox" />
+			<from uri="{{botstatusstart.endpoint}}" />
+			<log message="Routing message from inbox to outbox queue with data ${body}" />
+			<to uri="mock:a" />
 		</route>
 
-		<!-- Camel route to move messages from the ActiveMQ inbox to its outbox 
-			queue -->
-		<!-- <route> -->
-		<!-- <from uri="activemq:queue:inbox" /> -->
-		<!-- <log message="Routing message from inbox to outbox queue with data 
-			${body}" /> -->
-		<!-- <to uri="activemq:queue:outbox" /> -->
-		<!-- </route> -->
-<!-- 		<route> -->
-<!-- 			<from -->
-<!-- 				uri="activemq:topic:ActiveMQ.Advisory.Connection?mapJmsMessage=false" /> -->
-<!-- 			<convertBodyTo type="java.lang.String" /> -->
-<!-- 			<transform> -->
-<!-- 				<simple>${in.body}&#13;</simple> -->
-<!-- 			</transform> -->
-<!-- 			<to -->
-<!-- 				uri="file://data/activemq/?fileExist=Append&amp;fileName=advisoryConnection-${date:now:yyyyMMdd}.txt" /> -->
-<!-- 		</route> -->
 	</camelContext>
 
 	<!-- create a Camel ActiveMQ component to use, using the Spring bean style -->
 	<!-- we use the vm protocol to communicate intra-jvm which is much faster 
 		than tcp -->
-	<bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
-		<!-- vm://myBroker is the vm protocol, and myBroker is the broker name -->
-		<property name="brokerURL"
-			value="vm://myBroker?create=false&amp;waitForStart=5000" />
-	</bean>
+	<!-- <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent"> -->
+	<!-- <property name="brokerURL" -->
+	<!-- value="vm://myBroker?create=false&amp;waitForStart=5000" /> -->
+	<!-- </bean> -->
 
 </beans>

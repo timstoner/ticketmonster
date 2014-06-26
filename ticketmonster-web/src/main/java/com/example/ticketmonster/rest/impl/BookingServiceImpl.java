@@ -34,7 +34,7 @@ import com.example.ticketmonster.rest.BookingService;
 import com.example.ticketmonster.rest.RestServiceException;
 import com.example.ticketmonster.rest.SectionComparator;
 import com.example.ticketmonster.service.AllocatedSeats;
-import com.example.ticketmonster.service.SeatAllocationService;
+import com.example.ticketmonster.service.SeatAllocationManager;
 
 /**
  * <p>
@@ -53,7 +53,7 @@ public class BookingServiceImpl extends BaseEntityService<Booking, BookingDTO>
 			.getLogger(BookingServiceImpl.class);
 
 	@Autowired
-	SeatAllocationService seatAllocationService;
+	SeatAllocationManager seatAllocationService;
 
 	public BookingServiceImpl() {
 		super(Booking.class);

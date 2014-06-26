@@ -3,6 +3,7 @@ package com.example.ticketmonster.rest;
 import java.util.List;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -11,13 +12,15 @@ import javax.ws.rs.core.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.example.ticketmonster.service.BotService;
+import com.example.ticketmonster.request.BotRequest;
+import com.example.ticketmonster.service.BotManager;
+import com.example.ticketmonster.service.BotState;
 
 @Path("/bot")
-public class BotStatusService {
+public class BotService {
 
 	@Autowired
-	private BotService botService;
+	private BotManager botManager;
 
 	/**
 	 * Produces a JSON representation of the bot's log, containing a maximum of
@@ -29,7 +32,7 @@ public class BotStatusService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<String> getMessages() {
-		return botService.fetchLog();
+		return botManager.fetchLog();
 	}
 
 	/**
@@ -42,8 +45,8 @@ public class BotStatusService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getBotStatus() {
-		BotState state = botService.isBotActive() ? BotState.RUNNING
-				: BotState.NOT_RUNNING;
+		BotState state = botManager.isBotActive() ? BotState.START
+				: BotState.STOP;
 		return Response.ok(state).build();
 	}
 
@@ -59,16 +62,17 @@ public class BotStatusService {
 	 */
 	@Path("status")
 	@PUT
-	public Response updateBotStatus(BotState updatedState) {
-		switch (updatedState) {
-		case NOT_RUNNING:
-			botService.stop();
+	@POST
+	public Response updateBotStatus(BotRequest request) {
+		switch (request.getState()) {
+		case STOP:
+			botManager.stop();
 			break;
 		case RESET:
-			botService.deleteAll();
+			botManager.deleteAll();
 			break;
-		case RUNNING:
-			botService.start();
+		case START:
+			botManager.start();
 			break;
 		default:
 			break;

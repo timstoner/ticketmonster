@@ -15,7 +15,7 @@ import com.example.ticketmonster.model.SectionAllocation;
 import com.example.ticketmonster.rest.SeatAllocationException;
 
 @Component
-public class SeatAllocationService {
+public class SeatAllocationManager {
 
 	@PersistenceContext
 	EntityManager entityManager;

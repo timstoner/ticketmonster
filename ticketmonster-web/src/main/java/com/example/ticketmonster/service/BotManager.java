@@ -33,9 +33,9 @@ import com.example.ticketmonster.rest.BookingService;
 import com.example.ticketmonster.rest.ShowService;
 
 @Component
-public class BotService {
+public class BotManager {
 
-	private final static Logger LOG = LoggerFactory.getLogger(BotService.class);
+	private final static Logger LOG = LoggerFactory.getLogger(BotManager.class);
 
 	private static final Random random = new Random(System.nanoTime());
 
@@ -60,7 +60,7 @@ public class BotService {
 	@Autowired
 	private BookingService bookingService;
 
-	@Produce(uri="activemq:queue:bot")
+	@Produce(uri = "#{botstatusstart.endpoint}")
 	private ProducerTemplate template;
 
 	private static final int MAX_LOG_SIZE = 50;
@@ -71,7 +71,7 @@ public class BotService {
 
 	private ScheduledFuture<?> futureTask;
 
-	public BotService() {
+	public BotManager() {
 		log = new CircularFifoQueue<String>(MAX_LOG_SIZE);
 		scheduler = Executors.newScheduledThreadPool(1);
 	}
@@ -103,14 +103,14 @@ public class BotService {
 	public void deleteAll() {
 		stop();
 		MultivaluedHashMap<String, String> empty = new MultivaluedHashMap<String, String>();
-		
-		for (Booking booking : bookingService.getAll(empty)) {
-			bookingService.deleteById(booking.getId());
 
-			String msg = "Deleted booking " + booking.getId() + " for "
-					+ booking.getContactEmail() + "\n";
-			LOG.debug(msg);
-		}
+//		for (Booking booking : bookingService.getAll(empty)) {
+//			bookingService.deleteById(booking.getId());
+//
+//			String msg = "Deleted booking " + booking.getId() + " for "
+//					+ booking.getContactEmail() + "\n";
+//			LOG.debug(msg);
+//		}
 	}
 
 	public List<String> fetchLog() {

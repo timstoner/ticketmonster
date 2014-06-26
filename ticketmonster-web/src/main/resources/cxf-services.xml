@@ -5,7 +5,7 @@
 	http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
 
 	<bean id="bookingService" class="com.example.ticketmonster.rest.impl.BookingServiceImpl" />
-	<bean id="botStatusService" class="com.example.ticketmonster.rest.BotStatusService" />
+	<bean id="botStatusService" class="com.example.ticketmonster.rest.BotService" />
 	<bean id="eventCategoryService"
 		class="com.example.ticketmonster.rest.impl.EventCategoryServiceImpl" />
 	<bean id="eventService" class="com.example.ticketmonster.rest.impl.EventServiceImpl" />

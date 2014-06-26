@@ -5,6 +5,10 @@
 	http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
 
 
+	<!-- bean which enables mocking all endpoints -->
+	<bean id="mockAllEndpoints"
+		class="org.apache.camel.impl.InterceptSendToMockEndpointStrategy" />
+
 	<import resource="applicationContext.xml" />
 
 </beans>
