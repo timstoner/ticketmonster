@@ -21,6 +21,34 @@
 			<!-- tcp for external communication -->
 			<transportConnector name="tcp" uri="tcp://localhost:61616" />
 		</transportConnectors>
+
+		<systemUsage>
+			<systemUsage>
+				<memoryUsage>
+					<memoryUsage limit="64 mb" />
+				</memoryUsage>
+				<storeUsage>
+					<storeUsage limit="128 mb" />
+				</storeUsage>
+				<tempUsage>
+					<tempUsage limit="64 mb" />
+				</tempUsage>
+			</systemUsage>
+		</systemUsage>
+
+		<systemUsage>
+			<systemUsage>
+				<memoryUsage>
+					<memoryUsage limit="64 mb" />
+				</memoryUsage>
+				<storeUsage>
+					<storeUsage limit="1 gb" />
+				</storeUsage>
+				<tempUsage>
+					<tempUsage limit="1 gb" />
+				</tempUsage>
+			</systemUsage>
+		</systemUsage>
 	</broker>
 
 </beans>

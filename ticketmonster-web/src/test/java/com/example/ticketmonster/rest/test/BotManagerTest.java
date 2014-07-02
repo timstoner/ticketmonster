@@ -23,10 +23,8 @@ public class BotManagerTest extends BaseServiceTest {
 	@Produce(uri = "${botstatusstart.endpoint}")
 	protected ProducerTemplate startEndpoint;
 
-	@EndpointInject(uri = "mock:a")
+	@EndpointInject(uri = "${botstatusend.endpoint}")
 	protected MockEndpoint mockEndpoint;
-
-	protected Endpoint test;
 
 	@Autowired
 	private CamelContext camelContext;
@@ -36,8 +34,8 @@ public class BotManagerTest extends BaseServiceTest {
 	public void testStartStatusMessage() throws Exception {
 		LOG.info("running testStartStatusMessage");
 		mockEndpoint.expectedBodiesReceived("start");
-		
-//		startEndpoint.
+
+		// startEndpoint.
 
 		// Endpoint log =
 		// camelContext.getEndpoint("log:com.example.ticketmonster.camel.test");
